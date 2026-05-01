@@ -1,0 +1,319 @@
+* {
+    box-sizing: border-box;
+}
+
+/* navbar menubar */
+#navbar-container .dropdown-menu {
+  border: none !important;
+  box-shadow: none !important;
+  background-color: #EB8317 !important;
+}
+
+#navbar-container .dropdown-item {
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+  color: whitesmoke;
+}
+
+.dropdown-item:hover, .dropdown-item:focus {
+    background-color: whitesmoke !important;
+    color: black !important;
+}
+
+/* Main */
+main {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+
+main #greeting, #date {
+    font-family: 'lilita one', sans-serif;
+}
+
+main #greeting {
+    color: #2FA4FF;
+}
+
+main .timeDisplay {
+    font-size: clamp(2rem, 10vw, 9rem);
+    font-family: 'Josefin sans', sans-serif;
+}
+
+.analog-container {
+    display: flex;
+    justify-content: center; /* Tengah horizontal */
+    align-items: center;     /* Tengah vertical kalau tinggi cukup */
+    padding: 20px;
+}
+
+/* main analog clock */
+.wrapper-analog {
+    position: relative;
+    width: 300px; /* Sesuaikan biar pas di layout kamu */
+    height: 300px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    animation: colorful 30s linear infinite;
+}
+
+@keyframes colorful {
+    100% {
+        filter: saturate(200%);
+    }
+}
+
+.bar-seconds, 
+.number-hours {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    /* background: purple; */
+    border-radius: 50%;
+}
+
+.bar-seconds span {
+    position: absolute;
+    /* 360deg / 60 = 6deg */
+    transform: rotate(calc(var(--indeks) * 6deg));
+    inset: -20px;
+    text-align: center;
+}
+
+.bar-seconds span p {
+    width: 2px;
+    height: 12px;
+    background: #CA4E79;
+    display: inline-block;
+    border-radius: 2px;
+    box-shadow: 0 0 10px #fde7d4;
+}
+
+/* 5n = every multiple of 5 */
+.bar-seconds span:nth-child(5n) p {
+    /* background: red; */
+    width: 6px;
+    height: 18px;
+    transform: translateY(1px);
+}
+
+.number-hours span {
+    position: absolute;
+    /* 360deg/ 12 = 30 deg */
+    transform: rotate(calc(var(--indeks) * 30deg));
+    inset: 6px;
+    text-align: center;
+}
+
+.number-hours span p {
+    font-size: 20px;
+    transform: rotate(calc(var(--indeks) * -30deg));
+    color: #CA4E79;
+    text-shadow: 0 0 10px #FFC18E;
+}
+
+.hands-box {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.hands-box .hand {
+    position: absolute;
+    border-radius: 50%;
+    /* df dan jc bikin jarum jam di tengah2 */
+    display: flex;
+    justify-content: center;
+}
+
+.hands-box .hand i {
+    display: inline-block;
+    transform-origin: bottom;
+    border-radius: 50%;
+    box-shadow: 0 0 10px #FFC18E;
+    position: absolute;
+    bottom: 50%;
+    transform-origin: bottom;
+}
+
+/* border dyg dikomen buat nentuin jalur / posisi jarum jam udh sesuai */
+.hands-box .hours {
+    width: 310px;
+    height: 310px;
+    /* transform: rotate(40deg); */
+    /* border: 2px solid red; */
+}
+
+.hands-box .hours i {
+    width: 8px;
+    /* half of parent height (yg dibagian atas sini pas itu parent) */
+    height: 90px;
+    background: #CA4E79;
+    /* transform: rotate(40deg); */
+}
+
+.hands-box .minutes {
+    width: 310px;
+    height: 310px;
+    /* transform: rotate(230deg); */
+    /* border: 2px solid yellow; */
+}
+
+/* center dot bottom */
+.hands-box .minutes::before {
+    content: '';
+    position: absolute;
+    width: 25px;
+    height: 25px;
+    background: #0E185F;
+    top: 50%;
+    transform: translateY(-50%);
+    border-radius: 50%;
+    box-shadow: 0 0 5px #00FFDD;
+}
+
+.hands-box .minutes i {
+    width: 8px;
+    height: 120px;
+    background: #CA4E79;
+    /* transform: rotate(230deg); */
+}
+
+.hands-box .seconds {
+    width: 300px;
+    height: 300px;
+    /* transform: rotate(160deg); */
+    /* border: 2px solid white; */
+}
+
+/* center dot top */
+.hands-box .seconds::before {
+    content: '';
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    background: #FFC18E;
+    top: 50%;
+    transform: translateY(-50%);
+    border-radius: 50%;
+    box-shadow: 0 0 2px rgba(0, 0, 0, 0.5);
+}
+
+.hands-box .seconds i {
+    width: 4px;
+    height: 140px;
+    background: #FFC18E;
+    /* transform: rotate(160deg); */
+    box-shadow: none;
+}
+
+/* CUSTOM FITUR BTN DIGILOG */
+.customBtnFitur {
+    font-family: 'josefin sans', sans-serif !important;
+}
+.customBtnFitur:hover {
+    border-radius: 30rem;
+    transform: scale(1.1);
+    transition: border-radius 2s ease, transform 0.5s ease;
+    background-color: #0E185F !important;
+    color: #00FFDD !important;
+    font-weight: bold !important;
+    border: #00FFDD 2px solid !important;
+    box-shadow: 0 0 5px #E8FFC2;
+}
+
+/* FITUR */
+
+.customBtnFitur {
+    color: #E8FFC2 !important;
+    border: #00FFDD 2px dashed !important;
+    background-color: #2FA4FF !important;
+}
+
+/* DARK MODE */
+[data-bs-theme="dark"] #greeting {
+    /* background-color: #1a1a1a; */
+    color: #00FFDD !important;
+}
+
+[data-bs-theme="dark"] .customBtnFitur {
+    color: #0E185F !important;
+    border: #0E185F 1px dashed !important;
+    background-color: #00FFDD !important;
+}
+
+/* flipickr */
+#date {
+    /* color: #4db8ff; */
+    cursor: pointer;
+}
+
+.flatpickr-days {
+    font-family: 'Urbanist',serif;
+}
+
+/* 🌙 popup style */
+.flatpickr-calendar {
+    /* background: #1e1e1e; */
+    color: white;
+    border: none;
+    box-shadow: 0 0 15px rgba(0,0,0,0.5);
+}
+
+/* ❌ tombol close */
+.flatpickr-close {
+    position: absolute;
+    top: 5px;
+    right: 8px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+/* 🔥 tanggal masa depan */
+.flatpickr-day.flatpickr-disabled {
+    color: #777;
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* ✅ tanggal aktif */
+.flatpickr-day:not(.flatpickr-disabled) {
+    cursor: pointer;
+}
+
+/* ✨ animasi muncul */
+.flatpickr-calendar {
+    animation: fadeIn 0.2s ease;
+    font-family: 'Urbanist',serif;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.year-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    padding: 10px;
+}
+
+.year-item {
+    padding: 6px;
+    text-align: center;
+    cursor: pointer;
+    border-radius: 6px;
+    color: #000;
+    font-family: 'Urbanist',serif;
+}
+
+.year-item:hover {
+    background: #ddd;
+}

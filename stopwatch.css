@@ -1,0 +1,170 @@
+/* .box {
+    background-color: #FFF9D2;
+    padding: 30px;
+    border-radius: 20px;
+    width: 370px;
+    color: #000;
+} */
+
+body {
+    overflow-x: hidden;
+}
+
+.time {
+    font-size: 2.5rem;
+    text-align: center;
+}
+
+.mili-style {
+    font-family: 'urbanist' !important;
+}
+
+.lap-list {
+    max-height: 230px;
+    overflow-y: auto;
+    margin-top: 20px;
+    font-family: 'Urbanist', sans-serif !important;
+    letter-spacing: 1px;
+}
+
+.lap-data {
+    border-bottom: 1px solid #334155;
+    padding: 8px 0;
+}
+
+.fastest {
+    color: #22c55e;
+}
+
+.slowest {
+    color: #ef4444;
+}
+
+.btn, .timeDisplay, .displayDate {
+    font-family: 'Urbanist', sans-serif !important;
+}
+
+.timeDisplay {
+    letter-spacing: 7px;
+}
+
+#stopwatchTitle {
+    font-family: 'Changa One', sans-serif !important;
+    letter-spacing: 4px;
+}
+
+/* CUSTOME BTN STOPWATCH */
+
+.custom-stopwatch {
+    transition: all 0.35s ease;
+}
+
+.btn:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    opacity: 1;
+    transition: all 0.2s ease;
+}
+
+.btn:active {
+    transform: scale(1.05);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    opacity: 1;
+    transition: all 0.2s ease;
+}
+
+/* DIGITAL STOPWATCH */
+
+#display-stopwatch {
+    font-family: 'Urbanist', sans-serif !important;
+    font-size: clamp(2rem, 8vw, 6rem) !important;
+    letter-spacing: 7px;
+}
+
+/* CSS TERHUBUNG DI JS */
+
+.tampilanSamarStopwatch {
+    opacity: 0.6;
+    transform: scale(0.98);
+}
+
+.tampilanSamarStopwatch:hover {
+    opacity: 0.8;
+    transform: scale(1);
+    /* box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); */
+}
+
+.badge {
+    font-size: 0.7rem;
+    margin-left: 5px;
+}
+
+#display-stopwatch.running {
+    font-family: 'orbitron', cursive !important;
+    font-weight: 900;
+    transform: scale(1.2);
+    letter-spacing: 7px;
+}
+
+#display-stopwatch.fokus {
+    font-family: 'lilita one', cursive !important;
+    transform: scale(1.3);
+    font-weight: 700 !important;
+    text-shadow: 0 0 8px #f87171, 0 0 16px #f3e9a8;
+}
+
+#display-stopwatch.glow {
+    font-family: 'Urbanist', serif !important;
+    text-shadow: 0 0 5px #22c55e, 0 0 10px #22c55e, 0 0 20px #22c55e, 0 0 40px #22c55e;
+}
+
+/* MODAL */
+h5 {
+    font-family: 'lilita one', serif !important;
+    text-decoration: underline dashed;
+}
+
+.modal-body {
+    font-family: 'urbanist', serif;
+}
+
+b {
+    color: palevioletred;
+}
+
+.deskripsi-digi-stopwatch, .cust-kategori-lap {
+    text-align: justify ;
+}
+
+.highlight-digi-stopwatch:hover {
+    text-decoration: underline pink;
+    color: purple;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+#fastest-modal {
+    color: forestgreen;
+}
+
+#slowest-modal {
+    color: #ef4444;
+}
+
+/* DARK MODE */
+
+[data-bs-theme="dark"] .box {
+    background-color: #1e293b;
+    color: #fff;
+    /* padding: 30px; */
+    border-radius: 20px;
+    /* width: 370px; */
+}
+
+[data-bs-theme="dark"] .highlight-digi-stopwatch:hover {
+    text-decoration: underline purple ;
+    color: pink;
+    font-weight: bold;
+    cursor: pointer;
+}
+

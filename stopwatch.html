@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DIGILOG STOPWATCH</title>
+
+    <!-- Link google font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Josefin+Sans:ital,wght@0,100..700;1,100..700&family=Lilita+One&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400..900&display=swap" rel="stylesheet">
+
+    <!-- Link CDN Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+
+    <!-- Link CSS bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-4Q6Gf2aSP4eDXB8Miphtr37CMZZQ5oXLH2yaXMJ2w8e2ZtHTl7GptT4jmndRuHDT" crossorigin="anonymous">
+
+    <!-- LINK CSS Style -->
+    <link rel="stylesheet" href="../navbar-fitur/navbar-fitur-digilog-style.css">
+    <link rel="stylesheet" href="stopwatch.css">
+    <link rel="stylesheet" href="../footer/footer-digilog-style.css">
+</head>
+
+<!-- d-flex di body penting untuk fleksibel si komponen yang dibuat ini. Kalau ga bakal berantakan cuy
+    jcc & aic adalah koentji tampilan seluruh komponen dalam body jadi ditengah layar~-->
+<body class="d-flex flex-column min-vh-100">
+
+    <!-- navbar -->
+    <div id="navbar-container">
+        <!-- space buat navbar join! -->
+    </div>
+
+    <!-- yep kalau ini ya.. div konten yep biar nurut diaturnya ga satu-satu -->
+    <div class="container-fluid flex-grow-1 m-auto p-5 text-center">
+
+        <!-- header bagian paling atas, emg niatnya gini, ga full stopwatch dilayar. 
+         biar mempermudah juga cek jam dan tanggal tinggal liat ke atas akak-->
+
+        <!-- pakai d-flex biar flexible dan column biar flexnya menyesuaikan lebar layar~ -->
+        <header class="d-flex flex-column align-items-center my-5">
+
+            <!-- HARI - TANGGAL -->
+            <div class="dateDisplay fs-5 text-center m-2 custom-stopwatch" id="date">DD:MM:YYYY</div>
+
+            <!-- JAM DIGITAL NAMPILIN WAKTU REAL TIME -->
+            <div class="timeDisplay text-center fs-5 custom-stopwatch" id="digitalClock">00 : 00 : 00</div>
+
+        </header>
+
+        <!-- STOPWATCH -->
+        <!-- div pertama disini untuk wrap komponen yang emg satu kesatuan-->
+        <div class="flex-column justify-content-center align-items-center mx-3">
+
+            <!-- TITLE STOPWATCH -->
+            <h1 class="text-center fs-2 mt-1 custom-stopwatch" id="stopwatchTitle" data-bs-toggle="modal" data-bs-target="#deskripsiModalDigiStopwatch">DIGI STOPWATCH</h1>
+
+            <!-- TAMPILAN STOPWATCH -->
+            <h1 class="time fs-1 mt-5 mx-auto" id="display-stopwatch"> 00:00.00 </h1>
+
+            <!-- button atau tombol yang dipakai di stopwatch -->
+             <!-- div kedua ini wrap biar jadi satu kesatuan si button nya dan ga acak-acakan -->
+            <div class="d-flex justify-content-center gap-5 mt-5 custom-stopwatch" id="btn-stopwatch">
+
+                <!-- tombol start -->
+                <button class="btn fs-4 btn-success px-4" id="startBtn">Start</button>
+
+                <!-- tombol pause 
+                 note: 
+                 ada d-none biar pas awal tombol ini ga keliatan
+                 untuk apa? biar rapih aja sih. Muncul saat user klik start~
+                -->
+                <button class="btn fs-4 btn-warning d-none px-4" id="pauseBtn">Pause</button>
+
+                <!-- tombol reset -->
+                <button class="btn fs-4 btn-danger px-4" id="resetBtn">Reset</button>
+
+                <!-- tombol lap -->
+                <button class="btn fs-4 btn-info px-4" id="lapBtn">Lap</button>
+            </div>
+
+            <!-- simpan data lap user (setiap user klik) -->
+            <div id="laps" class="lap-list"></div>
+        </div>
+    </div>
+
+    <!-- NOTIF CONTAINER -->
+    <div id="notif-container"></div>
+
+    <!-- MODAL LAP RESULT -->
+    <div class="modal fade" id="lapModal" tabindex="-1">
+
+        <!-- div paling atas untuk modal keluar ditengah layar -->
+        <div class="modal-dialog modal-dialog-centered">
+
+            <!-- konten atau isi modalnya-->
+            <div class="modal-content">
+
+                <!-- header result session dibagian atas modal-->
+                <div class="modal-header">
+
+                    <!-- title modal dong~ -->
+                    <h5 class="modal-title" id="lapModalLabel">Session Results</h5>
+
+                </div>
+
+                <!-- Isi utama atau konten result session di modal -->
+                <div class="modal-body" id="lapResults">
+
+                    <!-- pake ul karena hasilnya dalam bentuk list (biar ga berantakan) -->
+                    <ul id="lapTimesList" class="list-group">
+                        <!-- isi lap result atau result session, seluruh data-data utama lap;
+                            fastest
+                            slowest
+                            
+                            total lap
+                            total waktu stopwatch 
+                        -->
+                    </ul>
+
+                </div>
+
+                <!-- Footer Modal Lap -->
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-light" id="closeModalResult">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL DESKRIPSI DIGI STOPWATCH -->
+    <div class="modal fade" id="deskripsiModalDigiStopwatch">
+
+        <!-- div paling atas untuk modal keluar ditengah layar -->
+        <div class="modal-dialog modal-dialog-centered">
+
+            <!-- konten atau isi modalnya-->
+            <div class="modal-content">
+
+                <!-- header / title digi stopwatch dibagian atas modal -->
+                <div class="modal-header">
+
+                    <!-- nulis title nya~ -->
+                    <h5 class="modal-title" id="descriptionModalLabel">Digi Stopwatch</h5>
+
+                    <!-- tombol x sebelah title itu loh (☞ ͡° ͜ʖ ͡°)☞ -->
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+
+                <!-- isi deskripsi modal atau deskripsi digi stopwatch~ -->
+                <div class="modal-body p-3 m-auto">
+
+                    <!-- deskripsi digi stopwatch -->
+                    <p class="deskripsi-digi-stopwatch">Bagian dari project Digilog. 
+                        Stopwatch digital untuk membantu 
+                        memahami durasi dan progres waktu dari setiap sesi.
+                        Apabila ter-refresh maka stopwatch tetap melanjutkan perhitungan. 
+                        😉 <br>
+
+                        <!-- deskripsi tombol kontrol Stopwatch -->
+                        <br>
+                        <h5>Tombol Stopwatch</h5>
+
+                        <!-- Tombol Start -->
+                        ▶ <b>Start</b>
+                        <br> Mulai menghitung waktu.
+                        
+                        <br>
+                        ⏸ <b>Pause</b>
+                        <br> Jeda perhitungan waktu.
+
+                        <br>
+                        ↺ <b>Reset</b>
+                        <br> Hapus sesi pertama, tayangan hasil sesi, dan kembali ke tampilan awal.
+
+                        <br>
+                        <b>🏁 Lap</b>
+                        <br> 
+                        Simpan checkpoint dari sesi untuk melihat progress waktu.
+                        <br>
+
+                        <br>
+                        <h5>Kategori Lap</h5>
+                        <span class="cust-kategori-lap">Untuk mengetahui progress secara keseluruhan <span class="highlight-digi-stopwatch">saat klik tombol 'lap'.</span>  
+                        Berikut kategorinya;</span>
+                        <br>
+
+                        <b id="fastest-modal">🟢 Fastest</b>
+                        <br> Durasi tercepat.
+                        
+                        <br>
+                        <b id="slowest-modal">🔴 Slowest</b>
+                        <br> Durasi terlambat.
+
+                        <br>
+                        <br>
+                        <h5>Format Waktu Stopwatch</h5>
+                        
+                        <h6> <b> ⏱️ Apabila ≤ 1 jam</b> </h6>
+                        Menit : Detik . milidetik
+                        <br>
+                        
+                        <br>
+                        <h6><b> ⏱️ Apabila ≥ 1 jam</b></h6>
+                        Jam :  Menit : Detik . milidetik
+                        <br>
+
+                        <br>
+                        <h6><b>⏰ Apabila ≥ 1 hari</b></h6>
+                        Hari : Jam : Menit : Detik . milidetik
+                        <br>
+                        <br>
+
+                        — bysabico
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- footer -->
+    <div id="footer-container" class="mt-auto">
+        <!-- space untuk memasukkan footer -->
+    </div>
+
+
+    <!-- Link JS bootstrap -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.bundle.min.js" integrity="sha384-j1CDi7MgGQ12Z7Qab0qlWQ/Qqz24Gc6BM0thvEMVjHnfYGF0rmFCozFSxQBxwHKO" crossorigin="anonymous"></script>
+    <script src="../navbar-fitur/navbar-fitur-digilog-logic.js"></script>
+    <script src="stopwatch.js"></script>
+    <script src="../footer/footer-digilog.js"></script>
+</body>
+</html>

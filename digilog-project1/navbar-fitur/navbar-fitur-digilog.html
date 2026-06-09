@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DIGILOG</title>
+
+    <!-- Link google font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Changa+One:ital@0;1&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Josefin+Sans:ital,wght@0,100..700;1,100..700&family=Lilita+One&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Urbanist:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+
+    <!-- Link CDN Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+
+    <!-- Link CSS bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-4Q6Gf2aSP4eDXB8Miphtr37CMZZQ5oXLH2yaXMJ2w8e2ZtHTl7GptT4jmndRuHDT" crossorigin="anonymous">
+
+    <!-- LINK CSS Style -->
+    <link rel="stylesheet" href="navbar-fitur-digilog-style.css">
+</head>
+
+<body class="vh-100">
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-light fixed-top bg-body-tertiary border-bottom">
+        <div class="container">            
+            <!-- nama -->
+            <a class="navbar-brand fs-3" id="digilog-brand" data-bs-toggle="modal" data-bs-target="#deskripsi-digilog" href="#">DIGILOG</a>
+
+            <!-- toggle btn burger menu -->
+            <button class="navbar-toggler shadow-none border-0" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar" aria-controls="offcanvasNavbar">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <!-- sidebar -->
+            <div class="sidebar offcanvas offcanvas-start" tabindex="-1" id="offcanvasNavbar" aria-labelledby="usernamePlace">
+
+                <!-- sidebar header -->
+                <div class="offcanvas-header border-bottom"> 
+                    <h5 class="offcanvas-title" id="usernamePlace"> D I G I L O G </h5>
+                    <button type="button" class="btn-close shadow-none" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                </div>
+
+                <!-- sidebar body -->
+                <div class="offcanvas-body d-flex align-items-center justify-content-between flex-column flex-lg-row"> 
+
+                    <div class="navbar-nav justify-content-center align-items-center fs-4 flex-grow-1 pe-3 gap-3 m-auto" id="navbar-fitur-btn">
+                        <a href="../alarm/alarm.html" class="navbar-fitur-kostum active">ALARM</a>
+                        <a href="../stopwatch/stopwatch.html" class="navbar-fitur-kostum">STOPWATCH</a>
+                        <a href="../timer/timer.html" class="navbar-fitur-kostum">TIMER</a> 
+                        <a href="../timezone-weather/timezone-weather.html" class="navbar-fitur-kostum">WEATHER</a>
+
+                        <li id="switcher-screen-mode" class="nav-item mx-2">
+                            <input class="custom-screen-mode fs-4" type="checkbox" role="switch" id="screen-mode">
+                        </li>
+                    </div>
+
+                    <!-- login signup -->
+                    <div class="d-flex flex-column justify-content-center flex-lg-row align-items-center gap-3">                        
+                        <a href="../main/main-digilog.html" class="text-white text-decoration-none px-3 py-2 rounded-4" id="logout"
+                        style="background-color: rgb(18, 47, 72);">
+                        <i class="fa-solid fa-house"> </i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- modal  -->
+    <div class="modal fade p-5" id="deskripsi-digilog" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content rounded-4 shadow">
+                    
+                <!-- HEADER -->
+                <div class="modal-header border-0">
+                    <h5 class="modal-title fw-bold fs-4" id="modal-digilog-header">DIGILOG</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <hr class="mt-0">
+
+                <!-- BODY -->
+                <div class="modal-body text-center p-4 fs-5" id="modal-digilog-deskripsi">
+                   <p>
+                        <div id="modal-digilog-tittle">
+                            Digilog <br>
+                        </div>
+                        
+                        First project. Simple time. <br>
+                                
+                        <br>
+                        Digilog adalah website jam digital dan analog yang menampilkan waktu secara real-time. 
+                        Digilog dirancang sebagai <b>portofolio</b> dan sarana belajar untuk 
+                        memperdalam pemahaman <b>HTML, CSS, JavaScript, dan Bootstrap</b> 😼👍
+                        <br>
+                                
+                        <br>
+                        Digilog akan dikembangkan dengan fitur tambahan, yakni; <br>
+                        <ul class="text-start">
+                            <li>Stopwatch (in progress: 2 April 2026)</li>
+                            <li>Alarm (queued)</li>
+                            <li>Timer (queued)</li>
+                            <li>Weather (queued)</li>
+                        </ul>
+        
+                        <br>
+                        Tungguin yap! (⁠◕⁠ᴗ⁠◕⁠✿⁠)✨
+                        <br>
+                         Terima kasih sudah berkunjung ✨
+                        <br>
+                        <br>
+                        - bysabico -
+                
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!--  -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.bundle.min.js"
+         integrity="sha384-j1CDi7MgGQ12Z7Qab0qlWQ/Qqz24Gc6BM0thvEMVjHnfYGF0rmFCozFSxQBxwHKO"
+        crossorigin="anonymous"></script> 
+    <script src="navbar-fitur-digilog-logic.js"></script>
+</body>
+
+</html>

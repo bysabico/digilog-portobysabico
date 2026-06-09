@@ -1,0 +1,148 @@
+* {
+    box-sizing: border-box;
+}
+
+/* Font family (font style)*/
+.navbar-brand, .navbar-fitur-kostum, .dropdown-item, #logout, h5 {
+    font-family: 'Inter', sans-serif;
+    font-weight: bold;
+}
+
+nav .navbar-fitur-kostum {
+    font-family: 'Josefin Sans', sans-serif;
+}
+
+/* navbar */
+.nav-button, .navbar-fitur-kostum {
+  border: none; /* hilangin border default Bootstrap */
+  border-radius: 4px; /* biar rapi */
+  box-shadow: 0 2px 0 rgba(0,0,0,0.2); /* shadow tipis bawah tombol */
+  transition: box-shadow 0.2s;
+}
+
+.nav-item {
+    margin: 10px;
+}
+
+.navbar-fitur-kostum.active {
+    border: none !important;
+    border-bottom: 4px solid #CA4E79 !important;
+    box-shadow: 2px 2px 5px rgba(0,0,0,0.2);
+}
+
+.navbar-fitur-kostum:hover {
+    /* box-shadow: 2px 2px 5px #85EF47; */
+    transform: scale(1.1);
+}
+
+.navbar-fitur-kostum {
+    color: #333;
+    text-decoration: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    transition: background-color 0.3s, color 0.3s, transform 0.3s;
+}
+
+/* custom switch light-dark mode */
+.custom-screen-mode {
+    width: 70px;
+    height: 33px;
+    /* background-color: #85EF47; */
+    background-image: url(./light-mode-v2.png);
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: cover;
+    /* background-color: #fdffd1;
+    background-image: none; */
+    appearance: none;
+    position: relative;
+    transition: background-color 0.3s, background-image 0.3s;
+    border-radius: 36px;
+    outline: none;
+    cursor: pointer;
+}
+
+.custom-screen-mode::before {
+    content: "☀️";
+    position: absolute;
+    left: 8px;
+    top: 4px;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    transition: 0.3s;
+    /* background-color: whitesmoke; */
+    border-radius: 50%;
+}
+
+.custom-screen-mode:checked {
+    background-color: #333;
+    background-image: url(./dark-mode-v9.png);
+    background-position: center;
+    background-size: cover;
+}
+
+.custom-screen-mode:checked::before {
+    transform: translateX(30px);
+    content: "🌑";
+    background-color: none;
+}
+
+/* custom logout btn */
+#logout{
+    cursor: pointer;
+}
+
+#logout:hover, .custom-screen-mode:hover {
+    transform: scale(1.1);
+    box-shadow: 2px 2px 5px #00ffff, 4px 4px 10px #85EF47;
+}
+
+/* DARK MODE */
+[data-bs-theme="dark"] #analogBtn.active, #digitalBtn.active, #btn12.active, #btn24.active {
+    border-bottom: 4px solid #FFC18E !important;
+}
+
+[data-bs-theme="dark"] #digilog-brand {
+    color: whitesmoke !important;
+}
+
+[data-bs-theme="dark"] #digilog-brand:hover {
+    color: whitesmoke !important;
+    text-shadow: 0.5px 0.5px 3px #00ffff !important;
+    letter-spacing: 3px;
+    transition: letter-spacing 0.1s ease-in-out;
+}
+
+[data-bs-theme='dark'] .navbar-fitur-kostum {
+    color: #fff;
+}
+
+[data-bs-theme='dark'] .navbar-fitur-kostum.active {
+    border: none !important;
+    border-bottom: 4px solid #FFC18E !important;
+    box-shadow: 2px 2px 15px rgba(142, 133, 122, 0.2);
+}
+
+[data-bs-theme='dark'] .navbar-fitur-kostum:hover {
+    /* box-shadow: 2px 2px 5px #85EF47; */
+    transform: scale(1.1);
+    box-shadow: 2px 2px 5px rgba(142, 133, 122, 0.2);
+}
+
+#digilog-brand:hover {
+    text-shadow: 0.5px 0.5px 3px #2FA4FF !important;
+    letter-spacing: 3px;
+    transition: letter-spacing 0.1s ease-in-out;
+}
+
+#modal-digilog-deskripsi {
+    font-family: 'urbanist', serif;
+}
+
+#modal-digilog-header {
+    font-family: 'josefin sans', sans-serif;
+}

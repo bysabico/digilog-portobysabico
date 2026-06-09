@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Date Picker</title>
+
+  <!-- Flatpickr CSS -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+
+  <!-- Icon -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+
+  <style>
+    body { font-family: sans-serif; padding: 40px; }
+
+    #calendarTrigger {
+      display: inline-flex;
+      gap: 8px;
+      align-items: center;
+      cursor: pointer;
+      padding: 8px 12px;
+      border-radius: 8px;
+    }
+
+    #calendarTrigger:hover {
+      background: #eee;
+    }
+
+    .year-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+      padding: 10px;
+    }
+
+    .year-item {
+      padding: 6px;
+      text-align: center;
+      cursor: pointer;
+      border-radius: 6px;
+    }
+
+    .year-item:hover {
+      background: #ddd;
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- Trigger -->
+  <div id="calendarTrigger">
+    <span id="todayDate">Klik pilih tanggal</span>
+    <i class="fa-solid fa-calendar"></i>
+  </div>
+
+  <!-- Hidden input -->
+  <input type="text" id="calendarInput" style="display:none;">
+
+  <!-- Flatpickr -->
+  <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+
+  <script>
+    const trigger = document.getElementById("calendarTrigger");
+    const text = document.getElementById("todayDate");
+
+    const fp = flatpickr("#calendarInput", {
+      defaultDate: "today",
+      maxDate: "today",
+      clickOpens: false,
+
+      onReady: function(_, __, instance) {
+        const yearEl = instance.currentYearElement;
+
+        yearEl.style.cursor = "pointer";
+
+        yearEl.addEventListener("click", () => {
+          showYearPicker(instance);
+        });
+      },
+
+        onClose: function(_, __, instance) {
+    instance.setDate(new Date(), true);
+    }
+    });
+
+    trigger.addEventListener("click", () => {
+      fp.open();
+    });
+
+    document.getElementById("calendarInput").addEventListener("change", (e) => {
+      text.textContent = e.target.value;
+    });
+
+    function showYearPicker(instance) {
+      const container = instance.calendarContainer;
+      const days = container.querySelector(".flatpickr-days");
+
+      days.style.display = "none";
+
+      if (container.querySelector(".year-grid")) return;
+
+      const grid = document.createElement("div");
+      grid.className = "year-grid";
+
+      const now = new Date().getFullYear();
+
+      for (let y = now - 12; y <= now + 12; y++) {
+        const item = document.createElement("div");
+        item.textContent = y;
+        item.className = "year-item";
+
+        item.onclick = () => {
+          instance.changeYear(y);
+          grid.remove();
+          days.style.display = "";
+        };
+
+        grid.appendChild(item);
+      }
+
+      container.appendChild(grid);
+    }
+  </script>
+
+</body>
+</html>

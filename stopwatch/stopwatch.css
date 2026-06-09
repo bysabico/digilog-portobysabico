@@ -159,3 +159,11 @@ b {
     font-weight: bold;
     cursor: pointer;
 }
+
+/* RESPONSIVE */
+/* layar maksimal 768px (ukuran HP/Tablet) */
+@media screen and (max-width: 768px) {
+  .date-time, .dateDisplay, .timeDisplay {
+    display: none !important;
+  }
+}

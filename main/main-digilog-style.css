@@ -27,7 +27,7 @@ main {
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    height: 100vh;
+    width: 100%;
 }
 
 
@@ -54,8 +54,8 @@ main .timeDisplay {
 /* main analog clock */
 .wrapper-analog {
     position: relative;
-    width: 300px; /* Sesuaikan biar pas di layout kamu */
-    height: 300px;
+    width: min(280px, 40vh); /* Sesuaikan biar pas di layout kamu */
+    height: min(280px, 40vh);
     border-radius: 50%;
     display: flex;
     justify-content: center;
@@ -316,4 +316,30 @@ main .timeDisplay {
 
 .year-item:hover {
     background: #ddd;
+}
+
+/* TRANSISI DARI LOGIN KE MAIN PAGE */
+@keyframes zoomInPage {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+body {
+    animation: zoomInPage 3s cubic-bezier(0.22,1, 0.36, 1) forwards;
+}
+
+#calendarInput {
+    position: relative;
+    opacity: 0;
+}
+
+/* btn responsive */
+@media (min-width: 768px) {
+    .w-md-auto {
+        width: auto !important;
+    }
 }

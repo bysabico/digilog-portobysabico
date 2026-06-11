@@ -6,6 +6,33 @@ fetch ('../navbar/navbar-digilog.html')
     document.getElementById('navbar-container').innerHTML = data;
     setupNavbarLogic();
     mainPageClock();
+
+    // ini buat animasi pas klik logout yep
+    // ditaruh disini soalnya kalau di file navbar error bikos fetch
+    const logoutBtn = document.getElementById('logout')
+    const modalLogout = document.getElementById('logoutSayByebye');
+    const modalLogoutContent = document.getElementById('content-logoutbyebye');
+
+    const modal = new bootstrap.Modal(modalLogout);
+
+    logoutBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        modal.show();
+
+        setTimeout(() => {
+            // animasi muncul (naik)
+            modalLogoutContent.classList.add('slide-up');
+
+            // set untuk nunggu animasi selesai
+            setTimeout(() => {
+                modal.hide();
+                localStorage.clear();
+
+                const targetLogout = logoutBtn.getAttribute('href');
+                window.location.href = targetLogout;
+            }, 600)
+        }, 2000)
+    })
 })
 .catch(error => {
     console.error('gagal load navbar:', error)
@@ -73,9 +100,9 @@ function displayDate() {
   setInterval(() => {
     const now = new Date();
 
-    const day = now.toLocaleDateString('en-US', { weekday: 'long' });
+    const day = now.toLocaleDateString('id-ID', { weekday: 'long' });
     const date = now.getDate();
-    const month = now.toLocaleDateString('en-US', { month: 'long' });
+    const month = now.toLocaleDateString('id-ID', { month: 'short' });
     const year = now.getFullYear();
 
     displayDate.innerHTML = `${day}, ${date} ${month} ${year}`;
@@ -265,5 +292,3 @@ function mainPageClock() {
   digitalMode();
   analogClock();
 };
-
-mainPageClock();

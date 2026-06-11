@@ -27,20 +27,20 @@
     <!-- title portofolio 1: Jam Digilog -->
     <title>JAM DIGILOG</title>
 </head>
-<body class="d-flex flex-column" id="main-jam-digilog">
+<body class="d-flex flex-column min-vh-100" id="main-jam-digilog">
 
     <!-- navbar -->
     <div id="navbar-container">
         <!-- space untuk memasukkan navbar -->
     </div>
 
-    <main class="wrapper mt-5 p-5">
-        <header class="d-flex flex-column align-items-spacebetween justify-content-spacebetween text-center">
+    <main class="wrapper flex-grow-1 d-flex flex-column mt-5 p-5 justify-content-center align-items-center overflow-auto">
+        <header class="text-center">
             <h1 id="greeting" class="fw-bold fs-1"></h1>
             <div class="dateDisplay fs-2 text-right" id="date">DD:MM:YYYY</div>
             
             <!-- input hidden -->
-            <input type="text" id="calendarInput" style="position:relative; opacity:0;">
+            <input type="text" id="calendarInput">
         </header>
 
         <!-- containerDateTime -->
@@ -62,11 +62,11 @@
             </div>
 
             <!-- Input Section -->
-            <div class="mainBtn d-flex flex-row flex-wrap align-items-center justify-content-center gap-4 mt-2 mb-3">
-                <a href="../alarm/alarm.html" class="btn btn-outline-primary border-2 fs-2 customBtnFitur">Alarm</a>
-                <a href="../stopwatch/stopwatch.html" class="btn btn-outline-primary border-2 fs-2 customBtnFitur">Stopwatch</a>
-                <a href="../timer/timer.html" class="btn btn-outline-primary border-2 fs-2 customBtnFitur">Timer</a>
-                <a href="../timezone-weathere/timezone-weather.html" class="btn btn-outline-primary border-2 fs-2 customBtnFitur">Weather</a>
+            <div class="mainBtn d-flex flex-column flex-md-row align-items-center justify-content-center gap-4 mb-3">
+                <a href="../alarm/alarm.html" class="btn btn-outline-primary border-2 fs-2 customBtnFitur w-100 w-md-auto">ALARM</a>
+                <a href="../stopwatch/stopwatch.html" class="btn btn-outline-primary border-2 fs-2 customBtnFitur w-100 w-md-auto">STOPWATCH</a>
+                <a href="../timer/timer.html" class="btn btn-outline-primary border-2 fs-2 customBtnFitur w-100 w-md-auto">TIMER</a>
+                <a href="../timezone-weathere/timezone-weather.html" class="btn btn-outline-primary border-2 fs-2 customBtnFitur w-100 w-md-auto">WEATHER</a>
             </div>
         </div>
     </main>

@@ -58,10 +58,34 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     const finalName = isAnon ? "YOU" : nameValue;
-
     localStorage.setItem("username", finalName);
-    window.location.href = "../main/main-digilog.html";
-  }
+
+    const gateLeft = document.getElementById("gate-left");
+    const gateRight = document.getElementById("gate-right");
+    const loginCard = document.getElementById("login-page");
+
+        // Step 1: card naik + overlay biru asli fade out + jam zoom
+    loginCard.classList.add("slide-up");
+    document.body.classList.add("fade-overlay");
+    document.body.classList.add("bg-zoom");
+
+    // Step 2: gate biru MUNCUL (nutup layar dulu)
+    setTimeout(() => {
+      gateLeft.classList.add("visible");
+      gateRight.classList.add("visible");
+    }, 500);
+
+    // Step 3: gate biru BELAH ke kanan-kiri
+    setTimeout(() => {
+      gateLeft.classList.add("open");
+      gateRight.classList.add("open");
+    }, 1000);
+
+    // Step 4: pindah halaman
+    setTimeout(() => {
+      window.location.href = "../main/main-digilog.html";
+    }, 2000);
+}
 
   // klik tombol
   sendBtn.addEventListener("click", sendUsername);

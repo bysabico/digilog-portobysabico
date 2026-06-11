@@ -69,7 +69,7 @@ body {
 
 #display-stopwatch {
     font-family: 'Urbanist', sans-serif !important;
-    font-size: clamp(2rem, 8vw, 6rem) !important;
+    /* font-size: clamp(2rem, 8vw, 6rem) !important; */
     letter-spacing: 7px;
 }
 
@@ -166,4 +166,11 @@ b {
   .date-time, .dateDisplay, .timeDisplay {
     display: none !important;
   }
+}
+
+/* btn responsive */
+@media (min-width: 768px) {
+    .w-md-auto {
+        width: auto !important;
+    }
 }

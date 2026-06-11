@@ -80,19 +80,17 @@ function lightDarkMode() {
   });
 }
 
-// clear username
-function clearUsername() {
-  const clearUsername = document.getElementById('logout');
-  clearUsername.addEventListener('click', () => {
-    localStorage.clear();
-  });
-}
+// logout
+document.addEventListener('DOMContentLoaded', () => {
+  
+
+  logoutBtn.addEventListener('click', logoutSayByeBye);
+})
 
 function setupNavbarLogic() {
   digitalAnalogMode();
   displayDigitalMode();
   lightDarkMode();
-  clearUsername();
 };
 
 setupNavbarLogic();

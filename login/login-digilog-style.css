@@ -1,4 +1,4 @@
-/* font family */
+/* ===== FONT FAMILY ===== */
 h2, #sendBtn {
     font-family: 'lilita one', sans-serif;
 }
@@ -12,14 +12,20 @@ h2, #sendBtn {
   font-weight: bold;
 }
 
+/* ===== BODY ===== */
 body {
   background-image: url("https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExeTcya2VmN29wbzY1ZWFsczM3bTF2MHV5NzM2eXF3a2c0cnk0ZzV1OCZlcD12MV9naWZzX3NlYXJjaCZjdD1n/iwJMmqOiqzss0/giphy.gif");
   background-size: cover;
   background-blend-mode: overlay;
   animation: gradientShift 60s ease infinite;
-  color: #520d0d;
+  transition: background-size 1.2s ease;
 }
 
+body.bg-zoom {
+  background-size: 150%;
+}
+
+/* ===== OVERLAY BIRU ===== */
 body::before {
   content: "";
   position: fixed;
@@ -27,27 +33,81 @@ body::before {
   background: rgba(102, 201, 226, 0.404);
   backdrop-filter: blur(3px);
   z-index: -1;
+  opacity: 1;
+  transition: opacity 0.5s ease;
 }
 
-@keyframes gradientShift {
-  0% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
+body.fade-overlay::before {
+  opacity: 0;
 }
 
+/* ===== CARD LOGIN ===== */
 #login-page {
   background-color: #ffffff;
   color: #000000;
   animation: gradientShift 20s ease infinite;
   background-size: 150% 150%;
+  transition: transform 0.5s ease, opacity 0.5s ease;
+}
+
+#login-page.slide-up {
+  transform: translateY(-120px);
+  opacity: 0;
 }
 
 #login-page:hover:focus {
   background-color: #000000;
   color: #ffffff;
-  box-shadow: yellow;
 }
 
+/* ===== GATE / PINTU BIRU ===== */
+.gate-left,
+.gate-right {
+  position: fixed;
+  top: 0;
+  height: 100vh;
+  width: 50%;
+  z-index: 9998;
+  background: rgba(102, 201, 226, 0.404);
+  backdrop-filter: blur(3px);
+  pointer-events: none;
+  opacity: 0;
+  transform: translateX(0);
+  transition: transform 0.9s cubic-bezier(0.76, 0, 0.24, 1), opacity 0.4s ease;
+}
+
+.gate-left {
+  left: 0;
+}
+
+.gate-right {
+  right: 0;
+}
+
+/* gate muncul — langsung keliatan di posisi tengah */
+.gate-left.visible,
+.gate-right.visible {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+/* gate belah keluar kiri & kanan */
+.gate-left.open {
+  transform: translateX(-100%);
+}
+
+.gate-right.open {
+  transform: translateX(100%);
+}
+
+/* ===== ANIMATIONS ===== */
+@keyframes gradientShift {
+  0%   { background-position: 0% 50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* ===== TYPOGRAPHY ===== */
 h2 {
   text-shadow: 0 0 15px #00ffff, 0 0 25px #00ffff;
 }
@@ -57,6 +117,7 @@ h2:hover, .custom-checked:hover {
   cursor: pointer;
 }
 
+/* ===== FORM ELEMENTS ===== */
 #anon-checked, #remember-checked {
   accent-color: #00ffff;
   cursor: pointer;
@@ -66,7 +127,6 @@ h2:hover, .custom-checked:hover {
   color: #2e2347;
 }
 
-/* username custom */
 #username {
   border-radius: 5px;
   outline: none;
@@ -77,10 +137,9 @@ h2:hover, .custom-checked:hover {
 #username:focus {
   border: 1px solid #333;
   box-shadow: 5px 5px 5px #00ffff;
-  translate: 0 -3px 500s ease-in-out;
 }
 
-/* send button custom */
+/* ===== SEND BUTTON ===== */
 #sendBtn {
   background-color: #00ffff;
   box-shadow: 2px 2px 1px #00ffff, 2px 2px 5px #000303;
@@ -90,17 +149,17 @@ h2:hover, .custom-checked:hover {
   color: #333;
   cursor: pointer;
   letter-spacing: 1.5px;
+  transition: transform 0.2s ease, background-color 0.2s ease;
 }
 
 #sendBtn:hover {
   color: #ffffff;
-  translate: 0 -3px;
   box-shadow: 3px 3px 9px #00ffff;
-  translate: 0 -3px 500s ease-in-out;
   background-color: #000000;
+  transform: translateY(-3px);
 }
 
-/* overlay gelap di seluruh layar */
+/* ===== CUSTOM ALERT ===== */
 .alert-overlay {
   position: fixed;
   inset: 0;
@@ -113,7 +172,6 @@ h2:hover, .custom-checked:hover {
   transition: opacity 0.3s ease;
 }
 
-/* kotak alert di tengah */
 .alert-box {
   background: white;
   color: #333;
@@ -126,18 +184,16 @@ h2:hover, .custom-checked:hover {
   animation: popIn 0.3s ease;
 }
 
-/* animasi masuk */
 @keyframes popIn {
-  0% { transform: scale(0.8); opacity: 0; }
+  0%   { transform: scale(0.8); opacity: 0; }
   100% { transform: scale(1); opacity: 1; }
 }
 
-/* biar ilang pelan */
 .d-none {
   display: none !important;
 }
 
-/* footer */
+/* ===== FOOTER ===== */
 footer {
   font-family: 'Josefin Sans', sans-serif;
   color: darkslateblue;
@@ -149,4 +205,18 @@ footer:hover {
   opacity: 100 !important;
   transition: opacity 0.3s ease;
   cursor: pointer;
+}
+
+@keyframes loginAnimasi {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  } to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animasi-login {
+  animation: loginAnimasi 1.5s cubic-bezier(0.22, 1, 0.36, 1) forwards;
 }

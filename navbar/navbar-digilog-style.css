@@ -135,3 +135,18 @@ nav #digitalBtn, #analogBtn, #btn12, #btn24 {
     font-family: 'josefin sans', sans-serif;
     
 }
+
+/* ANIMASI LOGOUT MODAL */
+.slide-up {
+    animation: slideUp 6s ease forwards;
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 1;
+        transform: translateY(0);
+    } to {
+        opacity: 0;
+        transform: translateY(-150px);
+    }
+}

@@ -45,7 +45,7 @@
             <div class="dateDisplay fs-5 text-center m-2 custom-stopwatch" id="date">DD:MM:YYYY</div>
 
             <!-- JAM DIGITAL NAMPILIN WAKTU REAL TIME -->
-            <div class="timeDisplay text-center fs-5 custom-stopwatch" id="digitalClock">00 : 00 : 00</div>
+            <div class="display-1 timeDisplay text-center fs-5 custom-stopwatch" id="digitalClock">00 : 00 : 00</div>
 
         </header>
 
@@ -57,27 +57,27 @@
             <h1 class="text-center fs-2 mt-1 custom-stopwatch" id="stopwatchTitle" data-bs-toggle="modal" data-bs-target="#deskripsiModalDigiStopwatch">DIGI STOPWATCH</h1>
 
             <!-- TAMPILAN STOPWATCH -->
-            <h1 class="time fs-1 mt-5 mx-auto" id="display-stopwatch"> 00:00.00 </h1>
+            <h1 class="display-1 time fs-1 mt-5 mx-auto" id="display-stopwatch"> 00:00.00 </h1>
 
             <!-- button atau tombol yang dipakai di stopwatch -->
              <!-- div kedua ini wrap biar jadi satu kesatuan si button nya dan ga acak-acakan -->
-            <div class="d-flex flex-column flex-wrap justify-content-center gap-2 mt-5 custom-stopwatch" id="btn-stopwatch">
+            <div class="d-flex flex-column flex-md-row justify-content-center gap-2 mt-5 custom-stopwatch" id="btn-stopwatch">
 
                 <!-- tombol start -->
-                <button class="btn fs-4 btn-success px-4" id="startBtn">Start</button>
+                <button class="btn fs-4 btn-success p-2 w-100 w-md-auto" id="startBtn">START</button>
 
                 <!-- tombol pause 
                  note: 
                  ada d-none biar pas awal tombol ini ga keliatan
                  untuk apa? biar rapih aja sih. Muncul saat user klik start~
                 -->
-                <button class="btn fs-4 btn-warning d-none px-4" id="pauseBtn">Pause</button>
+                <button class="btn fs-4 btn-warning d-none p-2 w-100 w-md-auto" id="pauseBtn">PAUSE</button>
 
                 <!-- tombol reset -->
-                <button class="btn fs-4 btn-danger px-4" id="resetBtn">Reset</button>
+                <button class="btn fs-4 btn-danger p-2 w-100 w-md-auto" id="resetBtn">RESET</button>
 
                 <!-- tombol lap -->
-                <button class="btn fs-4 btn-info px-4" id="lapBtn">Lap</button>
+                <button class="btn fs-4 btn-info p-2 w-100 w-md-auto" id="lapBtn">LAP</button>
             </div>
 
             <!-- simpan data lap user (setiap user klik) -->

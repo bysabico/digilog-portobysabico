@@ -1,8 +1,8 @@
 document.addEventListener("DOMContentLoaded", () => {
 
   const username = document.getElementById("username");
-  const anonCheckbox = document.getElementById("anon-checked");
-  const sendBtn = document.getElementById("sendBtn");
+  const anonCheckbox = document.getElementById("anon-checkbox");
+  const sendBtn = document.getElementById("send-btn");
 
   function userInput() {
     // Kalau user ngetik username → disable checkbox
@@ -57,11 +57,11 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
-    const finalName = isAnon ? "YOU" : nameValue;
+    const finalName = isAnon ? "KAMU" : nameValue;
     localStorage.setItem("username", finalName);
 
-    const gateLeft = document.getElementById("gate-left");
-    const gateRight = document.getElementById("gate-right");
+    const gateLeft = document.getElementById("gerbang-kiri");
+    const gateRight = document.getElementById("gerbang-kanan");
     const loginCard = document.getElementById("login-page");
 
         // Step 1: card naik + overlay biru asli fade out + jam zoom

@@ -1,12 +1,12 @@
 fetch('../navbar-fitur/navbar-fitur-digilog.html')
-    .then(response => response.text())
-    .then(data => {
-        document.getElementById('navbar-container').innerHTML = data;
-        setupNavbarLogic();
-    })
-    .catch(error => {
-        console.error('gagal load navbar-fitur:', error);
-    });
+.then(response => response.text())
+.then(data => {
+    document.getElementById('navbar-container').innerHTML = data;
+    setupNavbarLogic();
+})
+.catch(error => {
+    console.error('gagal load navbar-fitur:', error);
+});
 
 // fetch footer
 fetch ('../footer/footer-digilog.html')
@@ -30,7 +30,8 @@ const displayStopwatch = document.getElementById('display-stopwatch'),
       tanggalHeader    = document.getElementById('date'),
       digitalRealTime  = document.getElementById('digitalClock'),
       resultsSession   = document.getElementById('lapResults'),
-      customStopwatch  = document.getElementsByClassName('custom-stopwatch')
+      customStopwatch  = document.getElementsByClassName('custom-stopwatch'),
+      notifStopwatch   = document.getElementById('notif-container')
 ;
 
 // ELEMENT MODAL HUB KE BOOTSTRAP
@@ -147,7 +148,7 @@ function startStopwatch() {
         // perhitungan / progress stopwatch muncul di layar, makanya parameternya elapsedTime
         // tapi disini belum berfungsi yep, baru dibuat nama fungsinya.
 
-        saveState();
+        // saveState();
         // biar gak ilang pas di refresh
 
     }, 50);
@@ -156,6 +157,10 @@ function startStopwatch() {
     // Karena kalau terlalu cepat (misal 10ms), 
     // bisa bikin performa turun, terutama di browser yang lebih tua. 
     // Selain itu, 50ms masih cukup halus untuk tampilan stopwatch, jadi tidak akan terlihat patah-patah.
+
+    setInterval(() => {
+        if(stopwatchInterval) saveState();
+    },1000)
 
     // style stopwatch kalau lg jalan 
     // css .running teraplikasi
@@ -285,7 +290,7 @@ function formatTime(elapsedTime) {
         return `${formatStopwatch}<br><span class="mili-style fs-3">00.${miliStopwatch}</span>`;
     } else {
         // ms tetap di baris yang sama
-        return `${formatStopwatch}.${String(msStopwatch).padStart(2, '0')}`;
+        return `${formatStopwatch}<span class="mili-intervalStopwatch">.${String(msStopwatch).padStart(2, '0')}</span>`;
     }
 
     // displayStopwatch.innerHTML = `${formatStopwatch}`;
@@ -380,21 +385,27 @@ function showResult() {
     // makanya pakai backticks dan isinya elemen html 😎👍 
     resultsSession.innerHTML = `
         <div class="text-center">
-            <div class="mb-3 text-success">
-                🟢 Fastest Lap <br>
+            <div class="mb-3 text-success fs-5">
+                <span class="fw-bold"> 🟢 Fastest Lap <br> </span>
                 #${fastest.id} — ${formatTime(fastest.lapTime).replace(/<br><span[^>]*>|<\/span>/g, '.')}
             </div>
-
-            <div class="mb-3 text-danger">
-                🔴 Slowest Lap <br>
-                #${slowest.id} — ${formatTime(slowest.lapTime).replace(/<br><span[^>]*>|<\/span>/g, '.')}
-            </div>
+            <br>
             
-            <div class="mb-2">
+            <br>
+            <div class="mb-3 text-danger">
+                <span class="fw-bold"> 🔴 Slowest Lap <br> </span>
+                #${slowest.id} — ${formatTime(slowest.lapTime).replace(/<br><span[^>]*>|<\/span>/g, '.')}
+            </div> 
+            
+            <br>
+
+            <br>
+            
+            <div class="mb-2 text-secondary">
                 Total Lap: ${laps.length}
             </div>
-            
-            <div>
+
+            <div class="text-secondary">
                 Total Time: ${formatTime(elapsedTime).replace(/<br><span[^>]*>|<\/span>/g, '.')}
             </div>
         </div>
@@ -516,8 +527,8 @@ function lap() {
     saveState();
 
     // cek
-    console.log('lapTime:', lapTime);
-    console.log('lastDurationLap:', lastDurationLap);
+    // console.log('lapTime:', lapTime);
+    // console.log('lastDurationLap:', lastDurationLap);
     // console.log('lapDiff:', lapDiff);
 }
 
@@ -564,10 +575,10 @@ function renderLaps() {
 
             <small>
                 Lap : ${formatTime(categoryLap.lapTime).replace(/<br><span[^>]*>|<\/span>/g, '.')}
-                
-                <br>
+            </small>
 
-                Total Time : ${formatTime(categoryLap.totalTime).replace(/<br><span[^>]*>|<\/span>/g, '.')}
+            <small>
+                Total Waktu : ${formatTime(categoryLap.totalTime).replace(/<br><span[^>]*>|<\/span>/g, '.')}
             </small>
         `;
 

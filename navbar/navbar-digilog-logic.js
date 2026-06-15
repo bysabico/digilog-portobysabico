@@ -5,6 +5,8 @@ function digitalAnalogMode() {
   const btn12 = document.getElementById('btn12');
   const btn24 = document.getElementById('btn24');
 
+  if (!digitalBtn || !analogBtn) return;
+
   digitalBtn.addEventListener('click', () => {
     // digital mode
     digitalBtn.classList.add('d-none', 'active');
@@ -60,6 +62,8 @@ function displayDigitalMode() {
 function lightDarkMode() {
   const modeScreen = document.getElementById('screen-mode');
 
+  if (!modeScreen) return;
+
   // 🔥 LOAD dari localStorage
   const savedTheme = localStorage.getItem("theme");
 
@@ -80,12 +84,6 @@ function lightDarkMode() {
   });
 }
 
-// logout
-document.addEventListener('DOMContentLoaded', () => {
-  
-
-  logoutBtn.addEventListener('click', logoutSayByeBye);
-})
 
 function setupNavbarLogic() {
   digitalAnalogMode();

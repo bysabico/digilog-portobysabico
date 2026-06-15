@@ -33,6 +33,8 @@ fetch ('../navbar/navbar-digilog.html')
             }, 600)
         }, 2000)
     })
+
+    if (!logoutBtn) return;
 })
 .catch(error => {
     console.error('gagal load navbar:', error)
@@ -52,16 +54,17 @@ fetch ('../footer/footer-digilog.html')
 function showGreeting() {
 
   // nama user tersimpan dalam local storage
-  const usernameInputed = localStorage.getItem("username") || "Guest";
+  const usernameInputed = localStorage.getItem("username") || "KAMU";
 
   // greeting
   const now = new Date();
   const hour = now.getHours();
   let greet = "";
 
-  if (hour >= 5 && hour < 12) greet = "Good Morning";
-  else if (hour >= 12 && hour < 17) greet = "Good Afternoon";    else if (hour >= 17 && hour < 21) greet = "Good Evening";
-  else greet = "Good Night";
+  if (hour >= 5 && hour < 12) greet = "Pagi";
+  else if (hour >= 12 && hour < 17) greet = "Siang";    
+  else if (hour >= 17 && hour < 21) greet = "Sore";
+  else greet = "Malam";
 
   greet = greet.toUpperCase();
 
@@ -78,6 +81,8 @@ function digitalAnalogClock() {
   const analogBtn = document.getElementById('analogBtn');
   const digitalClock = document.getElementById('digitalClock');
   const analogClock = document.getElementById('analogClock');
+
+    if (!digitalBtn || !analogBtn || !digitalClock || !analogClock) return;
 
   digitalClock.classList.remove('d-none');
   analogClock.classList.add('d-none');
@@ -111,12 +116,14 @@ function displayDate() {
 
 // flipickr date
 
-const fp = flatpickr("#calendarInput", {
+const fp = flatpickr("#seeCalendar", {
     defaultDate: "today",
     maxDate: "today", // ❗ disable masa depan
     clickOpens: false,
     onReady: function(_, __, instance) {
     const yearEl = instance.currentYearElement;
+
+        if (!yearEl) return;
 
         yearEl.style.cursor = "pointer";
 
@@ -168,20 +175,21 @@ function showYearPicker(instance) {
       }
 
       container.appendChild(grid);
-    }
+}
 
-// tambahin tombol close (❌)
-fp.calendarContainer.insertAdjacentHTML(
-    "beforeend",
-    '<span class="flatpickr-close">✖</span>'
-);
+if (fp.calendarContainer) {
+    // tambahin tombol close (❌)
+    fp.calendarContainer.insertAdjacentHTML(
+        "beforeend",
+        '<span class="flatpickr-close">✖</span>'
+    );
 
-const closeBtn = fp.calendarContainer.querySelector(".flatpickr-close");
-
-  closeBtn.addEventListener("click", (e) => {
-    e.preventDefault();
-    fp.close(); // ini nutup kalender total
-  });
+    const closeBtn = fp.calendarContainer.querySelector(".flatpickr-close");
+    closeBtn.addEventListener("click", (e) => {
+        e.preventDefault();
+        fp.close(); // ini nutup kalender total
+    });
+}
 
 // sambungin digital ke btn12 dan btn24
 function digitalMode() {
@@ -190,6 +198,8 @@ function digitalMode() {
   const btn24 = document.getElementById('btn24');
 
   let use24HourFormat = false;
+
+  if(!btn12 || !btn24) return;
 
   btn12.addEventListener('click', () => {
       use24HourFormat = false;
@@ -286,9 +296,11 @@ function analogClock() {
 
 // Kode JavaScript untuk mengatur logika navbar
 function mainPageClock() {
-  showGreeting();
-  digitalAnalogClock();
-  displayDate();
-  digitalMode();
-  analogClock();
+    showGreeting();
+    digitalAnalogClock();
+    displayDate();
+    digitalMode();
+    analogClock();
 };
+
+mainPageClock()

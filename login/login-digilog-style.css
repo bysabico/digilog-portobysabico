@@ -1,222 +1,179 @@
-/* ===== FONT FAMILY ===== */
-h2, #sendBtn {
-    font-family: 'lilita one', sans-serif;
+/* FONT FAMILY */
+h2, #send-btn, #alert-message, footer {
+  font-family: 'lilita one', serif;
 }
 
 #username, label {
-    font-family: 'Josefin Sans', sans-serif;
+  font-family: 'josefin sans', serif;
 }
 
-.custom-checkbox {
-  color: #000303;
-  font-weight: bold;
-}
-
-/* ===== BODY ===== */
+/* body */
 body {
   background-image: url("https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExeTcya2VmN29wbzY1ZWFsczM3bTF2MHV5NzM2eXF3a2c0cnk0ZzV1OCZlcD12MV9naWZzX3NlYXJjaCZjdD1n/iwJMmqOiqzss0/giphy.gif");
   background-size: cover;
   background-blend-mode: overlay;
-  animation: gradientShift 60s ease infinite;
+  background-position: center;
   transition: background-size 1.2s ease;
 }
 
-body.bg-zoom {
-  background-size: 150%;
-}
-
-/* ===== OVERLAY BIRU ===== */
+/* biar img bg body dilapisi warna biru */
 body::before {
-  content: "";
+  content: '';
   position: fixed;
   inset: 0;
-  background: rgba(102, 201, 226, 0.404);
+  background-color: #052471e7;
   backdrop-filter: blur(3px);
   z-index: -1;
   opacity: 1;
   transition: opacity 0.5s ease;
 }
 
-body.fade-overlay::before {
-  opacity: 0;
-}
-
-/* ===== CARD LOGIN ===== */
-#login-page {
-  background-color: #ffffff;
-  color: #000000;
-  animation: gradientShift 20s ease infinite;
-  background-size: 150% 150%;
-  transition: transform 0.5s ease, opacity 0.5s ease;
-}
-
-#login-page.slide-up {
+/* card login transisi ke main page */
+.card #login-page.slide-up {
   transform: translateY(-120px);
   opacity: 0;
 }
 
-#login-page:hover:focus {
-  background-color: #000000;
-  color: #ffffff;
+/* style text */
+h2, #username {
+  color: #0E185F !important;
+  font-weight: bold;
 }
 
-/* ===== GATE / PINTU BIRU ===== */
-.gate-left,
-.gate-right {
-  position: fixed;
-  top: 0;
-  height: 100vh;
-  width: 50%;
-  z-index: 9998;
-  background: rgba(102, 201, 226, 0.404);
-  backdrop-filter: blur(3px);
-  pointer-events: none;
-  opacity: 0;
-  transform: translateX(0);
-  transition: transform 0.9s cubic-bezier(0.76, 0, 0.24, 1), opacity 0.4s ease;
-}
-
-.gate-left {
-  left: 0;
-}
-
-.gate-right {
-  right: 0;
-}
-
-/* gate muncul — langsung keliatan di posisi tengah */
-.gate-left.visible,
-.gate-right.visible {
-  opacity: 1;
-  transform: translateX(0);
-}
-
-/* gate belah keluar kiri & kanan */
-.gate-left.open {
-  transform: translateX(-100%);
-}
-
-.gate-right.open {
-  transform: translateX(100%);
-}
-
-/* ===== ANIMATIONS ===== */
-@keyframes gradientShift {
-  0%   { background-position: 0% 50%; }
-  50%  { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
-}
-
-/* ===== TYPOGRAPHY ===== */
 h2 {
-  text-shadow: 0 0 15px #00ffff, 0 0 25px #00ffff;
+  letter-spacing: 7px;
 }
 
-h2:hover, .custom-checked:hover {
-  text-shadow: 0 0 15px #85EF47, 0 0 25px #00ffff;
+h2:hover, .custom-checkbox:hover {
+  text-shadow: 0 0 8px #2FA4FF;
   cursor: pointer;
 }
 
-/* ===== FORM ELEMENTS ===== */
-#anon-checked, #remember-checked {
-  accent-color: #00ffff;
-  cursor: pointer;
-}
-
-.custom-checkbox:checked {
-  color: #2e2347;
-}
-
+/* username style custom */
 #username {
-  border-radius: 5px;
-  outline: none;
-  border: 1px dotted #00ffff;
+  border: 0.2px solid #2FA4FF;
   box-shadow: 2px 2px 2px #333;
 }
 
 #username:focus {
-  border: 1px solid #333;
-  box-shadow: 5px 5px 5px #00ffff;
+  border: 2px dashed #2FA4FF;
+  box-shadow: 4px 4px 4px #0E185F;
+  transition: box-shadow 0.3s ease;
 }
 
-/* ===== SEND BUTTON ===== */
-#sendBtn {
-  background-color: #00ffff;
-  box-shadow: 2px 2px 1px #00ffff, 2px 2px 5px #000303;
-  outline: none;
-  border: none;
-  border-radius: 5px;
-  color: #333;
-  cursor: pointer;
-  letter-spacing: 1.5px;
-  transition: transform 0.2s ease, background-color 0.2s ease;
+/* ubah warna box checkbox saat terpilih */
+input:checked {
+  background-color: #0e185f !important;
+  box-shadow: 0 0 5px #2FA4FF;
+  transition: box-shadow 0.3s ease;
 }
 
-#sendBtn:hover {
-  color: #ffffff;
-  box-shadow: 3px 3px 9px #00ffff;
-  background-color: #000000;
-  transform: translateY(-3px);
+/* send-btn style */
+#send-btn:hover {
+  transform: translateY(-1px);
+  transition: transform 0.2s ease;
+  box-shadow: 2px 3px 6px #000;
 }
 
-/* ===== CUSTOM ALERT ===== */
+/* alert style */
 .alert-overlay {
-  position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.4);
-  display: flex;
-  justify-content: center;
-  align-items: center;
   z-index: 9999;
   backdrop-filter: blur(3px);
-  transition: opacity 0.3s ease;
+  background: rgba(0, 0, 0, 0.4);
+  display: none !important;
 }
 
 .alert-box {
-  background: white;
-  color: #333;
+  background-color: #fff;
+  color: #000;
   padding: 20px 30px;
   border-radius: 10px;
-  box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-  font-size: 1.1rem;
   max-width: 300px;
   text-align: center;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
   animation: popIn 0.3s ease;
 }
 
 @keyframes popIn {
-  0%   { transform: scale(0.8); opacity: 0; }
-  100% { transform: scale(1); opacity: 1; }
+  0% {
+    transform: scale(0.8);
+    opacity: 0;
+  }
+
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
 }
 
-.d-none {
-  display: none !important;
-}
-
-/* ===== FOOTER ===== */
-footer {
-  font-family: 'Josefin Sans', sans-serif;
-  color: darkslateblue;
-}
-
+/* footer */
 footer:hover {
-  color: #000000 !important;
-  font-weight: bold !important;
-  opacity: 100 !important;
-  transition: opacity 0.3s ease;
+  color: #fff;
   cursor: pointer;
+}
+
+/* animasi transisi login to main*/
+body.bg-zoom {
+  background-size: 150%;
+}
+
+body.fade-overlay::before {
+  opacity: 0;
+}
+
+body.fade-overlay::after {
+  opacity: 1;
+  background: #fff;
+}
+
+.gerbang-kanan, .gerbang-kiri {
+  opacity: 0;
+  top: 0;
+  height: 100vh;
+  width: 50%;
+  z-index: 9998;
+  background: #0e185f;
+  backdrop-filter: blur(300px);
+  transform: translateX(0);
+  transition: transform 0.9s cubic-bezier(0.76, 0, 0.24, 1), opacity 0.4s ease;
+  pointer-events: none;
+}
+
+.gerbang-kanan {
+  right: 0;
+}
+
+.gerbang-kiri {
+  left: 0;
+}
+
+.gerbang-kiri.visible, .gerbang-kanan.visible {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.gerbang-kiri.open {
+  transform: translateX(-100%)
+}
+
+.gerbang-kanan.open {
+  transform: translateX(100%);
+}
+
+
+.animasi-login {
+  animation: loginAnimasi 1.5s cubic-bezier(0.22, 1, 0.36, 1) forwards;
 }
 
 @keyframes loginAnimasi {
   from {
     opacity: 0;
-    transform: translateY(30px);
-  } to {
+    transform: translateY(100px);
+  }
+
+  to {
     opacity: 1;
     transform: translateY(0);
   }
-}
-
-.animasi-login {
-  animation: loginAnimasi 1.5s cubic-bezier(0.22, 1, 0.36, 1) forwards;
 }

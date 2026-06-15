@@ -9,19 +9,67 @@ body {
 
 .mili-style {
     font-family: 'urbanist' !important;
+    /* display: inline; */
+    font-variant-numeric: tabular-nums;
+}
+
+.mili-intervalStopwatch {
+    display: inline;
+}
+
+@media (max-width: 768px) {
+    .mili-intervalStopwatch {
+        display: block;
+        font-family: monospace !important;
+    }
+
+    .lap-data .mili-intervalStopwatch {
+        display: inline !important;
+        font-family: 'urbanist' !important;
+    }
+
+    #lapResults .mili-intervalStopwatch {
+        display: inline !important;
+    }
 }
 
 .lap-list {
-    max-height: 230px;
+    /* max-height: 230px; bikin tingginya dipatok semuaa */
     overflow-y: auto;
     margin-top: 20px;
     font-family: 'Urbanist', sans-serif !important;
     letter-spacing: 1px;
 }
 
+/* responsive untuk tablet */
+@media (min-width: 768px) and (max-width: 1024px){
+    .lap-list {
+        max-height: 640px;
+    }
+}
+
+/* responsive untuk laptop */
+@media (min-width: 1024px){
+    .lap-list {
+        max-height: 300px;
+    }
+}
+
+@media (max-width: 768px){
+    .lap-list {
+        max-height: 300px;
+    }
+}
+
 .lap-data {
     border-bottom: 1px solid #334155;
     padding: 8px 0;
+}
+
+.lap-data small {
+    display: block;
+    font-family: 'inter', sans-serif !important;
+    font-size: 0.9rem;
 }
 
 .fastest {
@@ -41,7 +89,7 @@ body {
 }
 
 #stopwatchTitle {
-    font-family: 'Changa One', sans-serif !important;
+    font-family: 'Josefin Sans', sans-serif !important;
     letter-spacing: 4px;
 }
 
@@ -49,6 +97,10 @@ body {
 
 .custom-stopwatch {
     transition: all 0.35s ease;
+}
+
+.btn {
+    min-width: 200px !important;
 }
 
 .btn:hover {
@@ -69,8 +121,8 @@ body {
 
 #display-stopwatch {
     font-family: 'Urbanist', sans-serif !important;
-    /* font-size: clamp(2rem, 8vw, 6rem) !important; */
-    letter-spacing: 7px;
+    font-size: clamp(2rem, 9vw, 7rem) !important;
+    letter-spacing: 7px !important;
 }
 
 /* CSS TERHUBUNG DI JS */
@@ -92,10 +144,10 @@ body {
 }
 
 #display-stopwatch.running {
-    font-family: 'orbitron', cursive !important;
+    font-family: 'oxanium', cursive !important;
     font-weight: 900;
     transform: scale(1.2);
-    letter-spacing: 7px;
+    letter-spacing: 10px !important;
 }
 
 #display-stopwatch.fokus {

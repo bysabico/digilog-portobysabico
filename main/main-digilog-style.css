@@ -39,8 +39,8 @@ main #greeting {
     color: #2FA4FF;
 }
 
-main .timeDisplay {
-    font-size: clamp(2rem, 10vw, 9rem);
+main #digitalClock {
+    font-size: clamp(3rem, 20vw, 10rem) !important;
     font-family: 'Josefin sans', sans-serif;
 }
 
@@ -235,6 +235,9 @@ main .timeDisplay {
     color: #E8FFC2 !important;
     border: #00FFDD 2px dashed !important;
     background-color: #2FA4FF !important;
+
+    /* bikin btn sama panjang */
+    min-width: 200px !important;
 }
 
 /* DARK MODE */
@@ -249,7 +252,7 @@ main .timeDisplay {
     background-color: #00FFDD !important;
 }
 
-/* flipickr */
+/* flatpickr */
 #date {
     /* color: #4db8ff; */
     cursor: pointer;
@@ -290,13 +293,21 @@ main .timeDisplay {
 
 /* ✨ animasi muncul */
 .flatpickr-calendar {
-    animation: fadeIn 0.2s ease;
-    font-family: 'Urbanist',serif;
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+    top: 200px !important;
+    animation: fadeIn 0.2s ease !important;
+    font-family: 'Urbanist', serif !important;
 }
 
 @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(10px); }
-    to { opacity: 1; transform: translateY(0); }
+    from { 
+        opacity: 0; 
+        transform: translateY(10px); 
+    } to { 
+        opacity: 1; 
+        transform: translateY(0); 
+    }
 }
 
 .year-grid {
@@ -330,11 +341,6 @@ main .timeDisplay {
 
 body {
     animation: zoomInPage 3s cubic-bezier(0.22,1, 0.36, 1) forwards;
-}
-
-#calendarInput {
-    position: relative;
-    opacity: 0;
 }
 
 /* btn responsive */

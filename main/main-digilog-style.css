@@ -34,7 +34,7 @@ main #greeting {
 }
 
 main #digital-clock {
-    font-size: clamp(3rem, 2vh, 10rem) !important;
+    font-size: clamp(3rem, 20vh, 10rem) !important;
 }
 
 /* analog style */

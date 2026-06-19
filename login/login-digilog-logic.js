@@ -1,100 +1,125 @@
-document.addEventListener("DOMContentLoaded", () => {
 
-  const username = document.getElementById("username");
-  const anonCheckbox = document.getElementById("anon-checkbox");
-  const sendBtn = document.getElementById("send-btn");
+const usernameInput = document.getElementById('username');
+const anonCheckbox = document.getElementById('anon-checkbox');
+const rememberMeCheckbox = document.getElementById('remember-me');
+const sendBtn = document.getElementById('send-btn');
+const customAlert = document.getElementById('custom-alert');
+const alertMessage = document.getElementById('alert-message');
 
-  function userInput() {
-    // Kalau user ngetik username → disable checkbox
-      username.addEventListener("input", () => {
-        if (username.value.trim() !== "") {
-          anonCheckbox.disabled = true;
-        } else {
-          anonCheckbox.disabled = false;
-        }
-      });
+// user input nama / anon
+function userInput() {
+  usernameInput.addEventListener('input', () => {
 
-      // Kalau user centang anonymous → disable kotak username
-      anonCheckbox.addEventListener("change", () => {
-        if (anonCheckbox.checked) {
-          username.disabled = true;
-          username.value = ""; // hapus teks kalau sebelumnya ada
-        } else {
-          username.disabled = false;
-        }
-      });
-  }
-
-  // capslock
-  username.addEventListener("input", function() {
-    username.value = username.value.toUpperCase();
+    // kalau username ada = checkbox anon disabled
+    if(usernameInput.value.trim() !==''){
+      anonCheckbox.disabled = true;
+      usernameInput.value = usernameInput.value.toUpperCase();
+    } 
+      
+    // tapi kalau gaada bisa diisi~
+    else {
+      anonCheckbox.disabled = false;
+    }
   });
 
-  function showAlert(message) {
-    const overlay = document.getElementById("custom-alert");
-    const alertMsg = document.getElementById("alert-message");
+  anonCheckbox.addEventListener('change', () => {
+    // kalau checkbox anon di check = username disabled
+    if(anonCheckbox.checked){
+      usernameInput.disabled = true;
 
-    alertMsg.textContent = message;
-    overlay.classList.remove("d-none");
-
-    // Klik di luar alert untuk tutup
-    overlay.addEventListener("click", () => {
-      overlay.classList.add("d-none");
-    });
-
-    // Auto-close setelah 2.5 detik
-    setTimeout(() => {
-      overlay.classList.add("d-none");
-    }, 2500);
-  }
-
-  function sendUsername() {
-    const nameValue = username.value.trim();
-    const isAnon = anonCheckbox.checked;
-
-    if (nameValue === "" && !isAnon) {
-      showAlert("Isi nama atau pilih anonymous 🕵🏻");
-      return;
+      // kalau user sempat isi kolom username, auto HAPUS!!
+      usernameInput.value ="";
+    } 
+      
+    // tapi kalau gaada bisa diisi~
+    else {
+      usernameInput.disabled = false;
     }
-
-    const finalName = isAnon ? "KAMU" : nameValue;
-    localStorage.setItem("username", finalName);
-
-    const gateLeft = document.getElementById("gerbang-kiri");
-    const gateRight = document.getElementById("gerbang-kanan");
-    const loginCard = document.getElementById("login-page");
-
-        // Step 1: card naik + overlay biru asli fade out + jam zoom
-    loginCard.classList.add("slide-up");
-    document.body.classList.add("fade-overlay");
-    document.body.classList.add("bg-zoom");
-
-    // Step 2: gate biru MUNCUL (nutup layar dulu)
-    setTimeout(() => {
-      gateLeft.classList.add("visible");
-      gateRight.classList.add("visible");
-    }, 500);
-
-    // Step 3: gate biru BELAH ke kanan-kiri
-    setTimeout(() => {
-      gateLeft.classList.add("open");
-      gateRight.classList.add("open");
-    }, 1000);
-
-    // Step 4: pindah halaman
-    setTimeout(() => {
-      window.location.href = "../main/main-digilog.html";
-    }, 2000);
+  });
 }
 
-  // klik tombol
-  sendBtn.addEventListener("click", sendUsername);
+// alert untuk milih user atau anon
+function showAlertMessage(message) {
+    
+  // tampilin alert
+  alertMessage.textContent = message;
+  customAlert.style.remove('d-none');
 
-  // tekan enter
-  username.addEventListener("keydown", (e) => {
-    // sendUsername dipanggilnya disini, jadi gausah dipanggil lagi yep
-    if (e.key === "Enter") sendUsername();
+  // klik random biar alert ketutup
+  customAlert.addEventListener('click', () => {
+    customAlert.style.add('d-none');
   });
 
-  userInput();
-});
+  // alert tertutup otomatis
+  setTimeout(() => {
+    customAlert.style.add('d-none');
+  }, 2000);  
+}
+
+// send inputan user
+function sendUserInput() {  
+  
+  // kalau username dan checkbox anonim belum diisi, keluar peringatan ini
+  if(!usernameInput.value.trim() && !anonCheckbox.checked){
+    showAlertMessage('Ayo isi nama atau centang "Login as Anonim"');
+    return;
+  };
+
+  // username atau checkbox anonim diisi = langsung lanjut ke main page
+  const finalNameUser = anonCheckbox.checked ? "KAMU" : usernameInput.value;
+
+  // hmmmm masih error ding :(
+  if (rememberMeCheckbox.checked) {
+
+    localStorage.setItem('username-or-anonim',finalNameUser);
+
+  } else {
+
+    sessionStorage.setItem('login-once', 'true');
+    sessionStorage.setItem('username-or-anonim',finalNameUser);
+    
+  }
+
+  // animasi transisi login to main-page
+  const gerbangKiri = document.getElementById('gerbang-kiri');
+  const gerbangKanan = document.getElementById('gerbang-kanan');
+  const loginPageCard = document.getElementById('login-page');
+
+  // login card ditambahin animasi 'slide-up'
+  loginPageCard.classList.add('slide-up');
+
+  // tampilan layar agak mengedip-ngedip dan background jam zoom (css)
+  document.body.classList.add('fade-overlay');
+  document.body.classList.add('bg-zoom');
+      
+  // animasi gerbang kiri dan kanan terlihat
+  gerbangKiri.classList.add('visible');
+  gerbangKanan.classList.add('visible');
+
+  // animasi gerbang kiri dan kanan terbuka
+  setTimeout(() => {
+    gerbangKiri.classList.add('open');
+    gerbangKanan.classList.add('open');
+  }, 500);
+
+  // muncul halaman main-page
+  setTimeout(() => {
+    window.location.href = "../main/main-digilog.html";
+  }, 1500)
+}
+
+// enter = ke kirim
+usernameInput.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter')
+  sendUserInput();
+})
+
+anonCheckbox.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter')
+  sendUserInput();
+})
+
+// klik btn send = ke kirim
+sendBtn.addEventListener('click', sendUserInput);
+
+userInput();

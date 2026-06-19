@@ -1,65 +1,48 @@
-* {
-    box-sizing: border-box;
+/* transisi login to main-page */
+body {
+    animation: zoomIn 3s cubic-bezier(0.23, 1, 0.320, 1) forwards;
 }
 
-/* navbar menubar */
-#navbar-container .dropdown-menu {
-  border: none !important;
-  box-shadow: none !important;
-  background-color: #EB8317 !important;
+@keyframes zoomIn {
+    from {
+        opacity: 0;
+
+        /* bikin ada efek zoom-kecil */
+        transform: scale(0.8);
+    }
+
+    to {
+        opacity: 1;
+
+        /* bikin ada efek zoom-besar*/
+        transform: scale(1);
+    }
 }
 
-#navbar-container .dropdown-item {
-  border: none !important;
-  outline: none !important;
-  box-shadow: none !important;
-  color: whitesmoke;
+/* font */
+main #greeting, #date, .flatpickr-days, .flatpickr-calendar, .year-item {
+    font-family: 'Poppins', serif !important;
 }
 
-.dropdown-item:hover, .dropdown-item:focus {
-    background-color: whitesmoke !important;
-    color: black !important;
+.custom-btn-fitur, .flatpickr-days {
+    font-family: 'Josefin Sans', serif;
 }
 
-/* Main */
-main {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    width: 100%;
-}
-
-
-main #greeting, #date {
-    font-family: 'lilita one', sans-serif;
-}
-
+/* main */
 main #greeting {
-    color: #2FA4FF;
+    color: #2fa4ff;
 }
 
-main #digitalClock {
-    font-size: clamp(3rem, 20vw, 10rem) !important;
-    font-family: 'Josefin sans', sans-serif;
+main #digital-clock {
+    font-size: clamp(3rem, 2vh, 10rem) !important;
 }
 
-.analog-container {
-    display: flex;
-    justify-content: center; /* Tengah horizontal */
-    align-items: center;     /* Tengah vertical kalau tinggi cukup */
-    padding: 20px;
-}
+/* analog style */
 
-/* main analog clock */
-.wrapper-analog {
-    position: relative;
-    width: min(280px, 40vh); /* Sesuaikan biar pas di layout kamu */
+main .wrapper-analog {
+    width: min(280px, 40vh);
     height: min(280px, 40vh);
     border-radius: 50%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
     animation: colorful 30s linear infinite;
 }
 
@@ -69,19 +52,22 @@ main #digitalClock {
     }
 }
 
-.bar-seconds, 
-.number-hours {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    /* background: purple; */
+.bar-seconds, .number-hours {
     border-radius: 50%;
 }
 
+/* jarum detik */
 .bar-seconds span {
     position: absolute;
-    /* 360deg / 60 = 6deg */
-    transform: rotate(calc(var(--indeks) * 6deg));
+
+    /* 
+    === Perhitungan untuk menentukan derajat yang dibutuhkan per detik
+        360deg.s / 60s = 6deg 
+
+        60s = 1 menit
+    */
+
+    transform: rotate(calc(var(--indeks)*6deg));
     inset: -20px;
     text-align: center;
 }
@@ -89,227 +75,245 @@ main #digitalClock {
 .bar-seconds span p {
     width: 2px;
     height: 12px;
-    background: #CA4E79;
+    background: #ca4e79;
     display: inline-block;
     border-radius: 2px;
     box-shadow: 0 0 10px #fde7d4;
 }
 
-/* 5n = every multiple of 5 */
+/* jarum detik
+    5n = berputar setiap kelipatan 5 dan untuk bar yang menunjukkan jam
+*/
 .bar-seconds span:nth-child(5n) p {
-    /* background: red; */
+    /* background-color: red; */
     width: 6px;
     height: 18px;
     transform: translateY(1px);
 }
 
+/* jarum jam */
 .number-hours span {
     position: absolute;
-    /* 360deg/ 12 = 30 deg */
-    transform: rotate(calc(var(--indeks) * 30deg));
+
+    /* 
+    === Perhitungan untuk menentukan derajat yang dibutuhkan per jam
+        360deg.h / 12h = 30deg 
+
+        1 days = 12 hours
+    */
+
+    transform: rotate(calc(var(--indeks)*30deg));
     inset: 6px;
     text-align: center;
 }
 
 .number-hours span p {
     font-size: 20px;
-    transform: rotate(calc(var(--indeks) * -30deg));
-    color: #CA4E79;
-    text-shadow: 0 0 10px #FFC18E;
+    transform: rotate(calc(var(--indeks)*-30deg));
+    color: #ca4e79;
+    text-shadow: 0 0 10px #ffc18e;
 }
 
-.hands-box {
-    position: relative;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-.hands-box .hand {
+.hands-box .hand{
     position: absolute;
     border-radius: 50%;
-    /* df dan jc bikin jarum jam di tengah2 */
+
+    /* df dan jcc ini bikin jarum ada ditengah */
     display: flex;
     justify-content: center;
 }
 
 .hands-box .hand i {
     display: inline-block;
-    transform-origin: bottom;
-    border-radius: 50%;
-    box-shadow: 0 0 10px #FFC18E;
-    position: absolute;
     bottom: 50%;
+    border-radius: 50%;
+    position: absolute;
     transform-origin: bottom;
+    box-shadow: 0 0 10px #ffc18e;
 }
 
-/* border dyg dikomen buat nentuin jalur / posisi jarum jam udh sesuai */
+/* lingkaran jam analog */
 .hands-box .hours {
     width: 310px;
     height: 310px;
-    /* transform: rotate(40deg); */
-    /* border: 2px solid red; */
+    
+    /* untuk nentuin posisi jarum jam udah sesuai atau belum */
+    /* transform: rotate(40deg);
+    border: 2px solid red; */
 }
 
+/* jarum jam gerak */
 .hands-box .hours i {
     width: 8px;
-    /* half of parent height (yg dibagian atas sini pas itu parent) */
+
+    /* 1/2 height dari parent */
     height: 90px;
-    background: #CA4E79;
+    background: #ca4e79;
     /* transform: rotate(40deg); */
 }
 
 .hands-box .minutes {
     width: 310px;
     height: 310px;
-    /* transform: rotate(230deg); */
-    /* border: 2px solid yellow; */
+    /* transform: rotate(230deg);
+    border: 2px solid yellow; */
 }
 
-/* center dot bottom */
+/* titik ditengah jam analog */
 .hands-box .minutes::before {
     content: '';
     position: absolute;
     width: 25px;
     height: 25px;
-    background: #0E185F;
+    background: #0e185f;
     top: 50%;
-    transform: translateY(-50%);
     border-radius: 50%;
-    box-shadow: 0 0 5px #00FFDD;
+    transform: translateY(-50%);
+    box-shadow: 0 0 5px #00ffdd;
 }
 
+/* jarum menit gerak */
 .hands-box .minutes i {
     width: 8px;
     height: 120px;
-    background: #CA4E79;
+    background: #ca4e79;
     /* transform: rotate(230deg); */
 }
 
 .hands-box .seconds {
     width: 300px;
     height: 300px;
-    /* transform: rotate(160deg); */
-    /* border: 2px solid white; */
+    /* transform: rotate(160deg);
+    border: 2px solid white; */
 }
 
-/* center dot top */
 .hands-box .seconds::before {
     content: '';
     position: absolute;
     width: 20px;
     height: 20px;
-    background: #FFC18E;
+    background: #ffc18e;
     top: 50%;
-    transform: translateY(-50%);
     border-radius: 50%;
+    transform: translateY(-50%);
     box-shadow: 0 0 2px rgba(0, 0, 0, 0.5);
 }
 
 .hands-box .seconds i {
     width: 4px;
     height: 140px;
-    background: #FFC18E;
+    background-color: #ffc18e;
     /* transform: rotate(160deg); */
     box-shadow: none;
 }
 
-/* CUSTOM FITUR BTN DIGILOG */
-.customBtnFitur {
-    font-family: 'josefin sans', sans-serif !important;
+/* custom-btn-fitur */
+.custom-btn-fitur {
+    /* biar rapi kotak btn-nya */
+    min-width: 200px;
+    color: #0e185f !important; 
+
+    /* hilangin border default Bootstrap */
+    border: none !important;
+
+    /* shadow tipis bawah tombol */
+    box-shadow: 0 2px 0 rgba(0,0,0,0.2);
+
+    /* biar jadi patokan garis hover */
+    position: relative;
 }
-.customBtnFitur:hover {
-    border-radius: 30rem;
+
+.custom-btn-fitur:hover {
     transform: scale(1.1);
-    transition: border-radius 2s ease, transform 0.5s ease;
-    background-color: #0E185F !important;
-    color: #00FFDD !important;
     font-weight: bold !important;
-    border: #00FFDD 2px solid !important;
-    box-shadow: 0 0 5px #E8FFC2;
 }
 
-/* FITUR */
+/* membuat element garis saat hover */
+.custom-btn-fitur::after {
+    /* biar garis muncul */
+    content: '';
 
-.customBtnFitur {
-    color: #E8FFC2 !important;
-    border: #00FFDD 2px dashed !important;
-    background-color: #2FA4FF !important;
+    /* posisi garis dibebaskan ditempatkan (awalnya terkunci karena relative) */
+    position: absolute;
 
-    /* bikin btn sama panjang */
-    min-width: 200px !important;
+    /* posisi garis muncul ditengah */
+    left: 50%;
+
+    /* jarak text dan garis */
+    bottom: -3px;
+
+    /* bikin garis tak terlihat */
+    width: 0;
+
+    /* ketebalan garis */
+    height: 2px;
+
+    /* warna garis = warna text */
+    background: currentColor;
+
+    /* bikin geser garis ke kanan-kiri dan letaknya persis ditengah */
+    transform: translateX(-50%);
+
+    /* kalau width berubah akan ada transisi selama 0.3s */
+    transition: width 0.3s ease;
 }
 
-/* DARK MODE */
-[data-bs-theme="dark"] #greeting {
-    /* background-color: #1a1a1a; */
-    color: #00FFDD !important;
+/* pas mouse masuk */
+.custom-btn-fitur:hover::after{
+    /* garis membesar selebar tombol */
+    width: 100%;
 }
 
-[data-bs-theme="dark"] .customBtnFitur {
-    color: #0E185F !important;
-    border: #0E185F 1px dashed !important;
-    background-color: #00FFDD !important;
-}
-
-/* flatpickr */
-#date {
-    /* color: #4db8ff; */
+/* flatpickr style */
+#date, .flatpickr-days, .flatpickr-days:not(.flatpickr-disabled)
+, .flatpickr-close, .year-item {
     cursor: pointer;
 }
 
-.flatpickr-days {
-    font-family: 'Urbanist',serif;
-}
-
-/* 🌙 popup style */
 .flatpickr-calendar {
-    /* background: #1e1e1e; */
-    color: white;
     border: none;
     box-shadow: 0 0 15px rgba(0,0,0,0.5);
+
+    /* posisi calendar flatpickr */
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+
+    /* biar pas diatas #date */
+    top: 200px !important;
+
+    /* animasi flatpickr keluar */
+    animation: fadeIn 0.3s ease !important;
 }
 
-/* ❌ tombol close */
+/* animasi flatpickr */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* btn close flatpickr */
 .flatpickr-close {
     position: absolute;
     top: 5px;
     right: 8px;
-    cursor: pointer;
     font-size: 14px;
+    color: #ca4e79;
 }
 
-/* 🔥 tanggal masa depan */
-.flatpickr-day.flatpickr-disabled {
+/* flatpickr-days disabled: tanggal harian setelah hari ini */
+.flatpickr-day.flatpickr-disabled, .year-item.flatpickr-disabled {
     color: #777;
     opacity: 0.5;
     cursor: not-allowed;
 }
 
-/* ✅ tanggal aktif */
-.flatpickr-day:not(.flatpickr-disabled) {
-    cursor: pointer;
-}
-
-/* ✨ animasi muncul */
-.flatpickr-calendar {
-    left: 50% !important;
-    transform: translateX(-50%) !important;
-    top: 200px !important;
-    animation: fadeIn 0.2s ease !important;
-    font-family: 'Urbanist', serif !important;
-}
-
-@keyframes fadeIn {
-    from { 
-        opacity: 0; 
-        transform: translateY(10px); 
-    } to { 
-        opacity: 1; 
-        transform: translateY(0); 
-    }
-}
-
+/* flatpickr tahun */
 .year-grid {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
@@ -319,33 +323,11 @@ main #digitalClock {
 .year-item {
     padding: 6px;
     text-align: center;
-    cursor: pointer;
     border-radius: 6px;
     color: #000;
-    font-family: 'Urbanist',serif;
 }
 
 .year-item:hover {
-    background: #ddd;
-}
-
-/* TRANSISI DARI LOGIN KE MAIN PAGE */
-@keyframes zoomInPage {
-    from {
-        opacity: 0;
-    }
-    to {
-        opacity: 1;
-    }
-}
-
-body {
-    animation: zoomInPage 3s cubic-bezier(0.22,1, 0.36, 1) forwards;
-}
-
-/* btn responsive */
-@media (min-width: 768px) {
-    .w-md-auto {
-        width: auto !important;
-    }
+    background: #ca4e79;
+    color: #fff;
 }

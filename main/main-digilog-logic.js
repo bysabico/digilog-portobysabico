@@ -50,11 +50,20 @@ fetch ('../footer/footer-digilog.html')
     console.error('gagal load footer:', error)
 })
 
+const remembered = localStorage.getItem('username-or-anonim');
+const loginOnce = sessionStorage.getItem('login-once');
+
+if (!remembered && !loginOnce) {
+    window.location.href = '../login/login-digilog.html';
+}
+
 // greeting dan username log in
 function showGreeting() {
 
   // nama user tersimpan dalam local storage
-  const usernameInputed = localStorage.getItem("username") || "KAMU";
+  const usernameInputed = localStorage.getItem('username-or-anonim') ||
+    sessionStorage.getItem('username-or-anonim') ||
+    'KAMU';
 
   // greeting
   const now = new Date();
@@ -74,13 +83,17 @@ function showGreeting() {
 // nama user dari hasil login akan muncul di layar
 window.addEventListener("DOMContentLoaded", showGreeting);
 
+if (loginOnce) {
+    sessionStorage.clear();
+}
+
 // tampilan jam mode digital atau analog
 function digitalAnalogClock() {
   // digital-analog clock
   const digitalBtn = document.getElementById('digitalBtn');
   const analogBtn = document.getElementById('analogBtn');
-  const digitalClock = document.getElementById('digitalClock');
-  const analogClock = document.getElementById('analogClock');
+  const digitalClock = document.getElementById('digital-clock');
+  const analogClock = document.getElementById('analog-clock');
 
     if (!digitalBtn || !analogBtn || !digitalClock || !analogClock) return;
 
@@ -193,7 +206,7 @@ if (fp.calendarContainer) {
 
 // sambungin digital ke btn12 dan btn24
 function digitalMode() {
-  const displayDigitalMode = document.getElementById('digitalClock');
+  const displayDigitalMode = document.getElementById('digital-clock');
   const btn12 = document.getElementById('btn12');
   const btn24 = document.getElementById('btn24');
 

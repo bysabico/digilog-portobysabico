@@ -7,8 +7,7 @@
     <!-- Link google font -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Josefin+Sans:ital,wght@0,100..700;1,100..700&family=Lilita+One&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Changa+One:ital@0;1&family=Urbanist:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Changa+One:ital@0;1&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Josefin+Sans:ital,wght@0,100..700;1,100..700&family=Lilita+One&family=Oxanium:wght@200..800&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Urbanist:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
 
     <!-- Link CDN Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
@@ -22,10 +21,10 @@
     <!-- LINK CSS Style -->
     <link rel="stylesheet" href="../navbar/navbar-digilog-style.css">
     <link rel="stylesheet" href="../footer/footer-digilog-style.css">
-    <link rel="stylesheet" href="main-digilog-style.css">
+    <link rel="stylesheet" href="../main/main-digilog-style.css">
 
     <!-- title portofolio 1: Jam Digilog -->
-    <title>JAM DIGILOG</title>
+    <title>DIGILOG</title>
 </head>
 <body class="d-flex flex-column min-vh-100 bg-light" id="main-jam-digilog">
 
@@ -34,13 +33,14 @@
         <!-- space untuk memasukkan navbar -->
     </div>
 
-    <main class="wrapper flex-grow-1 d-flex flex-column mt-5 p-5 justify-content-center align-items-center overflow-auto">
+
+    <main class="wrapper flex-grow-1 d-flex flex-column mt-5 p-5 justify-content-center align-items-center overflow-auto w-100">
         <header class="text-center my-4">
             <h1 id="greeting" class="fw-bold fs-1"></h1>
             <div class="dateDisplay fs-2 text-right" id="date">
                 <p>DD:MM:YYYY</p>
 
-                <!-- input hidden -->
+                <!-- flatpickr biar date bisa diklik dan munculin kalendar -->
                 <input type="text" id="seeCalendar" class="opacity-0 w-0 h-0">
             </div>
         </header>
@@ -48,41 +48,72 @@
         <!-- containerDateTime -->
         <div class="containerDateTime">
             <!-- digital mode -->
-            <div class="timeDisplay text-center fw-bold mx-auto my-2 font-monospace" id="digitalClock">00:00:00</div>
+            <div class="timeDisplay text-center fw-bold mx-auto my-2 font-monospace" id="digital-clock">
+                00:00:00
+            </div>
 
             <!-- analog mode -->
-            <div class="analog-container mb-lg-5">
-                <div class="wrapper-analog mb-4 mb-md-3" id="analogClock">
-                    <div class="bar-seconds"></div>
-                    <div class="number-hours"></div>
-                    <div class="hands-box">
+            <div class="analog-container mb-lg-5 p-4 d-flex justify-content-center align-items-center">
+
+                <!-- df, jcc, aic ditulis ulang biar jarum jam dan dot ditengah sesuai -->
+                <div class="wrapper-analog mb-4 mb-md-3 position-relative d-flex justify-content-center align-items-center" id="analog-clock">
+
+                    <!-- garis second = lebih kecil -->
+                    <div class="bar-seconds position-absolute w-100 h-100">
+
+                    </div>
+
+                    <!-- angka jam -->
+                    <div class="number-hours position-absolute w-100 h-100"></div>
+
+                    <!-- div untuk jarum jam analog -->
+                    <div class="hands-box position-relative d-flex justify-content-center align-items-center">
+
+                        <!-- jarum jam -->
                         <div class="hand hours">
-                            <i></i>
+                            <i> 
+                                <!-- isinya css -->
+                            </i>
                         </div>
                         
+                        <!-- jarum menit -->
                         <div class="hand minutes">
-                            <i></i>
+                            <i>
+                                <!-- isinya css -->
+                            </i>
                         </div>
 
+                        <!-- jarum detik -->
                         <div class="hand seconds">
-                            <i></i>
+                            <i>
+                                <!-- isinya css -->
+                            </i>
                         </div>
                     </div>
                 </div>
             </div>
 
+            <!-- saat layar berukuran md = medium ke bawah (hp-tablet) -->
             <div class="text-center d-flex align-items-center justify-content-center mt-md-5">
-                <button type="button" class="btn btn-light d-md-none mb-3 fs-3 p-3 dropdown-toggle" data-toggle="dropdown" data-bs-toggle="collapse" data-bs-target="#digilogFitur">
-                    Feature
+                <button type="button" class="btn btn-light d-md-none mb-3 fs-3 p-3 dropdown-toggle" data-toggle="dropdown" data-bs-toggle="collapse" data-bs-target="#digilog-fitur">
+                    F I T U R
                 </button>
             </div>
 
-            <!-- Input Section -->
-            <div class="text-center collapse d-md-flex mainBtn flex-md-row align-items-center justify-content-center gap-4" id="digilogFitur">
-                <a href="../alarm/alarm.html" class="btn fs-3 p-3 customBtnFitur w-md-auto">ALARM</a>
-                <a href="../stopwatch/stopwatch.html" class="btn fs-3 p-3 customBtnFitur w-md-auto">STOPWATCH</a>
-                <a href="../timer/timer.html" class="btn fs-3 p-3 customBtnFitur w-md-auto">TIMER</a>
-                <a href="../timezone-weathere/timezone-weather.html" class="btn fs-3 p-3 customBtnFitur w-md-auto">WEATHER</a>
+            <!-- btn fitur digilog -->
+            <div class="text-center collapse d-md-flex mainBtn flex-md-row align-items-center justify-content-center gap-4" id="digilog-fitur">
+
+                <!-- alarm -->
+                <a href="../alarm/alarm.html" class="btn m-auto fs-3 p-3 custom-btn-fitur w-md-auto">ALARM</a>
+
+                <!-- stopwatch -->
+                <a href="../stopwatch/stopwatch.html" class="btn m-auto fs-3 p-3 custom-btn-fitur w-md-auto">STOPWATCH</a>
+
+                <!-- timer -->
+                <a href="../timer/timer.html" class="btn m-auto fs-3 p-3 custom-btn-fitur w-md-auto">TIMER</a>
+
+                <!-- weather -->
+                <a href="../timezone-weathere/timezone-weather.html" class="btn m-auto fs-3 p-3 custom-btn-fitur w-md-auto">WEATHER</a>
             </div>
         </div>
     </main>
@@ -101,6 +132,6 @@
     <!-- Link JS -->
     <script src="../navbar/navbar-digilog-logic.js"></script>
     <script href="../footer/footer-digilog-logic.js"></script>
-    <script src="main-digilog-logic.js"></script>
+    <script src="../main/main-digilog-logic.js"></script>
 </body>
 </html>

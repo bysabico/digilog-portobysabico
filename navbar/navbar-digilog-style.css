@@ -59,7 +59,7 @@ nav #digitalBtn, #analogBtn, #btn12, #btn24 {
     background-image: none; */
     appearance: none;
     position: relative;
-    transition: background-color 0.3s, background-image 0.3s;
+    /* transition: background-color 0.3s, background-image 0.3s; */
     border-radius: 36px;
     outline: none;
     cursor: pointer;

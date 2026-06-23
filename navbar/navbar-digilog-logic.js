@@ -1,70 +1,59 @@
+// btn digital-analog mode
 function digitalAnalogMode() {
-  // for digital analog mode
-  const digitalBtn = document.getElementById('digitalBtn');
-  const analogBtn = document.getElementById('analogBtn');
-  const btn12 = document.getElementById('btn12');
-  const btn24 = document.getElementById('btn24');
+  const digitalBtn = document.getElementById('digitalBtn'),
+        analogBtn = document.getElementById('analogBtn'),
+        btn12 = document.getElementById('btn12'),
+        btn24 = document.getElementById('btn24');
 
   if (!digitalBtn || !analogBtn) return;
 
-  digitalBtn.addEventListener('click', () => {
-    // digital mode
-    digitalBtn.classList.add('d-none', 'active');
+  const savedMode = localStorage.getItem('clock-mode') || 'show-digital';
+
+  if(savedMode === 'show-analog') {
+        
+    digitalBtn.classList.add('active');
+    analogBtn.classList.remove('active');
+
+    digitalBtn.classList.add('d-none');
     analogBtn.classList.remove('d-none');
 
-    // mode digital, btn12 dan btn24 terlihat
     btn12.classList.add('d-none');
     btn24.classList.add('d-none');
+  } else {
+        
+    analogBtn.classList.add('active');
+    digitalBtn.classList.remove('active');
 
-    // Enable 12/24 buttons
-    btn12.disabled = true;
-    btn24.disabled = true;
+    analogBtn.classList.add('d-none');
+    digitalBtn.classList.remove('d-none');
 
-    // btn12 dan btn24 aktif
-    btn12.addEventListener('click', () => {
-        btn12.classList.add('active');
-        btn24.classList.remove('active');
-    });
+    btn12.classList.remove('d-none');
+    btn24.classList.remove('d-none');
+  }
 
-    btn24.addEventListener('click', () => {
-        btn24.classList.add('active');
-        btn12.classList.remove('active');
-    });
+  digitalBtn.addEventListener('click', () => {
+    digitalBtn.classList.add('d-none');
+    analogBtn.classList.remove('d-none');
+    btn12.classList.add('d-none');
+    btn24.classList.add('d-none');
+    localStorage.setItem('clock-mode', 'show-analog');
   });
 
   analogBtn.addEventListener('click', () => {
-    // analog mode
-    analogBtn.classList.add('d-none', 'active');
+    analogBtn.classList.add('d-none');
     digitalBtn.classList.remove('d-none');
-
-    // saat mode analog, btn12 dan btn24 tidak terlihat
     btn12.classList.remove('d-none');
     btn24.classList.remove('d-none');
-    
-    // Disable 12/24 buttons
-    btn12.disabled = false;
-    btn24.disabled = false;
+    localStorage.setItem('clock-mode', 'show-digital');
   });
-}
-
-function displayDigitalMode() {
-  const digitalMode = document.querySelectorAll('#switcher .nav-item');
-
-  digitalMode.forEach(btn => {
-    btn.addEventListener('click', () => {
-      digitalMode.forEach (b => b.classList.remove('active'));
-      btn.classList.add('active');
-    });
-  }); 
 }
 
 // light-dark mode
 function lightDarkMode() {
   const modeScreen = document.getElementById('screen-mode');
-
+  
   if (!modeScreen) return;
 
-  // 🔥 LOAD dari localStorage
   const savedTheme = localStorage.getItem("theme");
 
   if (savedTheme === "dark") {
@@ -75,20 +64,14 @@ function lightDarkMode() {
     modeScreen.checked = false;
   }
 
-  // 🔥 SAVE saat berubah
   modeScreen.addEventListener('change', () => {
     const theme = modeScreen.checked ? "dark" : "light";
-
     document.documentElement.setAttribute("data-bs-theme", theme);
     localStorage.setItem("theme", theme);
   });
 }
 
-
 function setupNavbarLogic() {
   digitalAnalogMode();
-  displayDigitalMode();
   lightDarkMode();
 };
-
-setupNavbarLogic();

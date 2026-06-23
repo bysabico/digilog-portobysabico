@@ -8,14 +8,14 @@ body {
         opacity: 0;
 
         /* bikin ada efek zoom-kecil */
-        transform: scale(0.8);
+        /* transform: scale(0.8); */
     }
 
     to {
         opacity: 1;
 
         /* bikin ada efek zoom-besar*/
-        transform: scale(1);
+        /* transform: scale(0.9); */
     }
 }
 
@@ -34,7 +34,7 @@ main #greeting {
 }
 
 main #digital-clock {
-    font-size: clamp(3rem, 20vh, 10rem) !important;
+    font-size: clamp(3rem, 10vh, 10rem) !important;
 }
 
 /* analog style */
@@ -330,4 +330,21 @@ main .wrapper-analog {
 .year-item:hover {
     background: #ca4e79;
     color: #fff;
+}
+
+.d-none {
+    display: none;
+}
+
+/* dark mode */
+
+[data-bs-theme="dark"] #greeting {
+    /* background-color: #1a1a1a; */
+    color: #00FFDD !important;
+}
+
+[data-bs-theme="dark"] .custom-btn-fitur {
+    color: #0E185F !important;
+    border: #0E185F 1px dashed !important;
+    background-color: #00FFDD !important;
 }

@@ -66,7 +66,7 @@ function sendUserInput() {
   };
 
   // username atau checkbox anonim diisi = langsung lanjut ke main page
-  const finalNameUser = anonCheckbox.checked ? "KAMU" : usernameInput.value;
+  const finalNameUser = anonCheckbox.checked ? "HOOMAN" : usernameInput.value;
 
   // hmmmm masih error ding :(
   if (rememberMeCheckbox.checked) {

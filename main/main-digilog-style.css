@@ -28,12 +28,20 @@ main #greeting, #date, .flatpickr-days, .flatpickr-calendar, .year-item {
     font-family: 'Josefin Sans', serif;
 }
 
+#btn-fitur {
+    font-family: 'lilita one', serif;
+    letter-spacing: 3px;
+    border: none;
+    box-shadow: 0 2px 0 rgba(0,0,0,0.2);
+}
+
 /* main */
 main #greeting {
-    color: #2fa4ff;
+    color: #1B2F5E ;
 }
 
 main #digital-clock {
+    color: #1b2f5e;
     font-size: clamp(3rem, 10vh, 10rem) !important;
 }
 
@@ -169,7 +177,7 @@ main .wrapper-analog {
     top: 50%;
     border-radius: 50%;
     transform: translateY(-50%);
-    box-shadow: 0 0 5px #00ffdd;
+    box-shadow: 0 0 5px #f4e88c;
 }
 
 /* jarum menit gerak */
@@ -226,6 +234,7 @@ main .wrapper-analog {
 .custom-btn-fitur:hover {
     transform: scale(1.1);
     font-weight: bold !important;
+    background:rgba(255, 255, 255, 0.901) !important;
 }
 
 /* membuat element garis saat hover */
@@ -246,10 +255,11 @@ main .wrapper-analog {
     width: 0;
 
     /* ketebalan garis */
-    height: 2px;
+    height: 100%;
+    border-bottom: 4px solid #C9A84C;
 
-    /* warna garis = warna text */
-    background: currentColor;
+    /* garis melengkung sesuai sudut border */
+    border-radius: 0 0 8px 8px;
 
     /* bikin geser garis ke kanan-kiri dan letaknya persis ditengah */
     transform: translateX(-50%);
@@ -338,13 +348,32 @@ main .wrapper-analog {
 
 /* dark mode */
 
-[data-bs-theme="dark"] #greeting {
+[data-bs-theme="dark"] main #greeting {
     /* background-color: #1a1a1a; */
-    color: #00FFDD !important;
+    color: #fbafc9 !important;
+}
+
+[data-bs-theme="dark"] main #digital-clock {
+    color: #ffc18e;
 }
 
 [data-bs-theme="dark"] .custom-btn-fitur {
-    color: #0E185F !important;
-    border: #0E185F 1px dashed !important;
-    background-color: #00FFDD !important;
+    color: #fbafc9 !important;
+    box-shadow: 0 2px 0 rgba(0,0,0,0.2);
+}
+
+[data-bs-theme="dark"] .custom-btn-fitur:hover {
+    background:rgba(42, 49, 50, 0.901) !important;
+}
+
+[data-bs-theme="dark"] #btn-fitur {
+    background: none !important;
+    border: none;
+    color: #fff;
+    box-shadow: 0 2px 0 rgba(0,0,0,0.2);
+}
+
+/* coba light mode */
+[data-bs-theme="light"] body, #btn-fitur {
+    background: #F5F5F0  !important;
 }

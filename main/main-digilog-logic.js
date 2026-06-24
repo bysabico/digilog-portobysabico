@@ -169,7 +169,19 @@ const fp = flatpickr("#seeCalendar", {
     },
     // set tanggal hari ini ketika close
     onClose: function(_, __, instance) {
-        const today = new Date();
+        const today = new Date(),
+              grid = instance.calendarContainer.querySelector(".year-grid"),
+              days = instance.calendarContainer.querySelector(".flatpickr-days"),
+              weekdays = instance.calendarContainer.querySelector('.flatpickr-weekdays');
+
+        // hapus grid tahun
+        if (grid) grid.remove();
+
+        // tampilkan flatpickr-days dan flatpickr-weekdays lagi saat flatpickr tahun diklik
+        if(days) days.style.display = '';
+        if(weekdays) weekdays.style.display = '';
+
+
         requestAnimationFrame(() => {
             instance.setDate(today, true);
             instance.jumpToDate(today);
@@ -186,10 +198,12 @@ displayDate.addEventListener("click", () => {
 function showYearPicker(instance) {
 
     const container = instance.calendarContainer,
-          days = container.querySelector(".flatpickr-days");
+          days = container.querySelector('.flatpickr-days'),
+          weekdays = container.querySelector('.flatpickr-weekdays');
     
     // sembunyikan flatpickr days
-    days.style.display = "none";
+    days.style.display = 'none';
+    if(weekdays) weekdays.style.display = 'none';
 
     if (container.querySelector(".year-grid")) return;
 

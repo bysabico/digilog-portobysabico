@@ -1,15 +1,15 @@
-* {
-    box-sizing: border-box;
-}
-
 /* Font family (font style)*/
 .navbar-brand, #dropdownMenu, .dropdown-item, #logout, h5 {
     font-family: 'Inter', sans-serif;
     font-weight: bold;
 }
 
-nav #digitalBtn, #analogBtn, #btn12, #btn24 {
+nav #modal-digilog-header, #digitalBtn, #analogBtn, #btn12, #btn24 {
     font-family: 'Josefin Sans', sans-serif;
+}
+
+#modal-digilog-deskripsi {
+    font-family: 'urbanist', serif;
 }
 
 /* navbar */
@@ -50,16 +50,12 @@ nav #digitalBtn, #analogBtn, #btn12, #btn24 {
 .custom-screen-mode {
     width: 70px;
     height: 33px;
-    /* background-color: #85EF47; */
     background-image: url(./light-mode-v2.png);
     background-repeat: no-repeat;
     background-position: center;
     background-size: cover;
-    /* background-color: #fdffd1;
-    background-image: none; */
     appearance: none;
     position: relative;
-    /* transition: background-color 0.3s, background-image 0.3s; */
     border-radius: 36px;
     outline: none;
     cursor: pointer;
@@ -102,12 +98,17 @@ nav #digitalBtn, #analogBtn, #btn12, #btn24 {
 
 #logout:hover, .custom-screen-mode:hover {
     transform: scale(1.1);
-    box-shadow: 2px 2px 5px #00ffff, 4px 4px 10px #85EF47;
+    box-shadow: 2px 2px 5px #132266, 4px 4px 10px  #cbc64b;
 }
 
 /* DARK MODE */
 [data-bs-theme="dark"] #analogBtn.active, #digitalBtn.active, #btn12.active, #btn24.active {
     border-bottom: 4px solid #FFC18E !important;
+}
+
+[data-bs-theme="dark"] .custom-screen-mode:hover {
+    transform: scale(1.1);
+    box-shadow: 0.8px 0.8px 5px #00ffff, 2px 2px 10px #85EF47;
 }
 
 [data-bs-theme="dark"] #digilog-brand {
@@ -125,15 +126,6 @@ nav #digitalBtn, #analogBtn, #btn12, #btn24 {
     text-shadow: 0.5px 0.5px 3px #2FA4FF !important;
     letter-spacing: 3px;
     transition: letter-spacing 0.1s ease-in-out;
-}
-
-#modal-digilog-deskripsi {
-    font-family: 'urbanist', serif;
-}
-
-#modal-digilog-header {
-    font-family: 'josefin sans', sans-serif;
-    
 }
 
 /* ANIMASI LOGOUT MODAL */

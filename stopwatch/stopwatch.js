@@ -3,6 +3,7 @@ fetch('../navbar-fitur/navbar-fitur-digilog.html')
 .then(data => {
     document.getElementById('navbar-container').innerHTML = data;
     setupNavbarLogic();
+    stopwatchInit();
 })
 .catch(error => {
     console.error('gagal load navbar-fitur:', error);
@@ -711,7 +712,9 @@ closeModalResult.addEventListener('click', closeLapModal)
 // kenapa yang dipangil cuma 4 ini?
 // soalnya fungsi lain itu bergantung sama 'pergerakkan user'(klik = .addEventListener)
 // sedangkan 4 ini buat nyuruh tampilan layar yg konstan (waktu dan tanggal real time) dan memulihkan data lama saat ter-refresh
-autoActiveNavbar(); //dari func navbar-fitur-digilog yep
-displayDate();
-digitalClock();
-loadState();
+function stopwatchInit() {
+    autoActiveNavbar(); //dari func navbar-fitur-digilog yep
+    displayDate();
+    digitalClock();
+    loadState();
+}

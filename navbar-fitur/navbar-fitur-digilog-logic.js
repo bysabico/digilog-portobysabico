@@ -1,3 +1,19 @@
+const modalDescDigilog = document.getElementById('deskripsi-digilog');
+
+modalDescDigilog.addEventListener('show.bs.modal', 
+  () => {
+  fetch('../reusable-comp/desk-digilog/desc-digilog.html')
+    .then(response => response.text())
+    .then(data => {
+      const isiDescDigilog = document.getElementById('isiDescDigilog');
+      isiDescDigilog.innerHTML = data;
+      })
+    .catch(error => {
+      console.error('gagal load desk-digilog:', error);
+    })
+  }
+)
+
 // = DISPLAY DIGITAL MODE =
 function displayDigitalMode() {
 
@@ -41,55 +57,25 @@ function autoActiveNavbar() {
 
 // = LIGHT / DARK MODE =
 function lightDarkMode() {
-
   const modeScreen = document.getElementById('screen-mode');
-
-  // kalau element belum ada
+  
   if (!modeScreen) return;
 
-
-  // = LOAD THEME =
   const savedTheme = localStorage.getItem("theme");
 
   if (savedTheme === "dark") {
-
-    document.documentElement.setAttribute(
-      "data-bs-theme",
-      "dark"
-    );
-
+    document.documentElement.setAttribute("data-bs-theme", "dark");
     modeScreen.checked = true;
-
-  }
-
-  else {
-
-    document.documentElement.setAttribute(
-      "data-bs-theme",
-      "light"
-    );
-
+  } else {
+    document.documentElement.setAttribute("data-bs-theme", "light");
     modeScreen.checked = false;
-
   }
 
-
-  // = CHANGE THEME =
   modeScreen.addEventListener('change', () => {
-
-    const theme = modeScreen.checked
-      ? "dark"
-      : "light";
-
-    document.documentElement.setAttribute(
-      "data-bs-theme",
-      theme
-    );
-
+    const theme = modeScreen.checked ? "dark" : "light";
+    document.documentElement.setAttribute("data-bs-theme", theme);
     localStorage.setItem("theme", theme);
-
   });
-
 }
 
 
@@ -112,14 +98,10 @@ function clearUsername() {
 
 
 // = SETUP NAVBAR =
-function setupNavbarLogic() {
+function setupNavbarFiturLogic() {
   autoActiveNavbar();
-  displayDigitalMode();
   lightDarkMode();
   clearUsername();
 }
 
-// = INIT =
-document.addEventListener('DOMContentLoaded', () => {
-  setupNavbarLogic();
-});
+setupNavbarFiturLogic();

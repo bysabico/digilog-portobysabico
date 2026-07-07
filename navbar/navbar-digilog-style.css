@@ -4,13 +4,11 @@
     font-weight: bold;
 }
 
-nav #modal-digilog-header, #digitalBtn, #analogBtn, #btn12, #btn24 {
+nav #digitalBtn, #analogBtn, #btn12, #btn24 {
     font-family: 'Josefin Sans', sans-serif;
 }
 
-#modal-digilog-deskripsi {
-    font-family: 'urbanist', serif;
-}
+
 
 /* navbar */
 .nav-button, #btn12, #btn24 {

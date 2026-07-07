@@ -80,7 +80,7 @@ body {
     color: #ef4444;
 }
 
-.btn, .timeDisplay, .displayDate {
+.costume-stopwatch, .timeDisplay, .displayDate {
     font-family: 'Urbanist', sans-serif !important;
 }
 
@@ -99,18 +99,30 @@ body {
     transition: all 0.35s ease;
 }
 
-.btn {
-    min-width: 200px !important;
+.btn-stopwatch-costume {
+    flex: 0 0 28% !important;
+    min-width: 80px;
+    min-height: 50px;
+    /* style lain yang udah ada sebelumnya tetep di sini */
 }
 
-.btn:hover {
+@media (min-width: 768px) {
+    .btn-stopwatch-costume {
+        flex: 0 0 auto;
+        width: auto;
+        max-width: 220px;
+        min-width: 140px;
+    }
+}
+
+.costume-stopwatch:hover {
     transform: scale(1.05);
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     opacity: 1;
     transition: all 0.2s ease;
 }
 
-.btn:active {
+.costume-stopwatch:active {
     transform: scale(1.05);
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     opacity: 1;
@@ -163,10 +175,10 @@ body {
 }
 
 /* MODAL */
-h5 {
+/* h5 {
     font-family: 'lilita one', serif !important;
     text-decoration: underline dashed;
-}
+} */
 
 .modal-body {
     font-family: 'urbanist', serif;
@@ -226,3 +238,4 @@ b {
         width: auto !important;
     }
 }
+

@@ -45,11 +45,19 @@
                 <!-- sidebar body -->
                 <div class="offcanvas-body d-flex align-items-center justify-content-between flex-column flex-lg-row"> 
 
-                    <div class="navbar-nav justify-content-center align-items-center fs-5 flex-grow-1 pe-3 gap-3 m-auto" id="navbar-fitur-btn">
-                        <a href="../alarm/alarm.html" class="navbar-fitur-kostum active">ALARM</a>
-                        <a href="../stopwatch/stopwatch.html" class="navbar-fitur-kostum">STOPWATCH</a>
-                        <a href="../timer/timer.html" class="navbar-fitur-kostum">TIMER</a> 
-                        <a href="../timezone-weather/timezone-weather.html" class="navbar-fitur-kostum">WEATHER</a>
+                    <div class="nav-item navbar-nav justify-content-center align-items-center fs-4 flex-grow-1 pe-3 gap-3 m-auto" id="navbar-fitur-btn">
+
+                        <!-- alarm -->
+                        <a href="../alarm/alarm.html" class="btn nav-button p-2 navbar-fitur-kostum active">ALARM</a>
+
+                        <!-- stopwatch -->
+                        <a href="../stopwatch/stopwatch.html" class="btn nav-button p-2 navbar-fitur-kostum">STOPWATCH</a>
+
+                        <!-- timer -->
+                        <a href="../timer/timer.html" class="btn nav-button p-2 navbar-fitur-kostum">TIMER</a> 
+
+                        <!-- weather & timezone -->
+                        <a href="../timezone-weather/timezone-weather.html" class="btn p-2 nav-button navbar-fitur-kostum">WEATHER</a>
 
                         <li id="switcher-screen-mode" class="nav-item mx-2">
                             <input class="custom-screen-mode fs-4" type="checkbox" role="switch" id="screen-mode">
@@ -67,51 +75,10 @@
         </div>
     </nav>
 
-    <!-- modal deskripsi digilog -->
-    <div class="modal fade p-5" id="deskripsi-digilog" tabindex="-1">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content rounded-4 shadow">
-                    
-                <!-- HEADER -->
-                <div class="modal-header border-0">
-                    <h5 class="modal-title fw-bold fs-4" id="modal-digilog-header">DIGILOG</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <hr class="mt-0">
-
-                <!-- BODY -->
-                <div class="modal-body text-center p-4 fs-5" id="modal-digilog-deskripsi">
-                   <p>
-                        <div id="modal-digilog-tittle">
-                            Digilog <br>
-                        </div>
-                        
-                        First project. Simple time. <br>
-                                
-                        <br>
-                        Digilog adalah website jam digital dan analog yang menampilkan waktu secara real-time. 
-                        Digilog dirancang sebagai <b>portofolio</b> dan sarana belajar untuk lebih memahami <b>HTML, CSS, JavaScript, dan Bootstrap</b>. 😼👍
-                        <br>
-                                
-                        <br>
-                        Digilog akan dikembangkan dengan fitur tambahan, yakni; <br>
-                        <ul class="text-start">
-                            <li>Stopwatch</li>
-                            <li>Alarm</li>
-                            <li>Timer</li>
-                            <li>Weather</li>
-                        </ul>
-        
-                        <br>
-                        Tungguin yap! (⁠◕⁠ᴗ⁠◕⁠✿⁠)✨
-                        <br>
-                         Terima kasih sudah berkunjung ✨
-                        <br>
-                        <br>
-                        - bysabico -
-                
-                    </p>
-                </div>
+    <div class="modal fade" id="deskripsi-digilog">
+        <div class="modal-dialog">
+            <div class="modal-content" id="isiDescDigilog">
+                <!-- tempat modal deksripsi digilog -->
             </div>
         </div>
     </div>

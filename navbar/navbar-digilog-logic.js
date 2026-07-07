@@ -1,3 +1,18 @@
+const modalDescDigilog = document.getElementById('deskripsi-digilog');
+
+modalDescDigilog.addEventListener('show.bs.modal', 
+  () => {
+  fetch('../reusable-comp/desk-digilog/desc-digilog.html')
+    .then(response => response.text())
+    .then(data => {
+      const isiDescDigilog = document.getElementById('isiDescDigilog');
+      isiDescDigilog.innerHTML = data;
+      })
+    .catch(error => {
+      console.error('gagal load desk-digilog:', error);
+    })
+  }
+)
 // btn digital-analog mode
 function digitalAnalogMode() {
   const digitalBtn = document.getElementById('digitalBtn'),
@@ -75,3 +90,5 @@ function setupNavbarLogic() {
   digitalAnalogMode();
   lightDarkMode();
 };
+
+setupNavbarLogic()

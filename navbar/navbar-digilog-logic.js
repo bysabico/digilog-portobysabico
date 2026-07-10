@@ -13,6 +13,7 @@ modalDescDigilog.addEventListener('show.bs.modal',
     })
   }
 )
+
 // btn digital-analog mode
 function digitalAnalogMode() {
   const digitalBtn = document.getElementById('digitalBtn'),

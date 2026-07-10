@@ -80,12 +80,8 @@ body {
     color: #ef4444;
 }
 
-.costume-stopwatch, .timeDisplay, .displayDate {
+.costume-stopwatch {
     font-family: 'Urbanist', sans-serif !important;
-}
-
-.timeDisplay {
-    letter-spacing: 7px;
 }
 
 #stopwatchTitle {
@@ -224,14 +220,6 @@ b {
     cursor: pointer;
 }
 
-/* RESPONSIVE */
-/* layar maksimal 768px (ukuran HP/Tablet) */
-@media screen and (max-width: 768px) {
-  .date-time, .dateDisplay, .timeDisplay {
-    display: none !important;
-  }
-}
-
 /* btn responsive */
 @media (min-width: 768px) {
     .w-md-auto {
@@ -239,3 +227,43 @@ b {
     }
 }
 
+/* NOTIF */
+#notif-container {
+    top: 80px;
+    right: 20px;
+    gap: 8px;
+    z-index: 1050;
+}
+
+.notif-item {
+    background: #1e293b;
+    color: #fff;
+    padding: 10px 16px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    font-family: 'Urbanist', sans-serif;
+    animation: slideIn 0.3s ease;
+}
+
+.notif-time {
+    font-weight: bold;
+    margin-right: 8px;
+    opacity: 0.7;
+}
+
+.notif-warning { 
+    border-left: 4px solid #f59e0b; 
+}
+
+.notif-danger  { 
+    border-left: 4px solid #ef4444; 
+}
+
+.notif-info    { 
+    border-left: 4px solid #3b82f6; 
+}
+
+@keyframes slideIn {
+    from { transform: translateX(100%); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+}

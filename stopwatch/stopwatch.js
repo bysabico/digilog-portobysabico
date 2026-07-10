@@ -9,6 +9,15 @@ fetch('../navbar-fitur/navbar-fitur-digilog.html')
     console.error('gagal load navbar-fitur:', error);
 });
 
+fetch('../reusable-comp/date-time-for-fitur/date-time.html')
+.then(response => response.text())
+.then(data => {
+    document.getElementById('date-time-container').innerHTML = data;
+})
+.catch(error => {
+    console.error('gagal load date-time:', error);
+})
+
 // fetch footer
 fetch ('../footer/footer-digilog.html')
 .then(response => response.text())      
@@ -28,8 +37,6 @@ const displayStopwatch = document.getElementById('display-stopwatch'),
       lapBtn           = document.getElementById('lapBtn'),
       lapsList         = document.getElementById('laps'),
       closeModalResult = document.getElementById('closeModalResult'),
-      tanggalHeader    = document.getElementById('date'),
-      digitalRealTime  = document.getElementById('digitalClock'),
       resultsSession   = document.getElementById('lapResults'),
       customStopwatch  = document.getElementsByClassName('custom-stopwatch'),
       notifStopwatch   = document.getElementById('notif-container')
@@ -38,55 +45,15 @@ const displayStopwatch = document.getElementById('display-stopwatch'),
 // ELEMENT MODAL HUB KE BOOTSTRAP
 let modal = new bootstrap.Modal(document.getElementById('lapModal'));
 
-// ELEMENT BIAR ADA BUNYI
+// PENCET LAP = ADA BUNYI
 const beep = new Audio(
     "https://actions.google.com/sounds/v1/cartoon/wood_plank_flicks.ogg"
 );
 
-let date = null,
-    digiClock = null
-;
-
-// ===== DATE DISPLAY =====
-function displayDate() {
-    setInterval(() => {
-
-        // disini cuma diperintahin 'ambil' data tanggal saat ini berdasarkan variable 'now'.
-        const now = new Date(),
-              hariIni = now.toLocaleDateString('id-ID', { weekday: 'long' }),
-              tanggalHariIni = now.getDate(),
-              bulanIni = now.toLocaleDateString('id-ID', { month: 'long' }),
-              tahunIni = now.getFullYear()
-        ;
-
-        tanggalHeader.innerHTML = `${hariIni}, ${tanggalHariIni} ${bulanIni} ${tahunIni}`;
-
-    }, 1000);
-}
-
-// ===== DIGITAL CLOCK =====
-function digitalClock() {
-    setInterval(() => {
-
-        // nama variabel jam, pakai let karena jam itu sifatnya ga konstan dan selalu berubah.
-        // disini cuma diperintahin 'ambil' data jam saat ini berdasarkan variable 'now'..
-        let now = new Date(),
-            jamSkrg = now.getHours(),
-            menitSkrg = now.getMinutes(),
-            detikSkrg = now.getSeconds()
-        ;
-
-        // ini aturan si variable, jadi gausah pake 'const' atau 'let' lagi
-        // aturan apa?
-        // aturan untuk cek nilai jam, menit, detik. Kalau kurang dan 2 angka (10), mata di depannya ditambahi '0'
-        jamSkrg = jamSkrg < 10 ? '0' + jamSkrg : jamSkrg;
-        menitSkrg = menitSkrg < 10 ? '0' + menitSkrg : menitSkrg;
-        detikSkrg = detikSkrg < 10 ? '0' + detikSkrg : detikSkrg;
-
-        digitalRealTime.innerHTML = `${jamSkrg}:${menitSkrg}:${detikSkrg}`;
-
-    }, 1000);
-}
+// bunyi notifikasi
+const notifSound = new Audio (
+    "https://actions.google.com/sounds/v1/cartoon/clang_and_wobble.ogg"
+)
 
 // = ELEMEN STATE =
 // (data yang dibutuhin buat jalanin stopwatch, disimpen di sini)
@@ -111,6 +78,12 @@ let lastLapTime = 0,
 let laps = [];
 // [] : array
 // dipakai ada banyak data yang perlu disimpan~
+
+let notifFlags ={
+    passedLastLap: false,
+    passedFastestLap: false,
+    passedSlowestLap: false
+};
 
 // = START =
 // fungsi startStopwatch dibuat dulu karena 'gerbang' dari jalannya stopwatch
@@ -151,6 +124,8 @@ function startStopwatch() {
 
         // saveState();
         // biar gak ilang pas di refresh
+
+        checkLapNotif()
 
     }, 50);
     // 50 = setiap 50ms, stopwatch update. 
@@ -303,6 +278,67 @@ function formatTime(elapsedTime) {
     // return formatStopwatch;
 }
 
+// notif muncul di layar dan bunyi
+function showNotif(message, type='info') {
+    
+    const now = new Date(),
+          realTime = now.toLocaleTimeString('id-ID', {hour12: false});
+          notifElement = document.createElement('div');
+    
+    notifElement.className = `notif-item notif-${type}`;
+    notifElement.innerHTML = `
+        <span class="notif-time">${realTime}</span>
+        <span class="notif-message">${message}</span>
+    `;
+
+    notifStopwatch.appendChild(notifElement);
+
+    notifSound.currentTime = 0;
+    notifSound.play();
+
+    setTimeout(() => {
+        notifElement.remove();
+    }, 4000);
+
+}
+
+// cek notifikasi
+function checkLapNotif() {
+    if (laps.length === 0) return;
+
+    const currentLapDuration = elapsedTime - lastLapTime,
+          lastLap = laps[0].lapTime;
+          fastest = laps.reduce((prev, curr) =>
+    // paling cepat dari data keseluruhan.
+    // .reduce() = method js cari satu yang TERCEPAT
+
+        curr.lapTime < prev.lapTime ? curr : prev
+        // lap terbaru < lap sebelumnya, bandingin.
+    ).lapTime,
+          slowest = laps.reduce((prev, curr) =>
+    // paling cepat dari data keseluruhan.
+    // .reduce() = method js cari satu yang TERLAMBAT
+
+        curr.lapTime > prev.lapTime ? curr : prev
+    ).lapTime;
+
+    if (currentLapDuration > lastLap && !notifFlags.passedLastLap) {
+        showNotif('Sudah melewati lap sebelumnya!', 'warning');
+        notifFlags.passedLastLap = true;
+    }
+
+    if (currentLapDuration > slowest && !notifFlags.passedSlowestLap) {
+        showNotif('Rekor slowest terbaru!', 'danger');
+        notifFlags.passedSlowestLap = true;
+    }
+
+    if (currentLapDuration > fastest && !notifFlags.passedFastestLap) {
+        showNotif('Kecepatanmu berkurang! Rekor fastest terbaru!', 'info');
+        notifFlags.passedFastestLap = true;
+    }; 
+
+}
+
 // = PAUSE =
 function pauseStopwatch() {
 
@@ -390,16 +426,14 @@ function showResult() {
                 <span class="fw-bold"> 🟢 Fastest Lap <br> </span>
                 #${fastest.id} — ${formatTime(fastest.lapTime).replace(/<br><span[^>]*>|<\/span>/g, '.')}
             </div>
-            <br>
             
             <br>
+            
             <div class="mb-3 text-danger">
                 <span class="fw-bold"> 🔴 Slowest Lap <br> </span>
                 #${slowest.id} — ${formatTime(slowest.lapTime).replace(/<br><span[^>]*>|<\/span>/g, '.')}
             </div> 
             
-            <br>
-
             <br>
             
             <div class="mb-2 text-secondary">
@@ -444,6 +478,12 @@ function clearSession() {
     lastDurationLap = 0;
     lapCount = 0;
     laps = [];
+
+    notifFlags = {
+        passedLastLap: false,
+        passedFastestLap: false,
+        passedSlowestLap: false
+    }
 
     // kalau udh close, seluruh data di sesi itu = hilang permanen 🥷
     localStorage.removeItem('data-stopwatch');
@@ -523,6 +563,12 @@ function lap() {
         beep.play();
         displayStopwatch.classList.add('glow');
         setTimeout(() => displayStopwatch.classList.remove('glow'), 500);
+    }
+
+    notifFlags = {
+        passedLastLap: false,
+        passedFastestLap: false,
+        passedSlowestLap: false
     }
 
     saveState();
@@ -706,7 +752,51 @@ startBtn.addEventListener('click', startStopwatch);
 pauseBtn.addEventListener('click', pauseStopwatch);
 resetBtn.addEventListener('click', resetStopwatch);
 lapBtn.addEventListener('click', lap);
-closeModalResult.addEventListener('click', closeLapModal)
+closeModalResult.addEventListener('click', closeLapModal);
+
+// event listener device
+let backspaceCount = 0;
+
+document.addEventListener('keydown', (e) => {
+
+    // space = start & pause
+    if (e.code === 'Space') {
+        e.preventDefault();
+
+        // kalau lagi jalan = pause
+        if (stopwatchInterval) {
+            pauseBtn.click();
+        } 
+        
+        // kalau pause = start
+            else {
+            startBtn.click();
+        }
+    } 
+
+    // enter = lap
+    if (e.code === 'Enter') {
+        e.preventDefault();
+        lapBtn.click();
+    }
+
+    // backspace = reset
+    if (e.code === 'Backspace') {
+        e.preventDefault();
+        backspaceCount++;
+        if(backspaceCount === 1) {
+
+            resetBtn.click();
+        } else if (backspaceCount >= 2) {
+            clearSession();
+            closeModalResult.click();
+
+            // harus dipanggil lagi, kalau engga, kliknya bakal terus dihitung.
+            backspaceCount = 0;
+        }
+    } 
+});  
+
 
 // = INIT =
 // kenapa yang dipangil cuma 4 ini?
@@ -714,7 +804,6 @@ closeModalResult.addEventListener('click', closeLapModal)
 // sedangkan 4 ini buat nyuruh tampilan layar yg konstan (waktu dan tanggal real time) dan memulihkan data lama saat ter-refresh
 function stopwatchInit() {
     autoActiveNavbar(); //dari func navbar-fitur-digilog yep
-    displayDate();
-    digitalClock();
+    dateTimeInit();
     loadState();
 }

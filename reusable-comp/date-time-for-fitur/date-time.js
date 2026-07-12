@@ -1,6 +1,3 @@
-
-
-
 // ===== DATE DISPLAY =====
 function displayDate() {
 

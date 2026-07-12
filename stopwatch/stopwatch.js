@@ -13,6 +13,7 @@ fetch('../reusable-comp/date-time-for-fitur/date-time.html')
 .then(response => response.text())
 .then(data => {
     document.getElementById('date-time-container').innerHTML = data;
+    dateTimeInit();
 })
 .catch(error => {
     console.error('gagal load date-time:', error);
@@ -31,6 +32,7 @@ fetch ('../footer/footer-digilog.html')
 // ===== ELEMENT =====
 // DARI FILE HTML
 const displayStopwatch = document.getElementById('display-stopwatch'),
+      liveLapDiff      = document.getElementById('live-lap-diff'),
       startBtn         = document.getElementById('startBtn'),
       pauseBtn         = document.getElementById('pauseBtn'),
       resetBtn         = document.getElementById('resetBtn'),
@@ -64,6 +66,10 @@ let startTime = 0;
 let elapsedTime = 0;
 // untuk penghitung waktu dan 0 = belum mulai
 
+let startClockTime = null,
+    endClockTime = null
+// untuk mencantumkan jam saat klik start dan reset, tapi awalnya null karena belum ada klik start dan reset
+
 let stopwatchInterval = null;
 // 'motivasi si stopwatch' atau biar stopwatchnya jalan.
 // null = kosong [gaada motivasi atau arah sama sekali. makanya dibuat null, bukan 0]
@@ -91,6 +97,10 @@ function startStopwatch() {
 
     if (stopwatchInterval) return;
     // fungsi yang memberikan stopwatchInterval untuk jalan 🔥
+
+    if (elapsedTime === 0) {
+        startClockTime = new Date();
+    }
     
     startTime = Date.now() - elapsedTime;
     // aturan startTime di 'elemen state' buat gerak maju (gerbang agar stopwatch jalan)
@@ -125,7 +135,8 @@ function startStopwatch() {
         // saveState();
         // biar gak ilang pas di refresh
 
-        checkLapNotif()
+        checkLapNotif();
+        updateLiveLapDiffDisplay();
 
     }, 50);
     // 50 = setiap 50ms, stopwatch update. 
@@ -192,7 +203,7 @@ function formatTime(elapsedTime) {
     // itu buat pembulatan ke bawah
     // jadi angkanya kagak desimal jelek.
 
-    const msStopwatch = Math.floor((elapsedTime % 1000) / 10);
+    // const msStopwatch = Math.floor((elapsedTime % 1000) / 10);
     // msStopwatch = milisekon (dibagi 10 biar jadi 2 digit, misal 500ms => 5)
 
     const secStopwatch = Math.floor(elapsedTime / 1000);
@@ -240,7 +251,7 @@ function formatTime(elapsedTime) {
     // tapi reset (00:00) dan menambah format jam (tp format jam belum dibuat dan kalau ga dibuat bakal balik ke menit 00)
     // makanya, dibuatlah, rumus berikut;
 
-    let miliStopwatch = `${String(msStopwatch).padStart(2, '0')}`;
+    // let miliStopwatch = `${String(msStopwatch).padStart(2, '0')}`;
 
     if (hourStopwatch > 0) {
     // kalau stopwatch udh 1 jam ( 0 disini tu format sebelumnya kan per menit, sebelum 60 menitkan masih 00:59 menit, kan?)
@@ -263,11 +274,17 @@ function formatTime(elapsedTime) {
         // kok gaada %?
         // karena hari ga perlu di reset.
 
-        return `${formatStopwatch}<br><span class="mili-style fs-3">00.${miliStopwatch}</span>`;
+        return formatStopwatch;
+        // return `${formatStopwatch}<br><span class="mili-style fs-3">00.${miliStopwatch}</span>`;
     } else {
-        // ms tetap di baris yang sama
-        return `${formatStopwatch}<span class="mili-intervalStopwatch">.${String(msStopwatch).padStart(2, '0')}</span>`;
+        return formatStopwatch;
     }
+    
+    
+    // else {
+    //     // ms tetap di baris yang sama
+    //     return `${formatStopwatch}<span class="mili-intervalStopwatch">.${String(msStopwatch).padStart(2, '0')}</span>`;
+    // }
 
     // displayStopwatch.innerHTML = `${formatStopwatch}`;
     // displayMiliSecStopwatch.innerHTML = `00.${miliStopwatch}`;
@@ -278,11 +295,39 @@ function formatTime(elapsedTime) {
     // return formatStopwatch;
 }
 
+function updateLiveLapDiffDisplay() {
+    if (laps.length === 0) {
+        liveLapDiff.textContent = '';
+        return
+    }
+
+    const currentLapDuration = elapsedTime - lastLapTime,
+          prevLapTime = laps[0].lapTime,
+          diffLaps = currentLapDuration - prevLapTime;
+    
+    liveLapDiff.classList.remove('text-success', 'text-danger', 'text-secondary');
+    liveLapDiff.classList.add(diffLaps < 0 ? 'text-success' : diffLaps > 0 ? 'text-danger' : 'text-secondary');
+}
+
+function formatTimeForLapDisplay(time) {
+    const sign = diffMs > 0 ? '+' : diffMs < 0 ? '-' : '';
+    return sign + formatTime(Math.abs(diffMs));
+}
+
+function formatClockTime(date) {
+    if(!date) return '--:--:--';
+    return date.toLocaleTimeString('en-US', {hour12: false});
+}
+
+
+
 // notif muncul di layar dan bunyi
 function showNotif(message, type='info') {
     
+    if (laps.length > 2) return;
+
     const now = new Date(),
-          realTime = now.toLocaleTimeString('id-ID', {hour12: false});
+          realTime = now.toLocaleTimeString('en-US', {hour12: false}),
           notifElement = document.createElement('div');
     
     notifElement.className = `notif-item notif-${type}`;
@@ -304,36 +349,25 @@ function showNotif(message, type='info') {
 
 // cek notifikasi
 function checkLapNotif() {
-    if (laps.length === 0) return;
+    if (laps.length > 2) return;
 
     const currentLapDuration = elapsedTime - lastLapTime,
-          lastLap = laps[0].lapTime;
-          fastest = laps.reduce((prev, curr) =>
-    // paling cepat dari data keseluruhan.
-    // .reduce() = method js cari satu yang TERCEPAT
-
-        curr.lapTime < prev.lapTime ? curr : prev
-        // lap terbaru < lap sebelumnya, bandingin.
-    ).lapTime,
-          slowest = laps.reduce((prev, curr) =>
-    // paling cepat dari data keseluruhan.
-    // .reduce() = method js cari satu yang TERLAMBAT
-
-        curr.lapTime > prev.lapTime ? curr : prev
-    ).lapTime;
+          lastLap = laps[0].lapTime,
+          fastestAllLap = (laps.length > 0 ? Math.min(...laps.map(l => l.lapTime)) : Infinity),
+          slowestAllLap = (laps.length > 0 ? Math.max(...laps.map(l => l.lapTime)) : -Infinity);
 
     if (currentLapDuration > lastLap && !notifFlags.passedLastLap) {
-        showNotif('Sudah melewati lap sebelumnya!', 'warning');
+        showNotif('Melewati lap sebelumnya!', 'warning');
         notifFlags.passedLastLap = true;
     }
 
-    if (currentLapDuration > slowest && !notifFlags.passedSlowestLap) {
-        showNotif('Rekor slowest terbaru!', 'danger');
+    if (currentLapDuration > slowestAllLap && !notifFlags.passedSlowestLap) {
+        showNotif('Melewati slowest!', 'danger');
         notifFlags.passedSlowestLap = true;
     }
 
-    if (currentLapDuration > fastest && !notifFlags.passedFastestLap) {
-        showNotif('Kecepatanmu berkurang! Rekor fastest terbaru!', 'info');
+    if (currentLapDuration > fastestAllLap && !notifFlags.passedFastestLap) {
+        showNotif('Melewati fastest!', 'info');
         notifFlags.passedFastestLap = true;
     }; 
 
@@ -382,6 +416,8 @@ function showResult() {
     pauseStopwatch();
     // panggil fungsi pauseStopwatch() agar saat reset trs hasil sesi keluar, akurat dan tidak ada penambahan waktu lagi (tepat saat klik reset)
 
+    endClockTime = new Date();
+
     if (laps.length === 0) {
     // klo gxx ada lap (lap.length === 0) ini yep hasilnya;
         
@@ -390,6 +426,9 @@ function showResult() {
             <div class="text-center">
                 <div class="mb-3 text-muted">Belum ada lap ⏱️</div>
                 <div class="fs-4 font-monospace fw-bold">Total Time: ${formatTime(elapsedTime)}</div>
+                <div class="mt-3 text-secondary small"> 
+                    Duration: ${formatClockTime(startClockTime)} - ${formatClockTime(endClockTime)}
+                </div>
             </div>
         `;
         
@@ -440,8 +479,12 @@ function showResult() {
                 Total Lap: ${laps.length}
             </div>
 
-            <div class="text-secondary">
+            <div class="mb-2 text-secondary">
                 Total Time: ${formatTime(elapsedTime).replace(/<br><span[^>]*>|<\/span>/g, '.')}
+            </div>
+
+            <div class="text-secondary"> 
+                Duration: ${formatClockTime(startClockTime)} - ${formatClockTime(endClockTime)}
             </div>
         </div>
     `;
@@ -479,6 +522,9 @@ function clearSession() {
     lapCount = 0;
     laps = [];
 
+    startClockTime = null;
+    endClockTime = null;
+
     notifFlags = {
         passedLastLap: false,
         passedFastestLap: false,
@@ -490,6 +536,8 @@ function clearSession() {
 
     // tampilan awal balik yep, makanya ni fungsi dipanggil lagi
     displayTimeStopwatch(0);
+
+    liveLapDiff.textContent = '';
 
     // bahkan css semua hapus untuk memulai lembaran baruu
     displayStopwatch.classList.remove('running', 'fokus');
@@ -535,7 +583,8 @@ function lap() {
     // lastDurationLap = lapTime;
 
     // variabel untuk mengetahui lap tercepat dari nilai keseluruhan data lap.
-    const fastestAllLap = Math.min(...laps.slice(1).map(l => l.lapTime));
+    const fastestAllLap = laps.length > 0 ? Math.min(...laps.map(l => l.lapTime)) : Infinity;
+    const slowestAllLap = laps.length > 0 ? Math.max(...laps.map(l => l.lapTime)) : -Infinity;
 
     lapCount++;
 
@@ -565,6 +614,12 @@ function lap() {
         setTimeout(() => displayStopwatch.classList.remove('glow'), 500);
     }
 
+    if (lapCount > 1 && lapTime > slowestAllLap) {
+        beep.play();
+        displayStopwatch.classList.add('glow-slowest');
+        setTimeout(() => displayStopwatch.classList.remove('glow-slowest'), 500);
+    }
+
     notifFlags = {
         passedLastLap: false,
         passedFastestLap: false,
@@ -582,6 +637,8 @@ function lap() {
 // = RENDER LAPS =
 function renderLaps() {
     lapsList.innerHTML = '';
+
+    if (laps.length === 0) return; 
 
     // ada di bagian showResult() baca aja
     const fastest = laps.reduce((prev, curr) => curr.lapTime < prev.lapTime ? curr : prev);
@@ -613,6 +670,8 @@ function renderLaps() {
 
         // buat classnya biar bisa dimasukin ke div yang spesifik
         divLapsData.classList.add('lap-data');
+
+        let lapDifference = '--';
 
         // masukin isi dari div lap data yang udh dibuat tadi
         divLapsData.innerHTML = `
@@ -683,6 +742,9 @@ function saveState() {
         // dalam hal ini !! (double bang), dia yang nerjemahin maunya si stopwatchInterval
         // !! dia jadi penerjemah dan maksa si stopwatchInterval kalau nilai null (diem aja diajak ngomong) artinya dia gamau atau nilainya false
         // tapi kalau nilainya ada (si stopwatchInterval ngejawab alias ada pergerakan), tandanya dia mau atau true.
+        
+        startClockTime,
+        endClockTime,
         running: !!stopwatchInterval
 
         // KENAPA KUDU !! soalnya biar akurat 
@@ -714,6 +776,9 @@ function loadState() {
     // lastDurationLap = load.lastDurationLap;
     lapCount = load.lapCount;
     laps = load.laps || [];
+
+    startClockTime = load.startClockTime ? new Date(load.startClockTime) : null;
+    endClockTime = load.endClockTime ? new Date(load.endClockTime) : null;
 
     // balikin angka dan list lap ke layar
     displayTimeStopwatch(elapsedTime);
@@ -804,6 +869,5 @@ document.addEventListener('keydown', (e) => {
 // sedangkan 4 ini buat nyuruh tampilan layar yg konstan (waktu dan tanggal real time) dan memulihkan data lama saat ter-refresh
 function stopwatchInit() {
     autoActiveNavbar(); //dari func navbar-fitur-digilog yep
-    dateTimeInit();
     loadState();
 }

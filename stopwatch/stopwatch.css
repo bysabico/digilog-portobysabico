@@ -171,10 +171,6 @@ body {
 }
 
 /* MODAL */
-/* h5 {
-    font-family: 'lilita one', serif !important;
-    text-decoration: underline dashed;
-} */
 
 .modal-body {
     font-family: 'urbanist', serif;
@@ -264,6 +260,12 @@ b {
 }
 
 @keyframes slideIn {
-    from { transform: translateX(100%); opacity: 0; }
-    to { transform: translateX(0); opacity: 1; }
+    from { 
+        transform: translateX(100%); 
+        opacity: 0; 
+    }
+    to { 
+        transform: translateX(0); 
+        opacity: 1; 
+    }
 }

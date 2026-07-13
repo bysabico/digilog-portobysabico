@@ -117,5 +117,9 @@
 
 /* light-dark mode costum */
 [data-bs-theme='light'] .navbar-fitur-kostum {
-    color: #0e185f; 
+    color: #0e185f !important; 
+}
+
+[data-bs-theme='dark'] .navbar-fitur-kostum, #digilog-brand {
+    color: #ffffff !important;
 }

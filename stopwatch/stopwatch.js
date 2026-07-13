@@ -85,7 +85,7 @@ let laps = [];
 // [] : array
 // dipakai ada banyak data yang perlu disimpan~
 
-let notifFlags ={
+let notifFlags = {
     passedLastLap: false,
     passedFastestLap: false,
     passedSlowestLap: false
@@ -305,13 +305,14 @@ function updateLiveLapDiffDisplay() {
           prevLapTime = laps[0].lapTime,
           diffLaps = currentLapDuration - prevLapTime;
     
+    liveLapDiff.textContent = formatTimeForLapDisplay(diffLaps);
     liveLapDiff.classList.remove('text-success', 'text-danger', 'text-secondary');
     liveLapDiff.classList.add(diffLaps < 0 ? 'text-success' : diffLaps > 0 ? 'text-danger' : 'text-secondary');
 }
 
-function formatTimeForLapDisplay(time) {
-    const sign = diffMs > 0 ? '+' : diffMs < 0 ? '-' : '';
-    return sign + formatTime(Math.abs(diffMs));
+function formatTimeForLapDisplay(diffLapTime) {
+    const sign = diffLapTime > 0 ? '+' : diffLapTime < 0 ? '-' : '';
+    return sign + formatTime(Math.abs(diffLapTime));
 }
 
 function formatClockTime(date) {
@@ -650,46 +651,80 @@ function renderLaps() {
 
         // variabel penampung seluruh data lap (bagian bawah setelah di klik lap) saat dan setelah selesai sesi
         let lapPackage = '';
+        let rowClass = '';
 
         if (categoryLap.lapTime === fastest.lapTime) {
 
             // pakai variabel lapPackage soalnya dia kan yg pegang semua data lap.
             // nah, kalau ada lap paling cepat (fastest) ditandain disini aturannya
-            lapPackage = '<span class="badge bg-success">FASTEST</span>';
+            lapPackage = '<span class="badge">🟢</span>';
+
+            rowClass = 'fastest-lap-row';
             
         } else if (categoryLap.lapTime === slowest.lapTime) {
 
             // pakai variabel lapPackage soalnya dia kan yg pegang semua data lap.
             // nah, kalau ada lap paling lambat (slowest) ditandain disini aturannya
-            lapPackage = '<span class="badge bg-danger">SLOWEST</span>';
+            lapPackage = '<span class="badge">🔴</span>';
+
+            rowClass = 'slowest-lap-row';
 
         }
 
         // buat div untuk nampung seluruh data lap
-        const divLapsData = document.createElement('div');
+        // const divLapsData = document.createElement('div');
+
+        const trLapsData = document.createElement('tr');
+        
+        trLapsData.className = rowClass;     
+        trLapsData.innerHTML = `
+            <td class="text-center">
+                <small>
+                    ${lapPackage || ' '}
+                </small>
+            </td>
+
+            <td class="text-center">
+                <strong>#${categoryLap.id}</strong>
+            </td>
+
+            <td class="text-center">    
+                <small>
+                    ${formatTime(categoryLap.lapTime).replace(/<br><span[^>]*>|<\/span>/g, '.')}
+                </small>
+            </td>
+
+            <td class="text-center">
+                <small>
+                    ${formatTime(categoryLap.totalTime).replace(/<br><span[^>]*>|<\/span>/g, '.')}
+                </small>
+            </td>
+        `
+
+        lapsList.appendChild(trLapsData);
 
         // buat classnya biar bisa dimasukin ke div yang spesifik
-        divLapsData.classList.add('lap-data');
+        // divLapsData.classList.add('lap-data');
 
-        let lapDifference = '--';
+        // let lapDifference = '--';
 
-        // masukin isi dari div lap data yang udh dibuat tadi
-        divLapsData.innerHTML = `
-            <div>
-                <strong>Lap #${categoryLap.id}</strong> ${lapPackage}
-            </div>
+        // // masukin isi dari div lap data yang udh dibuat tadi
+        // divLapsData.innerHTML = `
+        //     <div>
+        //         <strong>Lap #${categoryLap.id}</strong> ${lapPackage}
+        //     </div>
 
-            <small>
-                Lap : ${formatTime(categoryLap.lapTime).replace(/<br><span[^>]*>|<\/span>/g, '.')}
-            </small>
+        //     <small>
+        //         Lap : ${formatTime(categoryLap.lapTime).replace(/<br><span[^>]*>|<\/span>/g, '.')}
+        //     </small>
 
-            <small>
-                Total Waktu : ${formatTime(categoryLap.totalTime).replace(/<br><span[^>]*>|<\/span>/g, '.')}
-            </small>
-        `;
+        //     <small>
+        //         Total Waktu : ${formatTime(categoryLap.totalTime).replace(/<br><span[^>]*>|<\/span>/g, '.')}
+        //     </small>
+        // `;
 
-        // ini yang bikin data lap muncul di layar
-        lapsList.appendChild(divLapsData);
+        // // ini yang bikin data lap muncul di layar
+        // lapsList.appendChild(divLapsData);
     }
 
     // ver forEach;

@@ -52,7 +52,7 @@
 
             <!-- TAMPILAN STOPWATCH -->
             <h1 class="time mt-5 mx-auto w-100" id="display-stopwatch"> 00:00:00 </h1>
-            <h4 id="live-lap-diff" class="text-secondary small"></h4>
+            <h2 id="live-lap-diff" class="text-secondary"></h2>
 
             <!-- button atau tombol yang dipakai di stopwatch -->
             <div class="d-flex flex-row justify-content-center gap-2 gap-md-4 mt-5 custom-stopwatch" id="btn-stopwatch">
@@ -87,7 +87,22 @@
             </div>
 
             <!-- simpan data lap user (setiap user klik) -->
-            <div id="laps" class="lap-list"></div>
+            <div id="laps-container" class="lap-list">
+                <table class="table table-lap">
+                    <thead>
+                        <tr>
+                            <th scope="col">Category</th>
+                            <th scope="col">Lap</th>
+                            <th scope="col">Lap Time</th>
+                            <th scope="col">Total Time</th>
+                        </tr>
+                    </thead>
+                    
+                    <tbody id="laps">
+                        <!-- data lap -->
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 
@@ -235,9 +250,17 @@
 
     <!-- Link JS bootstrap -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.bundle.min.js" integrity="sha384-j1CDi7MgGQ12Z7Qab0qlWQ/Qqz24Gc6BM0thvEMVjHnfYGF0rmFCozFSxQBxwHKO" crossorigin="anonymous"></script>
+
+    <!-- nav-fitur js -->
     <script src="../navbar-fitur/navbar-fitur-digilog-logic.js"></script>
+
+    <!-- date-time js -->
     <script src="../reusable-comp/date-time-for-fitur/date-time.js"></script>
+
+    <!-- footer js -->
     <script src="../footer/footer-digilog-logic.js"></script>
+
+    <!-- stopwatch js -->
     <script src="../stopwatch/stopwatch.js"></script>
 </body>
 </html>

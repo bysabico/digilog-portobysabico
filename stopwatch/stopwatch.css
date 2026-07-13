@@ -269,3 +269,28 @@ b {
         opacity: 1; 
     }
 }
+
+/* table-lap */
+
+.table-lap th, .table-lap td {
+    padding: 8px 12px;
+    text-align: center;
+    font-size: 1rem;
+}
+
+.table-lap thead {
+    border-bottom: 2px solid #dee2e6;
+    font-weight: 600;
+}
+
+.table-lap tbody tr:nth-child(even) {
+    background-color: #f8f9fa;
+}
+
+.fastest-lap-row, .fastest-lap-row td, .fastest-lap-row strong, .fastest-lap-row small {
+    color: #198753;
+}
+
+.slowest-lap-row, .slowest-lap-row td, .slowest-lap-row strong, .slowest-lap-row small {
+    color: #ef4444;
+}

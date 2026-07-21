@@ -909,7 +909,6 @@ document.addEventListener('keydown', (e) => {
 // = INIT =
 // kenapa yang dipangil cuma 4 ini?
 // soalnya fungsi lain itu bergantung sama 'pergerakkan user'(klik = .addEventListener)
-// sedangkan 4 ini buat nyuruh tampilan layar yg konstan (waktu dan tanggal real time) dan memulihkan data lama saat ter-refresh
 function stopwatchInit() {
     autoActiveNavbar(); //dari func navbar-fitur-digilog yep
     loadState();

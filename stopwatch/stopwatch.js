@@ -1,3 +1,4 @@
+// fetch navbar-fitur
 fetch('../navbar-fitur/navbar-fitur-digilog.html')
 .then(response => response.text())
 .then(data => {
@@ -9,6 +10,7 @@ fetch('../navbar-fitur/navbar-fitur-digilog.html')
     console.error('gagal load navbar-fitur:', error);
 });
 
+// fetch date-time
 fetch('../reusable-comp/date-time-for-fitur/date-time.html')
 .then(response => response.text())
 .then(data => {
@@ -303,11 +305,16 @@ function updateLiveLapDiffDisplay() {
 
     const currentLapDuration = elapsedTime - lastLapTime,
           prevLapTime = laps[0].lapTime,
-          diffLaps = currentLapDuration - prevLapTime;
+          diffLaps = currentLapDuration - prevLapTime,
+          fastestAllLap = Math.min(...laps.map(l => l.lapTime)),
+          slowestAllLap = Math.max(...laps.map(l => l.lapTime));
     
     liveLapDiff.textContent = formatTimeForLapDisplay(diffLaps);
-    liveLapDiff.classList.remove('text-success', 'text-danger', 'text-secondary');
-    liveLapDiff.classList.add(diffLaps < 0 ? 'text-success' : diffLaps > 0 ? 'text-danger' : 'text-secondary');
+    liveLapDiff.classList.remove('text-success', 'text-danger', 'text-warning');
+    liveLapDiff.classList.add(
+        currentLapDuration < fastestAllLap ? 'text-success' 
+        : currentLapDuration > slowestAllLap ? 'text-danger' 
+        : 'text-warning');
 }
 
 function formatTimeForLapDisplay(diffLapTime) {
@@ -325,7 +332,7 @@ function formatClockTime(date) {
 // notif muncul di layar dan bunyi
 function showNotif(message, type='info') {
     
-    if (laps.length > 2) return;
+    // if (laps.length > 2) return;
 
     const now = new Date(),
           realTime = now.toLocaleTimeString('en-US', {hour12: false}),
@@ -350,7 +357,7 @@ function showNotif(message, type='info') {
 
 // cek notifikasi
 function checkLapNotif() {
-    if (laps.length > 2) return;
+    if (laps.length === 0) return;
 
     const currentLapDuration = elapsedTime - lastLapTime,
           lastLap = laps[0].lapTime,
@@ -362,16 +369,17 @@ function checkLapNotif() {
         notifFlags.passedLastLap = true;
     }
 
-    if (currentLapDuration > slowestAllLap && !notifFlags.passedSlowestLap) {
-        showNotif('Melewati slowest!', 'danger');
-        notifFlags.passedSlowestLap = true;
+    if (laps.length >= 2) {
+        if (currentLapDuration > slowestAllLap && !notifFlags.passedSlowestLap) {
+            showNotif('Melewati slowest!', 'danger');
+            notifFlags.passedSlowestLap = true;
+        }
+
+        if (currentLapDuration > fastestAllLap && !notifFlags.passedFastestLap) {
+            showNotif('Melewati fastest!', 'info');
+            notifFlags.passedFastestLap = true;
+        };
     }
-
-    if (currentLapDuration > fastestAllLap && !notifFlags.passedFastestLap) {
-        showNotif('Melewati fastest!', 'info');
-        notifFlags.passedFastestLap = true;
-    }; 
-
 }
 
 // = PAUSE =

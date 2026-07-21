@@ -47,7 +47,8 @@ fetch('../footer/footer-digilog.html')
 
 // jika tidak klik remember-me box = balik ke halaman login.
 const remembered = localStorage.getItem('username-or-anonim'),
-      loginOnce = sessionStorage.getItem('login-once');
+      loginOnce = sessionStorage.getItem('login-once'),
+      usernameFromSession = sessionStorage.getItem('username-or-anonim'); // ambil dulu!
 
 if (!remembered && !loginOnce) {
     window.location.href = '../login/login-digilog.html';
@@ -58,8 +59,8 @@ if (loginOnce) {
 }
 
 // menampilkan greeting / sapaan
-const usernameInputed = localStorage.getItem('username-or-anonim') ||
-                        sessionStorage.getItem('username-or-anonim') ||
+const usernameInputed = remembered ||
+                        usernameFromSession ||
                         'HOOMAN',
     greeting = document.getElementById('greeting'),
     now = new Date(),
@@ -86,9 +87,6 @@ function showGreeting() {
 
     // huruf kapital semua
     greeting.innerHTML = greeting.innerHTML.toUpperCase();
-
-    // munculin greeting
-    window.addEventListener('load', showGreeting);
 }
 
 // menampilkan jam yg terhubung dengan navbar

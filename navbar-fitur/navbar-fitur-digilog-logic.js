@@ -54,11 +54,20 @@ function autoActiveNavbar() {
     
     if (window.location.pathname.endsWith(targetUrl.pathname)) {
       link.classList.add('active');
+      link.classList.add('disable-nav');
+
+      link.addEventListener('click', preventNavClick);
     } else {
       link.classList.remove('active');
-    }
+      link.classList.remove('disable-nav');
 
+      link.removeEventListener('click', preventNavClick)
+    }
   });
+}
+
+function preventNavClick(e) {
+  e.preventDefault();
 }
 
 // = LIGHT / DARK MODE =

@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DIGI TIMER</title>
+
+    <title>DIGILOG STOPWATCH</title>
+
+    <!-- Link google font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Changa+One:ital@0;1&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Josefin+Sans:ital,wght@0,100..700;1,100..700&family=Lilita+One&family=Oxanium:wght@200..800&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Urbanist:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+
+    <!-- Link CDN Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+
+    <!-- Link CSS bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-4Q6Gf2aSP4eDXB8Miphtr37CMZZQ5oXLH2yaXMJ2w8e2ZtHTl7GptT4jmndRuHDT" crossorigin="anonymous">
+
+    <!-- LINK CSS Style -->
+    <link rel="stylesheet" href="../navbar-fitur/navbar-fitur-digilog-style.css">
+    <link rel="stylesheet" href="../reusable-comp/date-time-for-fitur/date-time.css">
+    <link rel="stylesheet" href="../footer/footer-digilog-style.css">
+    <link rel="stylesheet" href="../timer/timer.css">
+</head>
+<body>
+    
+    <!-- navbar -->
+    <div id="navbar-container">
+        <!-- space buat navbar -->
+    </div>
+
+    <div class="container-fluid flex-grow-1 m-auto p-5 text-center">
+
+        <div id="date-time-container">
+            <!-- space date time -->
+        </div>
+
+        <!-- TIMER -->
+        <div class="flex-column justify-content-center align-items-center mx-3 mt-md-5">
+
+            <!-- TITLE STOPWATCH -->
+            <h1 class="text-center fs-2 mt-1 custom-timer" id="timer-title" data-bs-toggle="modal" data-bs-target="#deskripsiModalDigiStopwatch">DIGI TIMER</h1>
+
+            <!-- INPUT MODE TIMER -->
+            <div class="btn-group w-100 mt-4 mb-3 mode-toggle" role="group">
+                <input type="radio" id="mode-timer-biasa" class="btn-check" name="mode-radio" checked>
+                <label for="mode-timer-biasa" class="btn btn-outline-info"> TIMER </label>
+                
+                <input type="radio" id="mode-timer-pomodoro" class="btn-check" name="mode-radio">
+                <label for="mode-timer-pomodoro" class="btn btn-outline-info"> POMODORO </label>
+            </div>
+
+            <!-- INPUT NAMA TIMER -->
+            <div class="nama-timer mb-3">
+                <label class="form-label" for="input-nama-timer">Nama Timer</label>
+                <input type="text" id="input-nama-timer" class="form-control" placeholder="Contoh: Meeting, Belajar Kimia, dan lainnya...">
+            </div>
+
+            <!-- INPUT DURASI MODE BIASA -->
+            <div class="mode-panel mb-3" id="section-mode-biasa">
+                <label class="form-label" for="durasi-detik">Durasi Timer</label>
+                <div class="d-flex align-items-center gap-2">
+                    <input type="number" id="durasi-jam" class="form-control text-center" min="0" max="23" placeholder="HH">
+                    <span>:</span>
+                    <input type="number" id="durasi-menit" class="form-control text-center" min="0" max="59" placeholder="MM">
+                    <span>:</span>
+                    <input type="number" id="durasi-detik" class="form-control text-center" min="0" max="59" placeholder="SS">
+                </div>
+            </div>
+
+            <!-- INPUT DURASI MODE POMODORO -->
+            <div class="mode-panel mb-3 d-none" id="section-mode-pomodoro">
+                <div class="row g-2">
+                    <div class="col-6">
+                        <label class="form-label" for="durasi-detik">Durasi Fokus</label>
+                        <div class="d-flex align-items-center gap-2">
+                            <input type="number" id="durasi-jam" class="form-control text-center" min="0" max="23" placeholder="HH">
+                            <span>:</span>
+                            <input type="number" id="durasi-menit" class="form-control text-center" min="0" max="59" placeholder="MM">
+                            <span>:</span>
+                            <input type="number" id="durasi-detik" class="form-control text-center" min="0" max="59" placeholder="SS">
+                        </div>
+                    </div>
+
+                    <div class="col-6">
+                        <label class="form-label" for="durasi-detik">Durasi Istirahat</label>
+                        <div class="d-flex align-items-center gap-2">
+                            <input type="number" id="durasi-jam" class="form-control text-center" min="0" max="23" placeholder="HH">
+                            <span>:</span>
+                            <input type="number" id="durasi-menit" class="form-control text-center" min="0" max="59" placeholder="MM">
+                            <span>:</span>
+                            <input type="number" id="durasi-detik" class="form-control text-center" min="0" max="59" placeholder="SS">
+                        </div>
+                    </div>
+
+                    <div class="col-6">
+                        <label for="" class="form-label">Jumlah Siklus</label>
+                        <input type="number" id="repeat-input-manual" class="form-control" min="1" placeholder="1">
+                    </div>
+
+                    <div class="col-6">
+                        <input type="checkbox" name="" class="form-check-input" id="repeat-checkbox">
+                        <label for="repeat-checkbox" class="form-check-label custom-checkbox">Repeat</label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAMPILAN TIMER -->
+            <div class="d-none" id="running-timer">
+                <div class="timer-name-badge" id="nama-timer-berlangsung"></div>
+                <h1 class="mt-5 mx-auto w-100" id="display-timer"> 00:00:00 </h1>
+                <div class="progress mb-3">
+                    <div id="progress-bar" class="progress-bar bg-info w-100" role="progressbar"></div>
+                </div> 
+            </div>
+
+            <!-- BTN TIMER -->
+            <div class="d-flex flex-row justify-content-center gap-2 gap-md-4 mt-4 custom-timer" id="btn-timer">
+
+                <!-- tombol start -->
+                <button class="btn fs-4 btn-success w-md-auto btn-timer-costume w-100" id="startBtn">
+                    <i class="fa-solid fa-play d-inline d-md-none"></i>
+                    <span class="d-none d-md-inline">START</span>
+                </button>
+
+                <!-- tombol pause -->
+                <button class="btn fs-4 btn-warning d-none p-2 w-md-auto btn-stopwatch-costume" id="pauseBtn">
+                    <i class="fa-solid fa-pause d-inline d-md-none"></i>
+                    <span class="d-none d-md-inline">PAUSE</span>
+                </button>
+
+                <!-- tombol reset -->
+                <button class="btn fs-4 btn-danger p-2 w-md-auto btn-stopwatch-costume d-none" id="resetBtn">
+                    <i class="fa-solid fa-redo d-inline d-md-none"></i>
+                    <span class="d-none d-md-inline">RESET</span>
+                </button>
+            </div>
+
+            <p id="status-text" class="text-center mt-3 text-secondary small"> Isi nama & durasi terlebih dahulu ya.</p>
+
+            <div class="card-dark">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h5 class="mb-0">Timer Hari ini</h5>
+                    <span class="badge bg-secondary" id="today-date-badge"></span>
+                </div>
+            </div>
+
+            <div class="empty-state" id="loading-state">
+                <div class="spinner-border spinner-border-sm text-info me-2" role="status"></div>
+                Memuat data. . .
+            </div>
+
+            <div class="empty-state d-none" id="results-empty">
+                Belum ada timer yang dijalankan hari ini.
+            </div>
+
+            <div class="table-responsive d-none" id="results-timer">
+                <table class="table table-sm align-middle">
+                    <thead>
+                        <tr>
+                            <th>NAMA TIMER</th>
+                            <th>MODE</th>
+                            <th>SIKLUS</th>
+                            <th>TARGET</th>
+                            <th>TEREKSEKUSI</th>
+                            <th>STATUS</th>
+                            <th>JAM MULAI</th>
+                        </tr>
+                    </thead>
+
+                    <tbody id="hasil-timer"></tbody>
+                </table>
+            </div>
+
+            <p class="session-note mt-2 mb-0" id="save-note">
+                Data tersimpan otomatis dalam perangkat dan tetap ada walau halaman di-refresh. 
+                <br>
+                Data tersimpan per hari.
+            </p>
+        </div>
+    </div>
+
+    <div id="footer-container"></div>
+
+    <!-- Link JS bootstrap -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.bundle.min.js" integrity="sha384-j1CDi7MgGQ12Z7Qab0qlWQ/Qqz24Gc6BM0thvEMVjHnfYGF0rmFCozFSxQBxwHKO" crossorigin="anonymous"></script>
+
+    <!-- nav-fitur js -->
+    <script src="../navbar-fitur/navbar-fitur-digilog-logic.js"></script>
+
+    <!-- date-time js -->
+    <script src="../reusable-comp/date-time-for-fitur/date-time.js"></script>
+
+    <!-- footer js -->
+    <script src="../footer/footer-digilog-logic.js"></script>
+
+    <!-- stopwatch js -->
+    <script src="../timer/timer.js"></script>
+</body>
+</html>

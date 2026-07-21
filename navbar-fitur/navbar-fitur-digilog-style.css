@@ -123,3 +123,11 @@
 [data-bs-theme='dark'] .navbar-fitur-kostum, #digilog-brand {
     color: #ffffff !important;
 }
+
+.disable-nav {
+    /* opacity: 0.9; */
+    pointer-events: none;
+    cursor: not-allowed;
+    font-family: 'Lilita One', sans-serif !important;
+    border-bottom: 3px solid #C9A84C !important;
+}

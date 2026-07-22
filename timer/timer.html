@@ -72,38 +72,49 @@
 
             <!-- INPUT DURASI MODE POMODORO -->
             <div class="mode-panel mb-3 d-none" id="section-mode-pomodoro">
-                <div class="row g-2">
-                    <div class="col-6">
-                        <label class="form-label" for="durasi-detik">Durasi Fokus</label>
+                <button type="button" id="toggle-setting-pomodoro" class="btn btn-outline-info btn-sm w-100 d-flex justify-content-between align-items-center mb-3">
+                    <span>POMODORO SETTING</span>
+                    <span id="toggle-setting-pomodoro-icon">^</span>
+                </button>
+
+                <div id="pomodoro-settings">
+
+                    <div class="mb-3">
+                        <label for="" class="form-label fw-bold fs-5 text-info"></label>
                         <div class="d-flex align-items-center gap-2">
-                            <input type="number" id="durasi-jam" class="form-control text-center" min="0" max="23" placeholder="HH">
+                            <input type="number" name="" id="jam-pomodoro" class="form-control form-control-lg text-center" value='0' min="0" max="23" placeholder="HH">
                             <span>:</span>
-                            <input type="number" id="durasi-menit" class="form-control text-center" min="0" max="59" placeholder="MM">
+                            <input type="number" name="" id="menit-pomodoro" class="form-control form-control-lg text-center" value='25' min="0" max="59" placeholder="MM">
                             <span>:</span>
-                            <input type="number" id="durasi-detik" class="form-control text-center" min="0" max="59" placeholder="SS">
+                            <input type="number" name="" id="detik-pomodoro" class="form-control form-control-lg text-center" value='0' min="0" max="59" placeholder="SS">
                         </div>
                     </div>
 
-                    <div class="col-6">
-                        <label class="form-label" for="durasi-detik">Durasi Istirahat</label>
+                    <div class="mb-3">
+                        <label for="" class="form-label small text-warning-emphasis"></label>
                         <div class="d-flex align-items-center gap-2">
-                            <input type="number" id="durasi-jam" class="form-control text-center" min="0" max="23" placeholder="HH">
+                            <input type="number" name="" id="jam-istirahat" class="form-control form-control-sm text-center" value='0' min="0" max="23" placeholder="HH">
                             <span>:</span>
-                            <input type="number" id="durasi-menit" class="form-control text-center" min="0" max="59" placeholder="MM">
+                            <input type="number" name="" id="menit-istirahat" class="form-control form-control-sm text-center" value='5' min="0" max="59" placeholder="MM">
                             <span>:</span>
-                            <input type="number" id="durasi-detik" class="form-control text-center" min="0" max="59" placeholder="SS">
+                            <input type="number" name="" id="detik-istirahat" class="form-control form-control-sm text-center" value='0' min="0" max="59" placeholder="SS">
                         </div>
                     </div>
 
-                    <div class="col-6">
-                        <label for="" class="form-label">Jumlah Siklus</label>
-                        <input type="number" id="repeat-input-manual" class="form-control" min="1" placeholder="1">
+                    <div class="row g-2">
+                        <div class="col-12">
+                            <label for="" class="form-label">Jumlah Pengulangan</label>
+                            <div class="input-group mb-2">
+                                <input type="number" name="" id="input-repeatation" class="form-control">
+                            </div>
+
+                            <div class="form-check">
+                                <input type="checkbox" name="" id="unlimited-repeatation" class="form-check-input">
+                                <label for="unlimited-repeatation" class="form-check-label">Pengulangan Tanpa Batas</label>
+                            </div>
+                        </div>
                     </div>
 
-                    <div class="col-6">
-                        <input type="checkbox" name="" class="form-check-input" id="repeat-checkbox">
-                        <label for="repeat-checkbox" class="form-check-label custom-checkbox">Repeat</label>
-                    </div>
                 </div>
             </div>
 
@@ -183,6 +194,35 @@
     </div>
 
     <div id="footer-container"></div>
+
+    <div class="modal" id="trigger-modal">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header border-secondary">
+                    <h5 class="modal-title">PERHATIAN!</h5>
+                    <button type="button" class="btn-close btn-close-white" id="trigger-modal-close"></button>
+                </div>
+
+                <div class="modal-body" id="trigger-modal-body">
+                    <!-- isi pesan trigger -->
+                </div>
+
+                <div class="modal-footer border-secondary flex-column align-items-stretch p-0">
+
+                    <div class="progress" id="progress-bar-auto-close-trigger">
+                        <div id="auto-close-bar" class="progress-bar bg-info w-100" role="progressbar"></div>
+                    </div>
+                    <div class="d-flex jutify-content-between align-items-center px-3 py-2">
+                        <span class="small text-secondary">
+                            Otomatis tertutup dalam <span id="hitung-mundur-trigger-modal">15</span> detik
+                        </span>
+                    </div>
+
+                    <button type="button" class="btn btn-info btn-sm" id="modal-close-btn">Oke, paham!</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <!-- Link JS bootstrap -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.bundle.min.js" integrity="sha384-j1CDi7MgGQ12Z7Qab0qlWQ/Qqz24Gc6BM0thvEMVjHnfYGF0rmFCozFSxQBxwHKO" crossorigin="anonymous"></script>

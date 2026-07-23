@@ -24,7 +24,7 @@
     <link rel="stylesheet" href="../footer/footer-digilog-style.css">
     <link rel="stylesheet" href="../timer/timer.css">
 </head>
-<body>
+<body class="d-flex flex-column min-vh-100 bg-body-light">
     
     <!-- navbar -->
     <div id="navbar-container">
@@ -62,25 +62,28 @@
             <div class="mode-panel mb-3" id="section-mode-biasa">
                 <label class="form-label" for="durasi-detik">Durasi Timer</label>
                 <div class="d-flex align-items-center gap-2">
-                    <input type="number" id="durasi-jam" class="form-control text-center" min="0" max="23" placeholder="HH">
+                    <input type="number" id="durasi-jam-timer-biasa" class="form-control text-center" min="0" max="23" placeholder="HH">
                     <span>:</span>
-                    <input type="number" id="durasi-menit" class="form-control text-center" min="0" max="59" placeholder="MM">
+                    <input type="number" id="durasi-menit-timer-biasa" class="form-control text-center" min="0" max="59" placeholder="MM">
                     <span>:</span>
-                    <input type="number" id="durasi-detik" class="form-control text-center" min="0" max="59" placeholder="SS">
+                    <input type="number" id="durasi-detik-timer-biasa" class="form-control text-center" min="0" max="59" placeholder="SS">
                 </div>
             </div>
 
             <!-- INPUT DURASI MODE POMODORO -->
             <div class="mode-panel mb-3 d-none" id="section-mode-pomodoro">
-                <button type="button" id="toggle-setting-pomodoro" class="btn btn-outline-info btn-sm w-100 d-flex justify-content-between align-items-center mb-3">
+
+                <!-- BUNGKUS POMODORO SETTING -->
+                <button type="button" id="toggle-setting-pomodoro-btn" class="btn btn-outline-info btn-sm w-100 d-flex justify-content-between align-items-center mb-3">
                     <span>POMODORO SETTING</span>
                     <span id="toggle-setting-pomodoro-icon">^</span>
                 </button>
 
                 <div id="pomodoro-settings">
 
+                    <!-- INPUT FOKUS -->
                     <div class="mb-3">
-                        <label for="" class="form-label fw-bold fs-5 text-info"></label>
+                        <label for="" class="form-label fw-bold fs-5 text-info">FOKUS</label>
                         <div class="d-flex align-items-center gap-2">
                             <input type="number" name="" id="jam-pomodoro" class="form-control form-control-lg text-center" value='0' min="0" max="23" placeholder="HH">
                             <span>:</span>
@@ -90,8 +93,9 @@
                         </div>
                     </div>
 
+                    <!-- INPUT ISTIRAHAT -->
                     <div class="mb-3">
-                        <label for="" class="form-label small text-warning-emphasis"></label>
+                        <label for="" class="form-label small text-warning-emphasis">ISTIRAHAT</label>
                         <div class="d-flex align-items-center gap-2">
                             <input type="number" name="" id="jam-istirahat" class="form-control form-control-sm text-center" value='0' min="0" max="23" placeholder="HH">
                             <span>:</span>
@@ -101,16 +105,20 @@
                         </div>
                     </div>
 
+                    <!-- INPUT JUMLAH PENGULANGAN -->
                     <div class="row g-2">
                         <div class="col-12">
+
+                            <!-- TARGET -->
                             <label for="" class="form-label">Jumlah Pengulangan</label>
                             <div class="input-group mb-2">
-                                <input type="number" name="" id="input-repeatation" class="form-control">
+                                <input type="number" name="" id="jumlah-pengulangan" class="form-control">
                             </div>
 
+                            <!-- TAK TERBATAS -->
                             <div class="form-check">
-                                <input type="checkbox" name="" id="unlimited-repeatation" class="form-check-input">
-                                <label for="unlimited-repeatation" class="form-check-label">Pengulangan Tanpa Batas</label>
+                                <input type="checkbox" name="" id="unlimited-pengulangan" class="form-check-input">
+                                <label for="unlimited-pengulangan" class="form-check-label">Pengulangan Tanpa Batas</label>
                             </div>
                         </div>
                     </div>
@@ -120,10 +128,18 @@
 
             <!-- TAMPILAN TIMER -->
             <div class="d-none" id="running-timer">
-                <div class="timer-name-badge" id="nama-timer-berlangsung"></div>
+                <div class="timer-name-badge" id="running-timer-name">
+                    <!-- UNTUK MENAMPILKAN NAMA TIMER -->
+                </div>
+
+                <!-- TIMER -->
                 <h1 class="mt-5 mx-auto w-100" id="display-timer"> 00:00:00 </h1>
+
+                <!-- PROGRESS BAR -->
                 <div class="progress mb-3">
-                    <div id="progress-bar" class="progress-bar bg-info w-100" role="progressbar"></div>
+                    <div id="progress-bar" class="progress-bar bg-info w-100" role="progressbar">
+                        <!-- UNTUK MENAMPILKAN PROGRESS BAR TIMER -->
+                    </div>
                 </div> 
             </div>
 
@@ -149,8 +165,10 @@
                 </button>
             </div>
 
+            <!-- NOTE AWAL -->
             <p id="status-text" class="text-center mt-3 text-secondary small"> Isi nama & durasi terlebih dahulu ya.</p>
 
+            <!-- Report timer harian -->
             <div class="card-dark">
                 <div class="d-flex justify-content-between align-items-center mb-3">
                     <h5 class="mb-0">Timer Hari ini</h5>
@@ -158,17 +176,22 @@
                 </div>
             </div>
 
+            <!-- loading -->
             <div class="empty-state" id="loading-state">
                 <div class="spinner-border spinner-border-sm text-info me-2" role="status"></div>
                 Memuat data. . .
             </div>
 
+            <!-- hasil timer -->
             <div class="empty-state d-none" id="results-empty">
                 Belum ada timer yang dijalankan hari ini.
             </div>
 
-            <div class="table-responsive d-none" id="results-timer">
+            <!-- tabel hasil timer harian -->
+            <div class="table-responsive d-none" id="results-timer-table">
                 <table class="table table-sm align-middle">
+
+                    <!-- HEADER TABLE -->
                     <thead>
                         <tr>
                             <th>NAMA TIMER</th>
@@ -181,43 +204,55 @@
                         </tr>
                     </thead>
 
-                    <tbody id="hasil-timer"></tbody>
+                    <tbody id="hasil-timer">
+                        <!-- ISI HASIL TIMER -->
+                    </tbody>
                 </table>
             </div>
 
+            <!-- note untuk pengguna -->
             <p class="session-note mt-2 mb-0" id="save-note">
                 Data tersimpan otomatis dalam perangkat dan tetap ada walau halaman di-refresh. 
                 <br>
-                Data tersimpan per hari.
+                Data tersimpan harian.
             </p>
         </div>
     </div>
 
     <div id="footer-container"></div>
 
+    <!-- MODAL TRIGGER PENGISIAN TIMER -->
     <div class="modal" id="trigger-modal">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
+
+                <!-- HEADER MODAL -->
                 <div class="modal-header border-secondary">
                     <h5 class="modal-title">PERHATIAN!</h5>
-                    <button type="button" class="btn-close btn-close-white" id="trigger-modal-close"></button>
+                    <button type="button" class="btn-close btn-close-white" id="trigger-modal-close-x"></button>
                 </div>
 
+                <!-- PESAN MODAL -->
                 <div class="modal-body" id="trigger-modal-body">
                     <!-- isi pesan trigger -->
                 </div>
 
+                <!-- FOOTER MODAL -->
                 <div class="modal-footer border-secondary flex-column align-items-stretch p-0">
 
+                    <!-- PROGRESS BAR HITUNG MUNDUR AUTO CLOSE TRIGGER MODAL -->
                     <div class="progress" id="progress-bar-auto-close-trigger">
                         <div id="auto-close-bar" class="progress-bar bg-info w-100" role="progressbar"></div>
                     </div>
+
+                    <!-- PESAN AUTO CLOSE DAN HITUNG MUNDUR DALAM DETIK -->
                     <div class="d-flex jutify-content-between align-items-center px-3 py-2">
                         <span class="small text-secondary">
-                            Otomatis tertutup dalam <span id="hitung-mundur-trigger-modal">15</span> detik
+                            Otomatis tertutup dalam <span id="countdown-trigger-modal">15</span> detik
                         </span>
                     </div>
 
+                    <!-- BTN CLOSE MANUAL -->
                     <button type="button" class="btn btn-info btn-sm" id="modal-close-btn">Oke, paham!</button>
                 </div>
             </div>

@@ -95,20 +95,20 @@ function showTriggerModal(message) {
     clearTimeout(autoCloseTimeout);
     clearInterval(autoCloseInterval);
 
+    const totalSecond = autoCloseSecondTime / 1000; // 10000ms -> 10 detik
+    let secondLeft = totalSecond;
+
+    // matikan transisi CSS, bar dikontrol manual biar sinkron sama angka detik
     autoCloseBar.style.transition = 'none';
     autoCloseBar.style.width = '100%';
-    void autoCloseBar.offsetWidth;
-    requestAnimationFrame(() => {
-        autoCloseBar.style.transition = `width ${autoCloseSecondTime}ms linear`;
-        autoCloseBar.style.width = '0%';
-    });
-
-    let secondLeft = autoCloseSecondTime;
     countdownTriggerModal.textContent = secondLeft;
 
     autoCloseInterval = setInterval(() => {
         secondLeft--;
         countdownTriggerModal.textContent = Math.max(secondLeft, 0);
+
+        const percent = (Math.max(secondLeft, 0) / totalSecond) * 100;
+        autoCloseBar.style.width = `${percent}%`;
 
         if(secondLeft <= 0) {
             clearInterval(autoCloseInterval);
@@ -146,7 +146,7 @@ let mode = 'biasa',
     reminingSeconds = 0,
     intervalTimer = null,
     currentName = '',
-    currentPhase = null,
+    currentPhase = null,   // 'fokus' | 'break' | null
     currentRepeat = 1,
     totalRepeat = 1,
     focusDuration = 0,
@@ -243,7 +243,7 @@ function updateDisplayTimer() {
 
 function updateRunningLabel() {
     if (mode === 'pomodoro') {
-        const phaseLabel = currentPhase === 'focus' ? 'pomodoro' : 'Istirahat';
+        const phaseLabel = currentPhase === 'fokus' ? 'Pomodoro' : 'Istirahat';
         runningTimerName.textContent = `${currentName} - ${phaseLabel} (Pengulangan ${currentRepeat} / ${formatRepeat(totalRepeat)})`;
     } else {
         runningTimerName.textContent = `${currentName}`;
@@ -295,5 +295,200 @@ function renderResults() {
         </tr>
     `).join('');
 }
+
+// 
+function resetTampilan() {
+    runningTimerName.classList.add('d-none');
+    startTimerBtn.classList.remove('d-none');
+    pauseTimerBtn.classList.add('d-none');
+    resetTimerBtn.classList.add('d-none');
+    if(mode === 'pomodoro') {
+        pomodoroSettings.classList.remove('d-none');
+        toggleSettingPomodoroIcon.textContent = '^';
+    }
+    namaTimer.disabled = false;
+    durasiJamTimer.disabled = false;
+    durasiMenitTimer.disabled = false;
+    durasiDetikTimer.disabled = false;
+    
+    jamPomodoro.disabled = false;
+    menitPomodoro.disabled = false;
+    detikPomodoro.disabled = false;
+    jamIstirahat.disabled = false;
+    menitIstirahat.disabled = false;
+    detikIstirahat.disabled = false;
+
+    jumlahPengulangan.disabled = unlimitedPengulangan.checked;
+    unlimitedPengulangan.disabled = false;
+    modeBiasaRadio.disabled = false;
+    modePomodoroRadio.disabled = false;
+    currentPhase = null;
+
+    clearInterval(intervalTimer);
+    intervalTimer = null;
+}
+
+function startTimerInterval() {
+    updateDisplayTimer();
+    updateRunningLabel();
+    intervalTimer = setInterval (tick, 1000);
+}
+
+async function tick() {
+    if(reminingSeconds > 0) {
+        reminingSeconds--;
+        updateDisplayTimer();
+        return
+    }
+
+    clearInterval(intervalTimer);
+
+    if (mode === 'biasa') {
+        await addResult(currentName, '-', '-', totalSeconds, totalSeconds, 'Selesai');
+        statusText.textContent = `Timer "${currentName}" selesai!`;
+        resetTampilan();
+        return;
+    }
+
+    const phaseLabel = currentPhase === 'fokus' ? 'Pomodoro' : 'Istirahat';
+    await addResult(currentName, 'pomodoro', phaseLabel, totalSeconds, totalSeconds, 'Selesai');
+
+    if (currentPhase === 'fokus') {
+        // baru selesai fokus -> lanjut ke istirahat
+        currentPhase = 'break';
+        totalSeconds = breakDuration;
+        reminingSeconds = breakDuration;
+        statusText.textContent = `Waktunya istirahat, (Siklus ${currentRepeat}/${formatRepeat(totalRepeat)})`;
+        startTimerInterval();
+    } else {
+        // baru selesai istirahat -> cek apakah masih ada siklus berikutnya
+        if (currentRepeat < totalRepeat) {
+            currentRepeat++;
+            currentPhase = 'fokus';
+            totalSeconds = focusDuration;
+            reminingSeconds = focusDuration;
+            statusText.textContent = `Waktunya belajar, (Siklus ${currentRepeat}/${formatRepeat(totalRepeat)})`;
+            startTimerInterval();
+        } else {
+            statusText.textContent = `Semua ${formatRepeat(totalRepeat)} siklus belajar selesai! >.<`;
+            resetTampilan();
+        }
+    }
+}
+
+startTimerBtn.addEventListener('click', async () => {
+    const name = namaTimer.value;
+    if (!name) {
+        showTriggerModal('Isi nama / sesi terlebih dahulu ya!');
+        namaTimer.focus();
+        return;
+    }
+
+    if (currentDayKey !== todayKey()) {
+        await loadResultsForToday();
+    }
+
+    currentName = name;
+
+    if (mode==='biasa') {
+        const h = parseInt(durasiJamTimer.value, 10) || 0,
+              m = parseInt(durasiMenitTimer.value, 10) || 0,
+              s = parseInt(durasiDetikTimer.value, 10) || 0,
+              dur = (h*3600) + (m*60) + s;
+
+        if (!dur || dur <= 0) {
+            showTriggerModal('Isi durasi sesi terlebih dahulu ya!');
+            return;
+        }
+
+        totalSeconds = dur;
+        reminingSeconds = dur;
+        currentPhase = null;
+    } else {
+        const fh = parseInt(jamPomodoro.value, 10) || 0,
+              fm = parseInt(menitPomodoro.value, 10) || 0,
+              fs = parseInt(detikPomodoro.value, 10) || 0,
+              bh = parseInt(jamIstirahat.value, 10) || 0,
+              bm = parseInt(menitIstirahat.value, 10) || 0,
+              bd = parseInt(detikIstirahat.value, 10) || 0;
+        
+        focusDuration = (fh*3600) + (fm*60) + fs;
+        breakDuration = (bh*3600) + (bm*60) + bd;
+        totalRepeat = unlimitedPengulangan.checked ? Infinity : parseInt(jumlahPengulangan.value, 10);
+
+        if (!focusDuration || focusDuration <= 0) {
+            showTriggerModal('Durasi fokus harus lebih dari 0 (isi jam/menit/detik) ya!');
+            return;
+        }
+
+        if (!breakDuration || breakDuration <= 0) {
+            showTriggerModal('Durasi istirahat harus lebih dari 0 (isi jam/menit/detik) ya!');
+            return;
+        }
+
+        if (!unlimitedPengulangan.checked && (!totalRepeat || totalRepeat <= 0)) {
+            showTriggerModal('Jumlah pengulangan harus lebih dari 0, atau centang Pengulangan Tanpa Batas');
+            return;
+        }
+
+        currentRepeat = 1;
+        currentPhase = 'fokus';
+        totalSeconds = focusDuration;
+        reminingSeconds = focusDuration;
+    }
+
+    namaTimer.disabled = true;
+    durasiJamTimer.disabled = true;
+    durasiMenitTimer.disabled = true;
+    durasiDetikTimer.disabled = true;
+
+    jamPomodoro.disabled = true;
+    menitPomodoro.disabled = true;
+    detikPomodoro.disabled = true;
+    jamIstirahat.disabled = true;
+    menitIstirahat.disabled = true;
+    detikIstirahat.disabled = true;
+
+    jumlahPengulangan.disabled = true;
+    unlimitedPengulangan.disabled = true;
+
+    modeBiasaRadio.disabled = true;
+    modePomodoroRadio.disabled = true;
+
+    startTimerBtn.classList.add('d-none');
+    pauseTimerBtn.classList.remove('d-none');
+    resetTimerBtn.classList.remove('d-none');
+
+    runningTimer.classList.remove('d-none');
+    runningTimerName.classList.remove('d-none');
+
+    if(mode === 'pomodoro') {
+        pomodoroSettings.classList.add('d-none');
+        toggleSettingPomodoroIcon.textContent = 'v';
+    }
+
+    statusText.textContent = mode === 'pomodoro'
+        ? `Waktunya belajar, (Siklus ${currentRepeat}/${formatRepeat(totalRepeat)})`
+        : `Timer "${currentName}" dimulai!`;
+    startTimerInterval();
+})
+
+resetTimerBtn.addEventListener('click', () => {
+    resetTampilan();
+    statusText.textContent = '';
+    displayTimer.textContent = '00:00';
+    progressBar.style.width = '0%';
+});
+
+pauseTimerBtn.addEventListener('click', () => {
+    if (intervalTimer) {
+        clearInterval(intervalTimer);
+        intervalTimer = null;
+        pauseTimerBtn.textContent = 'Lanjut';
+    } else {
+        intervalTimer = setInterval(tick, 1000);
+        pauseTimerBtn.textContent = 'Jeda';
+    }
+});
 
 loadResultsForToday();

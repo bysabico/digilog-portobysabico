@@ -155,6 +155,52 @@ let mode = 'biasa',
     results = []
 ;
 
+// STATE FOR AUDIO
+let audioCtx = null;
+function getAudioCtx() {
+    if(!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    }
+    if(audioCtx.state === 'suspended') {
+        audioCtx.resume();
+    }
+    return audioCtx;
+}
+
+function playBeep(frequency, duration, volume =0.15, type ='sine') {
+    try {
+        const ctx = getAudioCtx(),
+              oscillator = ctx.createOscillator(),
+              gainNode = ctx.createGain();
+
+        oscillator.type = type;
+        oscillator.frequency.value = frequency;
+        gainNode.gain.value = volume;
+        oscillator.connect(gainNode);
+        gainNode.connect(ctx.destination);
+        oscillator.start();
+        
+        gainNode.gain.exponentialRampToValueAtTime(0.00001, ctx.currentTime + duration);
+        oscillator.stop(ctx.currentTime + duration);
+    } catch (error) {
+        // kalau error = diem aje
+    }
+}
+
+function playTickSound() {
+    playBeep(1000, 0.1, 0.1, 'square');
+}
+
+function playAlarmSound() {
+    const ctx = getAudioCtx();
+
+    [0, 0.3, 0.6, 0.9].forEach((delay, i) => {
+        setTimeout(() => {
+            playBeep(i % 2 === 0 ? 1046 : 784, 0.25, 0.18, 'triangle'), delay * 1000;
+        })
+    })
+}
+
 // BTN
 modeBiasaRadio.addEventListener('change', () => {
     mode = 'biasa';
@@ -329,6 +375,7 @@ function resetTampilan() {
 }
 
 function startTimerInterval() {
+    getAudioCtx();
     updateDisplayTimer();
     updateRunningLabel();
     intervalTimer = setInterval (tick, 1000);
@@ -338,10 +385,14 @@ async function tick() {
     if(reminingSeconds > 0) {
         reminingSeconds--;
         updateDisplayTimer();
+        if(reminingSeconds > 0 && reminingSeconds <= 10) {
+            playTickSound();
+        }
         return
     }
 
     clearInterval(intervalTimer);
+    playAlarmSound();
 
     if (mode === 'biasa') {
         await addResult(currentName, '-', '-', totalSeconds, totalSeconds, 'Selesai');

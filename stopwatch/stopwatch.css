@@ -85,8 +85,10 @@ body {
 }
 
 #stopwatchTitle {
-    font-family: 'Josefin Sans', sans-serif !important;
-    letter-spacing: 4px;
+    font-family: 'Oxanium', monospace;
+    /* letter-spacing: 4px; */
+    cursor: pointer;
+    /* font-weight: bold; */
 }
 
 /* CUSTOME BTN STOPWATCH */
@@ -152,7 +154,7 @@ body {
 }
 
 #display-stopwatch.running {
-    font-family: 'oxanium', cursive !important;
+    font-family: 'oxanium', monospace !important;
     font-weight: 900;
     transform: scale(1.2);
     letter-spacing: 10px !important;

@@ -863,21 +863,32 @@ lapBtn.addEventListener('click', lap);
 closeModalResult.addEventListener('click', closeLapModal);
 
 // event listener device
-let backspaceCount = 0;
+// let backspaceCount = 0;
+
+let resultSessionOpen = false;
+
+document.getElementById('lapModal').addEventListener('shown.bs.modal', () => {
+    resultSessionOpen = true;
+});
+document.getElementById('lapModal').addEventListener('hidden.bs.modal', () => {
+    resultSessionOpen = false;
+});
 
 document.addEventListener('keydown', (e) => {
+
+    if (resultSessionOpen) {
+        e.preventDefault();
+        e.stopImmediatePropagation();
+        closeLapModal();
+        return;
+    }
 
     // space = start & pause
     if (e.code === 'Space') {
         e.preventDefault();
-
-        // kalau lagi jalan = pause
         if (stopwatchInterval) {
             pauseBtn.click();
-        } 
-        
-        // kalau pause = start
-            else {
+        } else {
             startBtn.click();
         }
     } 
@@ -888,22 +899,12 @@ document.addEventListener('keydown', (e) => {
         lapBtn.click();
     }
 
-    // backspace = reset
+    // backspace = reset, modal otomatis show lewat showResult() -> modal.show()
     if (e.code === 'Backspace') {
         e.preventDefault();
-        backspaceCount++;
-        if(backspaceCount === 1) {
-
-            resetBtn.click();
-        } else if (backspaceCount >= 2) {
-            clearSession();
-            closeModalResult.click();
-
-            // harus dipanggil lagi, kalau engga, kliknya bakal terus dihitung.
-            backspaceCount = 0;
-        }
-    } 
-});  
+        resetBtn.click();
+    }  
+});
 
 
 // = INIT =

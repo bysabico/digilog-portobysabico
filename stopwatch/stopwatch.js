@@ -43,7 +43,8 @@ const displayStopwatch = document.getElementById('display-stopwatch'),
       closeModalResult = document.getElementById('closeModalResult'),
       resultsSession   = document.getElementById('lapResults'),
       customStopwatch  = document.getElementsByClassName('custom-stopwatch'),
-      notifStopwatch   = document.getElementById('notif-container')
+      notifStopwatch   = document.getElementById('notif-container'),
+      lapTableHeader   = document.getElementById('lap-table-header')
 ;
 
 // ELEMENT MODAL HUB KE BOOTSTRAP
@@ -556,6 +557,7 @@ function clearSession() {
 
     // list si laps juga kita kosongkan biar ga ovt (numpuk)
     lapsList.innerHTML = '';
+    lapTableHeader.classList.add('d-none');
 
     // tombol start muncul
     startBtn.classList.remove('d-none');
@@ -647,7 +649,12 @@ function lap() {
 function renderLaps() {
     lapsList.innerHTML = '';
 
-    if (laps.length === 0) return; 
+    if (laps.length === 0) {
+        lapTableHeader.classList.add('d-none');
+        return;
+    }; 
+
+    lapTableHeader.classList.remove('d-none');
 
     // ada di bagian showResult() baca aja
     const fastest = laps.reduce((prev, curr) => curr.lapTime < prev.lapTime ? curr : prev);
@@ -811,7 +818,10 @@ function loadState() {
     // ! macam guru piket gerbang sekolah
     // kalau ga pakai dasi atau melanggar peraturan sekolah (null/0 = gaada nilai). Bakal di stop ga boleh masuk ke sekolah.
     // tapi kalau pakai dasi (ada nilai) maka boleh masuk sekolah~
-    if (!load) return;
+    if (!load) {
+        renderLaps();
+        return;
+    };
 
     // pengaturan data tersimpan dan tetap muncul di layar dan bisa dilanjutkan
     elapsedTime = load.elapsedTime;

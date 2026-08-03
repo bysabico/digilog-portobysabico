@@ -175,54 +175,69 @@
                 <div class="modal-body p-3 m-auto">
 
                     <!-- deskripsi digi stopwatch -->
-                    <p class="deskripsi-digi-stopwatch">Bagian dari project Digilog. 
-                        Stopwatch digital untuk membantu 
-                        memahami durasi dan progres waktu dari setiap sesi.
-                        Apabila ter-refresh maka stopwatch tetap melanjutkan perhitungan. 
-                        😉 <br>
+                    <p class="deskripsi-digi-stopwatch">Bagian dari project Digilog bysabico. 
+                        <br>
+
+                        <h4>Fitur utama</h4>
+                        <ul>
+                            <li>Refresh tidak akan ter-reset.</li>
+                            <li>Auto deteksi fastest dan slowest.</li>
+                            <li>Saat sesi berjalan, terdapat audio untuk menginformasikan telah melewati fastest dan slowest.</li>
+                            <li>Data hasil sesi; fastest, slowest, total lap, total waktu, durasi jam mulai sampai akhir</li>
+                        </ul>
 
                         <!-- deskripsi tombol kontrol Stopwatch -->
                         <br>
-                        <h5>Tombol Stopwatch</h5>
+                        <h4>Tombol Stopwatch</h4>
 
                         <!-- Tombol Start -->
                         ▶ <b>Start</b>
-                        <br> Mulai menghitung waktu.
+                        : Mulai menghitung waktu.
                         
+                        <!-- Tombol Pause -->
                         <br>
                         ⏸ <b>Pause</b>
-                        <br> Jeda perhitungan waktu.
+                        : Jeda perhitungan waktu.
+
+                        <!-- Tombol Reset -->
+                        <br>
+                        ↺  <b>Reset</b>
+                        : Hentikan sesi & tampilkan hasil sesi.
+
+                        <!-- Tombol Lap -->
+                        <br>
+                        🏁 <b>Lap</b>
+                        : Simpan checkpoint dari sesi untuk melihat progress waktu.
+                        <br>
 
                         <br>
-                        ↺ <b>Reset</b>
-                        <br> Hapus sesi pertama, tayangan hasil sesi, dan kembali ke tampilan awal.
+
+                        <!-- keyboard -->
+                        <h5>#Desktop</h5>
+                        Jika memakai laptop atau komputer, dapat menggunakan keyboard untuk menggunakan tombol-tombol di stopwatch. Berikut tombolnya;
+                        <ul>
+                            <li> <b>Spasi</b> = start dan pause</li>
+                            <li> <b>Enter</b> = lap</li>
+                            <li> <b>Backspace</b> = reset</li>
+                            <li> <b>Keyboard mana pun</b> = close hasil sesi.</li>
+                        </ul>
 
                         <br>
-                        <b>🏁 Lap</b>
-                        <br> 
-                        Simpan checkpoint dari sesi untuk melihat progress waktu.
-                        <br>
-
-                        <br>
-                        <h5>Kategori Lap</h5>
+                        <h4>Kategori Lap</h4>
                         <span class="cust-kategori-lap">Untuk mengetahui progress secara keseluruhan <span class="highlight-digi-stopwatch">saat klik tombol 'lap'.</span>  
                         Berikut kategorinya;</span>
                         <br>
 
-                        <b id="fastest-modal">🟢 Fastest</b>
+                        <b id="fastest-modal" class="text-success">🟢 Fastest</b>
                         <br> Durasi tercepat.
                         
                         <br>
-                        <b id="slowest-modal">🔴 Slowest</b>
+                        <b id="slowest-modal" class="text-danger">🔴 Slowest</b>
                         <br> Durasi terlambat.
 
                         <br>
                         <br>
-                        <h5>Format Waktu Stopwatch</h5>
-                        
-                        <h6> <b> ⏱️ Apabila ≤ 1 jam</b> </h6>
-                        Menit : Detik . milidetik
-                        <br>
+                        <h4>Format Waktu Stopwatch</h4>
                         
                         <br>
                         <h6><b> ⏱️ Apabila ≥ 1 jam</b></h6>

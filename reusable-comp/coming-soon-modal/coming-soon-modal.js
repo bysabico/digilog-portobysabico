@@ -13,6 +13,15 @@ function loadComingSoonModal(namaFitur) {
 
         namaFiturEl.textContent = namaFitur;
 
+        // cari & tutup offcanvas kalau ada yang lagi kebuka
+        const offcanvasEl = document.getElementById('offcanvasNavbar');
+        if (offcanvasEl) {
+            const offcanvasInstance = bootstrap.Offcanvas.getInstance(offcanvasEl);
+            if (offcanvasInstance) {
+                offcanvasInstance.hide();
+            }
+        }
+
         const comingSoonModal = new bootstrap.Modal(document.getElementById('coming-soon-modal'));
         comingSoonModal.show();
 
@@ -34,16 +43,16 @@ function loadComingSoonModal(namaFitur) {
                 comingSoonModal.hide();
 
                 window.location.href = '../main/main-digilog.html';
-            }
+            } 
         }, 1000);
     })
 }
 
-document.querySelectorAll('.coming-soon-btn').forEach((a) => {
-    a.addEventListener('click', (e) => {
-        e.preventDefault();
-    
-        const namaFitur = a.dataset.feature;
-        loadComingSoonModal(namaFitur);
-    })
-})
+document.addEventListener('click', (e) => {
+    const btn = e.target.closest('.coming-soon-btn');
+    if (!btn) return;
+
+    e.preventDefault();
+    const namaFitur = btn.dataset.feature;
+    loadComingSoonModal(namaFitur);
+});

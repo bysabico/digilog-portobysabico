@@ -116,7 +116,7 @@
 }
 
 /* light-dark mode costum */
-[data-bs-theme='light'] .navbar-fitur-kostum {
+[data-bs-theme='light'] .navbar-fitur-kostum, #digilog-brand {
     color: #0e185f !important; 
 }
 

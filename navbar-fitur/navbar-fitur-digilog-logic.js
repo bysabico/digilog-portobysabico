@@ -46,22 +46,29 @@ function displayDigitalMode() {
 function autoActiveNavbar() {
   const navLinks = document.querySelectorAll('#navbar-fitur-btn .navbar-fitur-kostum');
   
-  if (!navLinks.length) return; 
-  // Jaga-jaga kalau elemen navbar belum dimuat
+  if (!navLinks.length) return;
 
   navLinks.forEach(link => {
+    const rawHref = link.getAttribute('href');
+
+    // skip link yang emang belum punya tujuan real (coming-soon, dsb)
+    if (!rawHref || rawHref === '#') {
+      link.classList.remove('active');
+      link.classList.remove('disable-nav');
+      link.removeEventListener('click', preventNavClick);
+      return;
+    }
+
     const targetUrl = new URL(link.href, window.location.origin);
     
     if (window.location.pathname.endsWith(targetUrl.pathname)) {
       link.classList.add('active');
       link.classList.add('disable-nav');
-
       link.addEventListener('click', preventNavClick);
     } else {
       link.classList.remove('active');
       link.classList.remove('disable-nav');
-
-      link.removeEventListener('click', preventNavClick)
+      link.removeEventListener('click', preventNavClick);
     }
   });
 }

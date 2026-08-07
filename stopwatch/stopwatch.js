@@ -60,140 +60,89 @@ const notifSound = new Audio (
     "https://actions.google.com/sounds/v1/cartoon/clang_and_wobble.ogg"
 )
 
-// = ELEMEN STATE =
-// (data yang dibutuhin buat jalanin stopwatch, disimpen di sini)
+// ELEMEN STATE
 
+// data awal stopwatch sebelum tombol start di klik
 let startTime = 0;
-// karena settingan awal dari 0
 
+// total waktu pemakaian stopwatch
 let elapsedTime = 0;
-// untuk penghitung waktu dan 0 = belum mulai
 
+// tampilan stopwatch saat tombol start & reset belum di klik
+// null = belum pernah di klik
 let startClockTime = null,
     endClockTime = null
-// untuk mencantumkan jam saat klik start dan reset, tapi awalnya null karena belum ada klik start dan reset
+;
 
-let stopwatchInterval = null;
-// 'motivasi si stopwatch' atau biar stopwatchnya jalan.
-// null = kosong [gaada motivasi atau arah sama sekali. makanya dibuat null, bukan 0]
-// kek sp yh 🫵🏻
+// ID dari setInterval() untuk menggerakkan stopwatch
+// null = belum ada interval aktif
+let stopwatchInterval = null,
+    autoSaveStopwatch = null
+;
 
+// perhitungan data lap
 let lastLapTime = 0,
     lastDurationLap = 0,
     lapCount = 0
 ;
-// belum ada waktu lap terakhir, durasi terakhir lap, dan lap yang dihitung, jadi settingan awal 0
 
+// simpan seluruh data lap dalam bentuk array []
+// [] = banyak data yang tersimpan.
 let laps = [];
-// [] : array
-// dipakai ada banyak data yang perlu disimpan~
 
+// flags untuk notifikasi lap selama stopwatch masih berjalan
 let notifFlags = {
     passedLastLap: false,
     passedFastestLap: false,
     passedSlowestLap: false
 };
 
-// = START =
-// fungsi startStopwatch dibuat dulu karena 'gerbang' dari jalannya stopwatch
+// === startStopwatch() = gerbang awal seluruh proses jalannya stopwatch ===
 function startStopwatch() {
 
     if (stopwatchInterval) return;
-    // fungsi yang memberikan stopwatchInterval untuk jalan 🔥
 
+    // untuk kebutuhan resultsSession() biar bisa tau jam berapa user klik start stopwatch
     if (elapsedTime === 0) {
         startClockTime = new Date();
     }
     
+    // startTime hitungan mundur dari waktu real dengan elapsedTime (waktu yang sudah berjalan), agar saat pause dan mau resume perhitungan tidak mulai dari 0 lagi.
     startTime = Date.now() - elapsedTime;
-    // aturan startTime di 'elemen state' buat gerak maju (gerbang agar stopwatch jalan)
-    // KNPH DIKURANGI (-) elapsedTime??
-    // karena kalau ga, bakal ngitung ulang dari 0 lagi setelah pause dan refresh.
-    // ibaratnya, abis perjalanan panjang tapi karena ga kuat dan pengen istirahat trs lanjut lg eh malah balik ke awal.. perjalananmu jadi sia-sia 💔 
-    // makanya, fungsi elapsed time ini juga sangat teramat penting 😼👌
-    // tapi elapsedTime disini belum diatur.
-
-    // = Date.now() =
-    // Date.now() harus disertakan sebagai variable awal aturan / rumus startTime dan elapsedTime agar stopwatch bisa jalan sesuai dengan fungsinya.
-    // jika tidak, maka js akan mengikutsertakan waktu 1970 (unix epoch : titik waktu komputer) dalam tampilannya.
     
     stopwatchInterval = setInterval(() => {
-    // arah atau aturan si stopwatchInterval di 'element state' yang nilainya null berubah jadi 'progress' (atur stopwatch jalan atau mulai).
-    // Caranya?
-    // waktu dihitung setelah user masuk gerbang (klik tombol start). Lalu, stopwatch akan mulai dan menghitung waktu.
-    // Perhitungan waktunya pakai fungsi bawaan js, yakni setInterval, tugasnya emang untuk mengulang suatu perintah tanpa jeda (makanya di fungsi digitalClock() dan displayDate() pakai setInterval juga) 
-    // Pada stopwatch ini, saat klik tombol start, maka stopwatch bisa jalan terus tiap beberapa milisekon tanpa jeda.
-    // isi aturan stopwatchInterval:
 
         elapsedTime = Date.now() - startTime;
-        // elapsedTime baru diatur di dalam stopwatchInterval
-        // Kenapa?
-        // karena berhubungan sama progress waktu yang harus ditampilkan di layar dan harus dibantu setInterval biar mau gerak. 
-        // dikurangi startTime biar kalau user klik start, maka stopwatch mulai jalan.
         
         displayTimeStopwatch(elapsedTime);
-        // perhitungan / progress stopwatch muncul di layar, makanya parameternya elapsedTime
-        // tapi disini belum berfungsi yep, baru dibuat nama fungsinya.
-
-        // saveState();
-        // biar gak ilang pas di refresh
-
         checkLapNotif();
         updateLiveLapDiffDisplay();
 
     }, 50);
-    // 50 = setiap 50ms, stopwatch update. 
-    // KENAPA 50ms? 
-    // Karena kalau terlalu cepat (misal 10ms), 
-    // bisa bikin performa turun, terutama di browser yang lebih tua. 
-    // Selain itu, 50ms masih cukup halus untuk tampilan stopwatch, jadi tidak akan terlihat patah-patah.
 
-    setInterval(() => {
+    // agar data stopwatch tersimpan di localStorage setiap 1 detik, biar kalau ke refresh ga hilang datanya
+    autoSaveStopwatch = setInterval(() => {
         if(stopwatchInterval) saveState();
     },1000)
 
-    // style stopwatch kalau lg jalan 
-    // css .running teraplikasi
     displayStopwatch.classList.add('running');
-
-    // css .fokus terhapus
     displayStopwatch.classList.remove('fokus');
 
-    // efek css .tampilanSamarStopwatch ditambahin ke customStopwatch 
-    // pakai for of karena customStopwatch bentuknya class di html
-    // bukan ID kalau id bisa lgsg akses kayak displayStopwatch, 
-    // tapi karena ini class dan ada di beberapa code di html (banyak)
-    // jadi harus di loop satu-satu
     for (let item of customStopwatch) {
-
-        // item sesuai dengan parameter setelah 'let ... of nama class'
         item.classList.add('tampilanSamarStopwatch'); 
-
     }
 
-    // style tombol start sembunyi (add = tambah)
     startBtn.classList.add('d-none');
-
-    // style tombol pause muncul (remove = hapus)
     pauseBtn.classList.remove('d-none');
-
-    // style tombol lap aktif atau bisa dipencet
     lapBtn.disabled = false;
 
-    // simpan state di localStorage, 
-    // biar kalau refresh ga hilang datanya
+    // simpan state di localStorage, agar saat ter refresh ga hilang datanya
     saveState();
 }
 
-// = PERINTAH EKSEKUSI TAMPILAN =
+// displayTimeStopwatch(elapsedTime) = komando tampilan stopwatch dilayar.
 function displayTimeStopwatch(elapsedTime) {
-// aturan untuk eksekusi displayTimeStopwatch(elapsedTime) yang ada di stopwatchInterval
-// isinya;
-
     displayStopwatch.innerHTML = formatTime(elapsedTime);
-    // komando agar stopwatch jalan dan bisa dilihat di layar
-    // tapi baru komando (belum jalan dan bisa dilihat).
-    // komandonya berupa fungsi formatTime(elapsedTime).
 }
 
 // ===== FORMAT & DISPLAY =====
@@ -248,7 +197,7 @@ function formatTime(elapsedTime) {
     // ===== PENJELASAN FORMAT: =====
 
     // let formatStopwatch = `${String(minStopwatch % 60).padStart(2, '0')}:${String(secStopwatch % 60).padStart(2, '0')}.${String(msStopwatch).padStart(2, '0')}`;
-    let formatStopwatch = `${String(minStopwatch % 60).padStart(2, '0')}:${String(secStopwatch % 60).padStart(2, '0')}`
+    let formatStopwatch = `${String(hourStopwatch % 24).padStart(2, '0')}:${String(minStopwatch % 60).padStart(2, '0')}:${String(secStopwatch % 60).padStart(2, '0')}`
     // variabel ini merupakan mandor atau arahan utama dari stopwatch agar tampilannya ga ngaco
     // format dasar (menit) mm:ss.ms (%60 = sisa bagi dengan variable di depannya (minStopwatch atau secStopwatch), biar pas udh 60 menit pas ganti balik 00)
     // tapi reset (00:00) dan menambah format jam (tp format jam belum dibuat dan kalau ga dibuat bakal balik ke menit 00)

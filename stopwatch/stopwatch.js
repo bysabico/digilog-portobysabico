@@ -281,14 +281,11 @@ function resetStopwatch() {
 // = SHOW RESULT =
 function showResult() {
     pauseStopwatch();
-    // panggil fungsi pauseStopwatch() agar saat reset trs hasil sesi keluar, akurat dan tidak ada penambahan waktu lagi (tepat saat klik reset)
 
     endClockTime = new Date();
 
     if (laps.length === 0) {
-    // klo gxx ada lap (lap.length === 0) ini yep hasilnya;
-        
-    // isi body modal nampilin total waktu dan ket 'belum ada lap'
+
         resultsSession.innerHTML = ` 
             <div class="text-center">
                 <div class="mb-3 text-muted">Belum ada lap ⏱️</div>
@@ -300,44 +297,33 @@ function showResult() {
         `;
         
         modal.show();
-        // muncul modal
 
         return; 
-        // return biar STOP (kode dibawah ini tidak tereksekusi).
     }
 
-    // kalau lap ada~
-    // fungsi untuk membandingkan lap secara keseluruhan (berdasarkan data yang sudah ada)
     const fastest = laps.reduce((prev, curr) =>
-    // paling cepat dari data keseluruhan.
-    // .reduce() = method js cari satu yang TERCEPAT
 
         curr.lapTime < prev.lapTime ? curr : prev
-        // lap terbaru < lap sebelumnya, bandingin.
+
     );
 
     const slowest = laps.reduce((prev, curr) =>
-    // paling cepat dari data keseluruhan.
-    // .reduce() = method js cari satu yang TERLAMBAT
 
         curr.lapTime > prev.lapTime ? curr : prev
     );
 
-    // delegasi html (getElementById) 
-    // minta untuk masukin data html lewat js pakai perwakilan js (method js = .innerHTML)
-    // makanya pakai backticks dan isinya elemen html 😎👍 
     resultsSession.innerHTML = `
         <div class="text-center">
             <div class="mb-3 text-success fs-5">
                 <span class="fw-bold"> 🟢 Fastest Lap <br> </span>
-                #${fastest.id} — ${formatTime(fastest.lapTime).replace(/<br><span[^>]*>|<\/span>/g, '.')}
+                #${fastest.id} — ${formatTime(fastest.lapTime)}
             </div>
             
             <br>
             
             <div class="mb-3 text-danger">
                 <span class="fw-bold"> 🔴 Slowest Lap <br> </span>
-                #${slowest.id} — ${formatTime(slowest.lapTime).replace(/<br><span[^>]*>|<\/span>/g, '.')}
+                #${slowest.id} — ${formatTime(slowest.lapTime)}
             </div> 
             
             <br>
@@ -347,7 +333,7 @@ function showResult() {
             </div>
 
             <div class="mb-2 text-secondary">
-                Total Time: ${formatTime(elapsedTime).replace(/<br><span[^>]*>|<\/span>/g, '.')}
+                Total Time: ${formatTime(elapsedTime)}
             </div>
 
             <div class="text-secondary"> 
@@ -356,19 +342,13 @@ function showResult() {
         </div>
     `;
 
-    // modal~ its show time~ 🕺
     modal.show();
 }
 
 // = CLOSE MODAL =
 function closeLapModal() {
-
     modal.hide();
-    // modal balik ga keliatan (ansos)
-
     clearSession();
-    // kalau klik close di modal = apuss 
-    // alias mulai dari 0 lagi ya, kak
 }
 
 // = CLEAR SESSION =
@@ -479,7 +459,9 @@ function lap() {
     if (lapCount > 1 && lapTime < fastestAllLap) {
         beep.play();
         displayStopwatch.classList.add('glow');
-        setTimeout(() => displayStopwatch.classList.remove('glow'), 500);
+        setTimeout(() => 
+            displayStopwatch.classList.remove('glow'), 500
+        );
     }
 
     if (lapCount > 1 && lapTime > slowestAllLap) {

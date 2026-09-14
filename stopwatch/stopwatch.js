@@ -355,11 +355,7 @@ function closeLapModal() {
 function clearSession() {
 
     clearInterval(stopwatchInterval);
-    // ini fungsi biar stopwatch yang sedang jalan terhapus saat klik reset
-    // kayak tahun baru, kalau close = mulai ulang dari awal~
-    // makanya pergerakkan stopwatchInterval (waktu stopwatchnya) dihapus
-
-    // element state di setting kayak awal lagii karena saat clear session harus balik seperti awal
+    
     startTime = 0;
     elapsedTime = 0;
     stopwatchInterval = null;
@@ -378,83 +374,50 @@ function clearSession() {
         passedSlowestLap: false
     }
 
-    // kalau udh close, seluruh data di sesi itu = hilang permanen 🥷
     localStorage.removeItem('data-stopwatch');
 
-    // tampilan awal balik yep, makanya ni fungsi dipanggil lagi
     displayTimeStopwatch(0);
 
     liveLapDiff.textContent = '';
 
-    // bahkan css semua hapus untuk memulai lembaran baruu
     displayStopwatch.classList.remove('running', 'fokus');
     for (let item of customStopwatch) { 
         item.classList.remove('tampilanSamarStopwatch'); 
     }
 
-    // list si laps juga kita kosongkan biar ga ovt (numpuk)
     lapsList.innerHTML = '';
     lapTableHeader.classList.add('d-none');
 
-    // tombol start muncul
     startBtn.classList.remove('d-none');
-
-    // tombol pause sembunyi
     pauseBtn.classList.add('d-none');
-
-    // lap tombol nonaktif atau gak bisa dipencet
     lapBtn.disabled = true;
 }
 
 // = LAP =
 function lap() {
-// fungsi lap biar kalau klik lap, muncul datanya!
 
     if (!stopwatchInterval) return;
-    // kalau stopwatchInterval diklik, maka nilainya jadi true (ada)
-    // awalnya null = false, setelah di klik jadi true atau waktu stopwatch berjalan~
 
     const currentTime = elapsedTime,
-    // elapsedTime di mirror dengan nilainya konstan agar selisih lap akurat.
-    // kenapa ga lgsg elapsedTime aja? karena awalnya pakai let dan nilai let fleksibel (bikin hasil nilai lap ada selisih 0,001)
 
-          lapTime = elapsedTime - lastLapTime
         //   ini variabel menghitung nilai lap.
+          lapTime = elapsedTime - lastLapTime
     ;
 
     lastLapTime = currentTime;
-    // waktu akhir lap = waktu elapsedTime (yg nilainya ga berubah, const)
 
-    // lapDiff = selisih antara lapTime sekarang dengan lapTime sebelumnya
-    // buat tau apakah lapTime sekarang lebih cepat atau lebih lambat dibanding lapTime sebelumnya
-    // const lapDiff = lapTime - lastDurationLap;
-    // lastDurationLap = lapTime;
-
-    // variabel untuk mengetahui lap tercepat dari nilai keseluruhan data lap.
-    const fastestAllLap = laps.length > 0 ? Math.min(...laps.map(l => l.lapTime)) : Infinity;
-    const slowestAllLap = laps.length > 0 ? Math.max(...laps.map(l => l.lapTime)) : -Infinity;
+    const fastestAllLap = Math.min(...laps.map(l => l.lapTime));
+    const slowestAllLap = Math.max(...laps.map(l => l.lapTime));
 
     lapCount++;
 
-    // .unshift = nambahin data baru paling atas di list
     laps.unshift({ 
-
-        // tampilan pas klik lap, panggil aje variabel
         id: lapCount, 
         lapTime, 
         totalTime: currentTime 
-
     });
 
     renderLaps();
-
-    // kalau nilai lapTime terbaru lebih kecil dari lapTime sebelumnya (lapDiff < 0), 
-    // berarti lapTime sekarang lebih cepat, jadi dikasih efek glow dan suara beep~ untuk ngasih tau user~
-    // if (lapCount > 1 && lapDiff < 0) {
-    //     beep.play();
-    //     displayStopwatch.classList.add('glow');
-    //     setTimeout(() => displayStopwatch.classList.remove('glow'), 500);
-    // }
 
     if (lapCount > 1 && lapTime < fastestAllLap) {
         beep.play();
@@ -544,13 +507,13 @@ function renderLaps() {
 
             <td class="text-center">    
                 <small>
-                    ${formatTime(categoryLap.lapTime).replace(/<br><span[^>]*>|<\/span>/g, '.')}
+                    ${formatTime(categoryLap.lapTime)}
                 </small>
             </td>
 
             <td class="text-center">
                 <small>
-                    ${formatTime(categoryLap.totalTime).replace(/<br><span[^>]*>|<\/span>/g, '.')}
+                    ${formatTime(categoryLap.totalTime)}
                 </small>
             </td>
         `
@@ -586,8 +549,10 @@ function renderLaps() {
     //     let lapPackage = '';
 
     //     // buat tampilin kata 'fastest' & 'slowest' di layar
-    //     if (lap.lapTime === fastest) lapPackage = '<span class="badge bg-success">FASTEST</span>';
-    //     else if (lap.lapTime === slowest) lapPackage = '<span class="badge bg-danger">SLOWEST</span>';
+    //     if (lap.lapTime === fastest) 
+        // lapPackage = '<span class="badge bg-success">FASTEST</span>';
+    //     else if (lap.lapTime === slowest) 
+    // lapPackage = '<span class="badge bg-danger">SLOWEST</span>';
 
     //     // bikin div untuk list lap nya
     //     const div = document.createElement('div');

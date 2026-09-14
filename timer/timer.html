@@ -40,27 +40,27 @@
         <!-- TIMER -->
         <div class="flex-column justify-content-center align-items-center mx-3 mt-md-5">
 
-            <!-- TITLE STOPWATCH -->
-            <h1 class="text-center fs-2 mt-1 custom-timer" id="timer-title" data-bs-toggle="modal" data-bs-target="#deskripsiModalDigiStopwatch">TIMER</h1>
-
             <div id="inputs-section">
                 <!-- INPUT MODE TIMER -->
-                <div class="btn-group w-100 mt-4 mb-3 mode-toggle" role="group">
+                <div class="btn-group w-100 mt-2 mb-3 mode-toggle" role="group">
                     <input type="radio" id="mode-timer-biasa" class="btn-check" name="mode-radio" checked>
-                    <label for="mode-timer-biasa" class="btn btn-outline-info"> TIMER </label>
+                    <label for="mode-timer-biasa" class="btn btn-outline-light"> TIMER </label>
                     
                     <input type="radio" id="mode-timer-pomodoro" class="btn-check" name="mode-radio">
-                    <label for="mode-timer-pomodoro" class="btn btn-outline-info"> POMODORO </label>
+                    <label for="mode-timer-pomodoro" class="btn btn-outline-light"> POMODORO </label>
                 </div>
 
+                <!-- TITLE STOPWATCH -->
+                <h1 class="text-center fs-2 mt-4 mb-3 custom-timer" id="timer-title" data-bs-toggle="modal" data-bs-target="#deskripsiModalDigiStopwatch" id='timerTitle'>TIMER</h1>
+
                 <!-- INPUT NAMA TIMER -->
-                <div class="nama-timer mb-3">
-                    <label class="form-label costume-style-timer" for="input-nama-timer">Nama Timer</label>
+                <div class="nama-timer mb-5">
+                    <label class="form-label costume-style-timer" for="input-nama-timer" id="input-nama-sesi">NAMA TIMER</label>
                     <input type="text" id="input-nama-timer" class="form-control" placeholder="Meeting, Belajar, dan lainnya...">
                 </div>
 
                 <!-- INPUT DURASI MODE BIASA -->
-                <div class="mode-panel mb-3" id="section-mode-biasa">
+                <div class="mode-panel mb-4" id="section-mode-biasa">
                     <label class="form-label costume-style-timer" for="durasi-detik">Durasi Timer</label>
                     <div class="d-flex align-items-center gap-2">
                         <input type="number" id="durasi-jam-timer-biasa" class="form-control text-center costume-durasi" min="0" max="23" placeholder="HH">
@@ -72,10 +72,10 @@
                 </div>
 
                 <!-- INPUT DURASI MODE POMODORO -->
-                <div class="mode-panel mb-3 d-none" id="section-mode-pomodoro">
+                <div class="mode-panel mb-4 d-none" id="section-mode-pomodoro">
 
                     <!-- BUNGKUS POMODORO SETTING -->
-                    <button type="button" id="toggle-setting-pomodoro-btn" class="btn btn-outline-info btn-sm w-100 d-flex justify-content-between align-items-center mb-3">
+                    <button type="button" id="toggle-setting-pomodoro-btn" class="btn btn-outline-light btn-sm w-100 d-flex justify-content-between align-items-center mb-3">
                         <span>POMODORO SETTING</span>
                         <span>
                             <i id="toggle-setting-pomodoro-icon" class="fa-solid fa-caret-up"></i>
@@ -145,7 +145,7 @@
 
                 <!-- PROGRESS BAR -->
                 <div class="progress mb-3">
-                    <div id="progress-bar" class="progress-bar bg-info" role="progressbar">
+                    <div id="progress-bar" class="progress-bar" role="progressbar">
                         <!-- UNTUK MENAMPILKAN PROGRESS BAR TIMER -->
                     </div>
                 </div> 
@@ -177,18 +177,18 @@
             <p id="status-text" class="text-center mt-3 text-secondary small"> Isi nama & durasi terlebih dahulu ya.</p>
 
             <!-- Report timer harian -->
-            <div class="card-dark">
+            <div class="card-dark d-none" id='header-report'>
                 <div class="d-flex justify-content-between align-items-center mb-3">
                     <h5 class="mb-0">Timer Hari ini</h5>
-                    <span class="badge bg-secondary" id="today-date-badge"></span>
+                    <!-- <span class="badge bg-secondary" id="today-date-badge"></span> -->
                 </div>
             </div>
 
             <!-- loading -->
-            <div class="empty-state" id="loading-state">
+            <!-- <div class="empty-state" id="loading-state">
                 <div class="spinner-border spinner-border-sm text-info me-2" role="status"></div>
                 Memuat data. . .
-            </div>
+            </div> -->
 
             <!-- hasil timer -->
             <div class="empty-state d-none" id="results-empty">
@@ -219,7 +219,7 @@
             </div>
 
             <!-- note untuk pengguna -->
-            <p class="session-note mt-2 mb-0" id="save-note">
+            <p class="session-note mt-2 mb-0 d-none" id="save-note">
                 Data tersimpan otomatis dalam harian.
             </p>
         </div>

@@ -4,21 +4,59 @@
 
 /* tampilan timer */
 #display-timer {
-    font-size: clamp(2rem, 9vw, 7rem) !important;
+    font-size: clamp(5rem, 9vw, 10rem) !important;
     font-weight: 700 !important;
     letter-spacing: 5px;
     text-align: center;
     margin: 1rem 0;
-    color: #38bd38;
+    color: black; /* ini jadi default awal sebelum timer start */
+    transition: color 0.3s linear;
+}
+
+.progress-bar {
+    /* height: 8px; */
+    /* border-radius: 999px; */
+    background-color: #22c55e; /* hapus !important-nya */
+    transition: width 1s linear, background-color 0.3s linear;
 }
 
 /* tampilan nama timer */
 .timer-name-badge {
     font-size: clamp(1rem, 4vw, 3rem) !important;
     color: #94a3b8;
+    margin-bottom: 0.5rem;
 }
 
-.progress {
-    height: 8px;
-    border-radius: 0;
+/* input box */
+.form-control:disabled, .form-select:disabled {
+    background-color: #1e293b;
+    color: #94a3b8;
+    border-color: #334155;
+}
+
+
+/* tabel */
+table {
+    border-color: #334155 !important;
+}
+
+.table > :not(caption) > * > * {
+    padding: 0.5rem 0.75rem !important;
+    background-color: transparent;
+    color: #f1f5f9;
+    font-size: 0.85rem;
+}
+
+@media (min-width: 992px) {
+    .table > :not(caption) > * > *  {
+        font-size: 0.95rem;
+    }
+}
+
+.badge-status-selesai {
+    background-color: #16a34a;
+}
+
+.badge-status-reset {
+    background-color: #dc2626;
 }

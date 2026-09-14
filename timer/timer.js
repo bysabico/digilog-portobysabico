@@ -75,7 +75,11 @@ const inputsSection = document.getElementById('inputs-section'),
       autoCloseBar = document.getElementById('auto-close-bar'),
       countdownTriggerModal = document.getElementById('countdown-trigger-modal'),
       modalCloseBtn = document.getElementById('modal-close-btn'),
-      triggerModalCloseX = document.getElementById('trigger-modal-close-x')
+      triggerModalCloseX = document.getElementById('trigger-modal-close-x'),
+
+      headerReport = document.getElementById('header-report'),
+      timerTitle = document.getElementById('timer-title'),
+      inputNamaSesi = document.getElementById('input-nama-sesi')
 ;
 
 let autoCloseTimeout = null,
@@ -207,12 +211,20 @@ modeBiasaRadio.addEventListener('change', () => {
     mode = 'biasa';
     sectionModeBiasa.classList.remove('d-none');
     sectionModePomodoro.classList.add('d-none');
+    timerTitle.textContent = 'TIMER';
+
+    inputNamaSesi.textContent = 'NAMA TIMER';
+    namaTimer.placeholder = 'Meeting, Belajar, dan lainnya...';
 });
 
 modePomodoroRadio.addEventListener('change', () => {
     mode = 'pomodoro';
     sectionModeBiasa.classList.add('d-none');
     sectionModePomodoro.classList.remove('d-none');
+    timerTitle.textContent = 'POMODORO';
+
+    inputNamaSesi.textContent = 'NAMA TASK';
+    namaTimer.placeholder = 'Belajar, Coding, dan lainnya...';
 });
 
 unlimitedPengulangan.addEventListener('change', () => {
@@ -247,8 +259,8 @@ async function loadResultsForToday() {
     resultsTimerTable.classList.add('d-none');
 
     try {
-        const stored = await window.storage.get(storageKey(key), false);
-        results = stored && stored.value ? JSON.parse(stored.value) : [];
+        const stored = localStorage.getItem(storageKey(key));
+        results = stored ? JSON.parse(stored) : [];
     } catch (error) {
         results = [];
     }
@@ -259,9 +271,9 @@ async function loadResultsForToday() {
 
 async function saveResults() {
     try {
-        const result = await window.storage.set(storageKey(currentDayKey), JSON.stringify(results), false);
-        saveNote.classList.toggle('text-danger', !result);
-        saveNote.textContent = result ? 'Berhasil disimpan' : 'Gagal disimpan, coba lagi.';
+        localStorage.setItem(storageKey(currentDayKey), JSON.stringify(results));
+        saveNote.classList.remove('text-danger');
+        saveNote.textContent = 'Berhasil disimpan';
     } catch (error) {
         saveNote.classList.add('text-danger');
         saveNote.textContent = 'Gagal menyimpan data: ' + error.message;
@@ -278,11 +290,39 @@ function formatTime(seconds) {
     return `${min}:${sec}`;
 }
 
+// hitung warna berdasarkan sisa persentase waktu (100% = hijau, 0% = merah)
+function getTimerColor(percent) {
+    let r, g, b = 0;
+
+    if (percent > 50) {
+        // hijau (34, 197, 94) -> kuning (250, 204, 21)
+        const t = (100 - percent) / 50;
+        r = Math.round(34 + t * (250 - 34));
+        g = Math.round(197 + t * (204 - 197));
+        b = Math.round(94 + t * (21 - 94));
+    } else {
+        // kuning (250, 204, 21) -> merah (239, 68, 68)
+        const t = (50 - percent) / 50;
+        r = Math.round(250 + t * (239 - 250));
+        g = Math.round(204 + t * (68 - 204));
+        b = Math.round(21 + t * (68 - 21));
+    }
+
+    return `rgb(${r}, ${g}, ${b})`;
+}
+
 function updateDisplayTimer() {
     displayTimer.textContent = formatTime(reminingSeconds);
 
     const percent = totalSeconds > 0 ? (reminingSeconds / totalSeconds) * 100 : 0;
+
+    // pas istirahat, warnanya dibalik: awal merah -> akhir hijau
+    const colorPercent = currentPhase === 'break' ? (100 - percent) : percent;
+    const color = getTimerColor(colorPercent);
+
     progressBar.style.width = `${percent}%`;
+    progressBar.style.backgroundColor = color;
+    displayTimer.style.color = color;
 
     displayTimer.classList.toggle('finished', reminingSeconds <= 0);
     progressBar.classList.toggle('phase-break', currentPhase === 'break');
@@ -325,11 +365,15 @@ function renderResults() {
     if (results.length === 0) {
         resultsEmpty.classList.remove('d-none');
         resultsTimerTable.classList.add('d-none');
+        headerReport.classList.add('d-none');
+        saveNote.classList.add('d-none');
         return;
     }
 
     resultsEmpty.classList.add('d-none');
     resultsTimerTable.classList.remove('d-none');
+    headerReport.classList.remove('d-none');
+    saveNote.classList.remove('d-none');
     hasilTimer.innerHTML = results.map(result => `
         <tr>
             <td>${result.name}</td>
@@ -337,7 +381,7 @@ function renderResults() {
             <td>${result.phaseLabel}</td>
             <td>${formatTime(result.target)}</td>
             <td>${formatTime(result.used)}</td>
-            <td><span class='badge ${result.status === 'selesai' ? 'badge-mode-selesai' : 'badge-mode-reset'}'>${result.status}</span></td>
+            <td><span class='badge ${result.status === 'Selesai' ? 'badge-status-selesai' : 'badge-status-reset'}'>${result.status}</span></td>
             <td>${result.time}</td>
         </tr>
     `).join('');
@@ -431,12 +475,13 @@ async function tick() {
 }
 
 startTimerBtn.addEventListener('click', async () => {
-    const name = namaTimer.value;
-    if (!name) {
-        showTriggerModal('Isi nama / sesi terlebih dahulu ya!');
-        namaTimer.focus();
-        return;
-    }
+    const defaultName = mode === 'pomodoro' ? 'Pomodoro' : 'Timer';
+    const name = namaTimer.value.trim() || defaultName;
+    // if (!name) {
+    //     showTriggerModal('Isi nama / sesi terlebih dahulu ya!');
+    //     namaTimer.focus();
+    //     return;
+    // }
 
     if (currentDayKey !== todayKey()) {
         await loadResultsForToday();
@@ -530,10 +575,10 @@ startTimerBtn.addEventListener('click', async () => {
         toggleSettingPomodoroIcon.className = 'fa-solid fa-caret-up';
     }
 
-    statusText.textContent = mode === 'pomodoro'
-        ? `Fokus siklus ${currentRepeat}/${formatRepeat(totalRepeat)})`
-        : `${currentName} sedang berjalan...`;
-        // : `Timer "${currentName}" dimulai!`;
+    // statusText.textContent = mode === 'pomodoro'
+    //     ? `Fokus siklus ${currentRepeat}/${formatRepeat(totalRepeat)})`
+    //     : `${currentName} sedang berjalan...`;
+    //     // : `Timer "${currentName}" dimulai!`;
     startTimerInterval();
 })
 
@@ -542,10 +587,10 @@ resetTimerBtn.addEventListener('click', async () => {
     const used = totalSeconds - reminingSeconds;
 
     if (mode === 'biasa') {
-        await addResult(currentName, 'Timer', '-', totalSeconds, used, 'Direset');
+        await addResult(currentName, 'Timer', '-', totalSeconds, used, 'Reset');
     } else {
         const phaseLabel = currentPhase === 'fokus' ? 'Pomodoro' : 'Istirahat';
-        await addResult(currentName, 'Pomodoro', phaseLabel, totalSeconds, used, 'Direset');
+        await addResult(currentName, 'Pomodoro', phaseLabel, totalSeconds, used, 'Reset');
     }
 
     resetTampilan();

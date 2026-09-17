@@ -79,7 +79,15 @@ const inputsSection = document.getElementById('inputs-section'),
 
       headerReport = document.getElementById('header-report'),
       timerTitle = document.getElementById('timer-title'),
-      inputNamaSesi = document.getElementById('input-nama-sesi')
+      inputNamaSesi = document.getElementById('input-nama-sesi'),
+
+      totalTimerBadge = document.getElementById('total-timer-badge'),
+      breakdownModal = document.getElementById('breakdown-modal'),
+      breakdownTotal = document.getElementById('breakdown-total'),
+      breakdownSelesai = document.getElementById('breakdown-selesai'),
+      breakdownReset = document.getElementById('breakdown-reset'),
+
+      sectionDivider = document.getElementById('section-divider')
 ;
 
 let autoCloseTimeout = null,
@@ -273,7 +281,7 @@ async function saveResults() {
     try {
         localStorage.setItem(storageKey(currentDayKey), JSON.stringify(results));
         saveNote.classList.remove('text-danger');
-        saveNote.textContent = 'Berhasil disimpan';
+        // saveNote.textContent = 'Berhasil disimpan';
     } catch (error) {
         saveNote.classList.add('text-danger');
         saveNote.textContent = 'Gagal menyimpan data: ' + error.message;
@@ -288,6 +296,18 @@ function formatTime(seconds) {
     const min = Math.floor(seconds / 60).toString().padStart(2, '0');
     const sec = (seconds % 60).toString().padStart(2, '0');
     return `${min}:${sec}`;
+}
+
+// hitung warna nama sesi semakin nyata saat waktunya udh mau selesai
+function getNameOpacity(percent) {
+    const minOpacity = 0.35; // seberapa redup di awal
+    return minOpacity + (1 - percent / 100) * (1 - minOpacity);
+}
+
+function getNameScale(percent) {
+    const minScale = 1;
+    const maxScale = 1.15; // seberapa besar pas mendekati akhir, atur sesuai selera
+    return minScale + (1 - percent / 100) * (maxScale - minScale);
 }
 
 // hitung warna berdasarkan sisa persentase waktu (100% = hijau, 0% = merah)
@@ -323,6 +343,9 @@ function updateDisplayTimer() {
     progressBar.style.width = `${percent}%`;
     progressBar.style.backgroundColor = color;
     displayTimer.style.color = color;
+
+    runningTimerName.style.opacity = getNameOpacity(percent);
+    runningTimerName.style.transform = `scale(${getNameScale(percent)})`;
 
     displayTimer.classList.toggle('finished', reminingSeconds <= 0);
     progressBar.classList.toggle('phase-break', currentPhase === 'break');
@@ -374,15 +397,21 @@ function renderResults() {
     resultsTimerTable.classList.remove('d-none');
     headerReport.classList.remove('d-none');
     saveNote.classList.remove('d-none');
-    hasilTimer.innerHTML = results.map(result => `
+
+    sectionDivider.classList.remove('d-none');
+
+    totalTimerBadge.textContent = `${results.length} sesi`;
+
+    hasilTimer.innerHTML = results.map((result, index) => `
         <tr>
+            <td>${index + 1}</td>
             <td>${result.name}</td>
-            <td><span class='badge ${result.mode === 'pomodoro' ? 'badge-mode-belajar' : 'badge-mode-biasa'}'>${result.mode}</span></td>
-            <td>${result.phaseLabel}</td>
-            <td>${formatTime(result.target)}</td>
+            <td class="d-none d-md-table-cell"><span class='badge ${result.mode === 'pomodoro' ? 'badge-mode-belajar' : 'badge-mode-biasa'}'>${result.mode}</span></td>
+            <td class="d-none d-md-table-cell">${result.phaseLabel}</td>
+            <td class="d-none d-md-table-cell">${formatTime(result.target)}</td>
             <td>${formatTime(result.used)}</td>
             <td><span class='badge ${result.status === 'Selesai' ? 'badge-status-selesai' : 'badge-status-reset'}'>${result.status}</span></td>
-            <td>${result.time}</td>
+            <td class="d-none d-md-table-cell">${result.time}</td>
         </tr>
     `).join('');
 }
@@ -425,6 +454,7 @@ function startTimerInterval() {
     getAudioCtx();
     updateDisplayTimer();
     updateRunningLabel();
+    statusText.innerHTML = 'Starting <span class="dot">.</span><span class="dot"> .</span><span class="dot"> .</span>';
     intervalTimer = setInterval (tick, 1000);
 }
 
@@ -477,11 +507,6 @@ async function tick() {
 startTimerBtn.addEventListener('click', async () => {
     const defaultName = mode === 'pomodoro' ? 'Pomodoro' : 'Timer';
     const name = namaTimer.value.trim() || defaultName;
-    // if (!name) {
-    //     showTriggerModal('Isi nama / sesi terlebih dahulu ya!');
-    //     namaTimer.focus();
-    //     return;
-    // }
 
     if (currentDayKey !== todayKey()) {
         await loadResultsForToday();
@@ -494,9 +519,9 @@ startTimerBtn.addEventListener('click', async () => {
               m = parseInt(durasiMenitTimer.value, 10) || 0,
               s = parseInt(durasiDetikTimer.value, 10) || 0,
               dur = (h*3600) + (m*60) + s;
-
+        
         if (!dur || dur <= 0) {
-            showTriggerModal('Isi durasi sesi terlebih dahulu ya!');
+            showTriggerModal('Isi durasi terlebih dahulu ya!');
             return;
         }
 
@@ -603,13 +628,93 @@ pauseTimerBtn.addEventListener('click', () => {
     if (intervalTimer) {
         clearInterval(intervalTimer);
         intervalTimer = null;
-        startTimerBtn.classList.remove('d-none');
-        pauseTimerBtn.classList.add('d-none');
+        // startTimerBtn.classList.remove('d-none');
+        // pauseTimerBtn.classList.add('d-none');
+        statusText.textContent = 'Paused ⏸️';
+        pauseTimerBtn.innerHTML = `
+            <i class="fa-solid fa-play d-inline d-md-none"></i>
+            <span class="d-none d-md-inline">RESUME</span>
+        `; 
     } else {
         intervalTimer = setInterval(tick, 1000);
-        startTimerBtn.classList.add('d-none');
-        pauseTimerBtn.classList.remove('d-none');
+        // startTimerBtn.classList.add('d-none');
+        // pauseTimerBtn.classList.remove('d-none');
+        statusText.innerHTML = `
+            <div class="text-center"> Starting <span class="dot">.</span><span class="dot">.</span><span class="dot">.</span></div>'
+        `;
+        pauseTimerBtn.innerHTML = `
+            <i class="fa-solid fa-pause d-inline d-md-none"></i>
+            <span class="d-none d-md-inline">PAUSE</span>
+        `;
     }
 });
 
 loadResultsForToday();
+namaTimer.focus();
+
+namaTimer.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+        e.preventDefault();
+        const firstDurasiInput = mode === 'pomodoro' ? jamPomodoro : durasiJamTimer;
+        firstDurasiInput.focus();
+        firstDurasiInput.select(); // biar langsung bisa ketik timpa angkanya
+    }
+});
+
+function setupDurasiArrowNav(inputs) {
+    inputs.forEach((input, index) => {
+        input.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' && index < inputs.length - 1) {
+                e.preventDefault();
+                inputs[index + 1].focus();
+                inputs[index + 1].select();
+            }
+            if (e.key === 'ArrowLeft' && index > 0) {
+                e.preventDefault();
+                inputs[index - 1].focus();
+                inputs[index - 1].select();
+            }
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                if (!startTimerBtn.classList.contains('d-none')) {
+                    startTimerBtn.click();
+                }
+            }
+        });
+    });
+}
+
+setupDurasiArrowNav([durasiJamTimer, durasiMenitTimer, durasiDetikTimer]);
+setupDurasiArrowNav([jamPomodoro, menitPomodoro, detikPomodoro]);
+setupDurasiArrowNav([jamIstirahat, menitIstirahat, detikIstirahat]);
+
+document.addEventListener('keydown', (e) => {
+    const active = document.activeElement;
+    const isTypingNama = active === namaTimer; // biar spasi tetap bisa diketik normal di nama sesi
+
+    // SPASI: start kalau belum jalan, pause/resume kalau lagi jalan
+    if (e.code === 'Space' && !isTypingNama) {
+        e.preventDefault();
+        if (!startTimerBtn.classList.contains('d-none')) {
+            startTimerBtn.click();
+        } else if (!pauseTimerBtn.classList.contains('d-none')) {
+            pauseTimerBtn.click();
+        }
+    }
+
+    // BACKSPACE: reset (cuma aktif kalau tombol reset kelihatan & user gak lagi ngetik di kolom input)
+    if (e.key === 'Backspace' && !resetTimerBtn.classList.contains('d-none') && active.tagName !== 'INPUT') {
+        e.preventDefault();
+        resetTimerBtn.click();
+    }
+});
+
+// isi angka breakdown pas modal Bootstrap mau muncul (event bawaan Bootstrap)
+breakdownModal.addEventListener('show.bs.modal', () => {
+    const selesaiCount = results.filter(r => r.status === 'Selesai').length;
+    const resetCount = results.filter(r => r.status === 'Reset').length;
+
+    breakdownTotal.textContent = results.length;
+    breakdownSelesai.textContent = selesaiCount;
+    breakdownReset.textContent = resetCount;
+});

@@ -24,7 +24,7 @@
     <link rel="stylesheet" href="../footer/footer-digilog-style.css">
     <link rel="stylesheet" href="../timer/timer.css">
 </head>
-<body class="d-flex flex-column min-vh-100 bg-body-light">
+<body class="d-flex flex-column min-vh-100 bg-body-light overflow-x-hidden">
     
     <!-- navbar -->
     <div id="navbar-container">
@@ -174,13 +174,18 @@
             </div>
 
             <!-- NOTE AWAL -->
-            <p id="status-text" class="text-center mt-3 text-secondary small"> Isi nama & durasi terlebih dahulu ya.</p>
+            <p id="status-text" class="text-center mt-3 text-secondary small"> Isi durasi terlebih dahulu ya.</p>
+
+            <hr class="section-divider d-none" id="section-divider">
 
             <!-- Report timer harian -->
             <div class="card-dark d-none" id='header-report'>
                 <div class="d-flex justify-content-between align-items-center mb-3">
-                    <h5 class="mb-0">Timer Hari ini</h5>
-                    <!-- <span class="badge bg-secondary" id="today-date-badge"></span> -->
+                    <h5 class="mb-0">
+                        Pemakaian Hari Ini 
+
+                        <span class="badge bg-info ms-2" id="total-timer-badge" role="button" data-bs-toggle="modal" data-bs-target="#breakdown-modal">0 sesi</span>
+                    </h5>
                 </div>
             </div>
 
@@ -202,13 +207,14 @@
                     <!-- HEADER TABLE -->
                     <thead>
                         <tr>
+                            <th>NO</th>
                             <th>SESI</th>
-                            <th>MODE</th>
-                            <th>SIKLUS</th>
-                            <th>TARGET</th>
+                            <th class="d-none d-md-table-cell">MODE</th>
+                            <th class="d-none d-md-table-cell">SIKLUS</th>
+                            <th class="d-none d-md-table-cell">TARGET</th>
                             <th>TEREKSEKUSI</th>
                             <th>STATUS</th>
-                            <th>START</th>
+                            <th class="d-none d-md-table-cell">START</th>
                         </tr>
                     </thead>
 
@@ -220,7 +226,7 @@
 
             <!-- note untuk pengguna -->
             <p class="session-note mt-2 mb-0 d-none" id="save-note">
-                Data tersimpan otomatis dalam harian.
+                <!-- Data tersimpan otomatis dalam harian. -->
             </p>
         </div>
     </div>
@@ -262,6 +268,32 @@
                     <!-- PROGRESS BAR HITUNG MUNDUR AUTO CLOSE TRIGGER MODAL -->
                     <div class="progress" id="progress-bar-auto-close-trigger">
                         <div id="auto-close-bar" class="progress-bar bg-info" role="progressbar"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL BREAKDOWN TOTAL TIMER -->
+    <div class="modal" id="breakdown-modal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header border-secondary">
+                    <h5 class="modal-title">Ringkasan Timer Hari Ini</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body py-4">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <span>Total Sesi</span>
+                        <span class="badge bg-info fs-6" id="breakdown-total">0</span>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <span>Selesai</span>
+                        <span class="badge badge-status-selesai fs-6" id="breakdown-selesai">0</span>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span>Direset</span>
+                        <span class="badge badge-status-reset fs-6" id="breakdown-reset">0</span>
                     </div>
                 </div>
             </div>

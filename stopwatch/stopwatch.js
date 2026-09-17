@@ -4,7 +4,6 @@ fetch('../navbar-fitur/navbar-fitur-digilog.html')
 .then(data => {
     document.getElementById('navbar-container').innerHTML = data;
     setupNavbarFiturLogic();
-    stopwatchInit();
 })
 .catch(error => {
     console.error('gagal load navbar-fitur:', error);
@@ -194,9 +193,25 @@ function formatTimeForLapDisplay(diffLapTime) {
 }
 
 // untuk menampilkan jam saat user klik start dan reset stopwatch
-function formatClockTime(date) {
+function formatClockTime(date, includeDate = false) {
     if(!date) return '--:--:--';
-    return date.toLocaleTimeString('en-US', {hour12: false});
+    
+    const timeStart = date.toLocaleTimeString('en-US', {hour12: false});
+
+    if (includeDate) {
+        const dateStart = date.toLocaleDateString('en-US', { 
+            day: '2-digit',
+            year: 'numeric', 
+            month: 'short'
+        });
+
+        return `${dateStart} ${timeStart}`;
+
+    }
+
+    return timeStart;
+
+
 }
 
 // notif muncul di layar dan bunyi
@@ -284,13 +299,23 @@ function showResult() {
 
     endClockTime = new Date();
 
+    const isDiffDay = startClockTime && endClockTime && startClockTime.toDateString() !== endClockTime.toDateString(),
+          dateInfo = isDiffDay ? 
+            `<div class='text-secondary small'>    
+            
+                📅 DATE DURATION: ${startClockTime.toLocaleDateString('en-US', {day:'2-digit', month:'short', year:'numeric'})} 
+               - ${endClockTime.toLocaleDateString('en-US', {day:'2-digit', month:'short', year:'numeric'})}
+            </div>` : ''
+    ;
+
     if (laps.length === 0) {
 
         resultsSession.innerHTML = ` 
             <div class="text-center">
                 <div class="mb-3 text-muted">Belum ada lap ⏱️</div>
                 <div class="fs-4 font-monospace fw-bold">Total Time: ${formatTime(elapsedTime)}</div>
-                <div class="mt-3 text-secondary small"> 
+                <div class="mt-3 text-secondary small">     
+                    ${dateInfo}
                     Duration: ${formatClockTime(startClockTime)} - ${formatClockTime(endClockTime)}
                 </div>
             </div>
@@ -327,7 +352,7 @@ function showResult() {
             </div> 
             
             <br>
-            
+
             <div class="mb-2 text-secondary">
                 Total Lap: ${laps.length}
             </div>
@@ -337,6 +362,7 @@ function showResult() {
             </div>
 
             <div class="text-secondary"> 
+                ${dateInfo}
                 Duration: ${formatClockTime(startClockTime)} - ${formatClockTime(endClockTime)}
             </div>
         </div>
@@ -519,63 +545,7 @@ function renderLaps() {
         `
 
         lapsList.appendChild(trLapsData);
-
-        // buat classnya biar bisa dimasukin ke div yang spesifik
-        // divLapsData.classList.add('lap-data');
-
-        // let lapDifference = '--';
-
-        // // masukin isi dari div lap data yang udh dibuat tadi
-        // divLapsData.innerHTML = `
-        //     <div>
-        //         <strong>Lap #${categoryLap.id}</strong> ${lapPackage}
-        //     </div>
-
-        //     <small>
-        //         Lap : ${formatTime(categoryLap.lapTime).replace(/<br><span[^>]*>|<\/span>/g, '.')}
-        //     </small>
-
-        //     <small>
-        //         Total Waktu : ${formatTime(categoryLap.totalTime).replace(/<br><span[^>]*>|<\/span>/g, '.')}
-        //     </small>
-        // `;
-
-        // // ini yang bikin data lap muncul di layar
-        // lapsList.appendChild(divLapsData);
     }
-
-    // ver forEach;
-    // laps.forEach(lap => {
-    //     let lapPackage = '';
-
-    //     // buat tampilin kata 'fastest' & 'slowest' di layar
-    //     if (lap.lapTime === fastest) 
-        // lapPackage = '<span class="badge bg-success">FASTEST</span>';
-    //     else if (lap.lapTime === slowest) 
-    // lapPackage = '<span class="badge bg-danger">SLOWEST</span>';
-
-    //     // bikin div untuk list lap nya
-    //     const div = document.createElement('div');
-
-    //     // ini yang buat setiap klik lap bisa bertambah
-    //     div.classList.add('lap-item');
-
-    //     // ini yang buat format tampilan lap di layar
-    //     // div ini yang buat ada 'title' fastest dan slowest.
-    //     // small ini data waktu per klik lap dan total stopwatch pas di klik lap
-    //     div.innerHTML = `
-    //         <div>
-    //             <strong>Lap #${lap.id}</strong> ${lapPackage}
-    //         </div>
-    //         <small>
-    //             Lap : ${formatTime(lap.lapTime)} <br>
-    //             Total : ${formatTime(lap.totalTime)}
-    //         </small>
-    //     `;
-
-    //     // ini yang bikin tampilan per lap muncul di layar
-    //     lapsList.appendChild(div);
-    // });
 }
 
 // = SAVE STATE =
@@ -583,29 +553,15 @@ function saveState() {
 
     localStorage.setItem('data-stopwatch', JSON.stringify ({
 
-        // call all state~
         elapsedTime,
         lastLapTime,
         lastDurationLap,
         lapCount,
         laps,
-
-        // null = kosong atau tidak ada nilai awal stopwatchInterval (awal bgt di state),
-        // macam bocah pendiem yang ga bisa diajak ngomong.
-        // makanya kalau mau ngomong sama dia, butuh temen/orang yang paham sama dia,
-        // dalam hal ini !! (double bang), dia yang nerjemahin maunya si stopwatchInterval
-        // !! dia jadi penerjemah dan maksa si stopwatchInterval kalau nilai null (diem aja diajak ngomong) artinya dia gamau atau nilainya false
-        // tapi kalau nilainya ada (si stopwatchInterval ngejawab alias ada pergerakan), tandanya dia mau atau true.
-        
         startClockTime,
         endClockTime,
         running: !!stopwatchInterval,
         notifFlags
-
-        // KENAPA KUDU !! soalnya biar akurat 
-        // ibaratnya !! = sahabat deket nemplok tau baik-buruk kita dan null anak super ansos 🗿
-        // kalau ! = temen biasa yang muka dua :< alias suka muter balikin fakta.
-        // makanya, kasus running diatas butuh !!~
     }));
 }
 
@@ -735,3 +691,5 @@ function stopwatchInit() {
     autoActiveNavbar(); //dari func navbar-fitur-digilog yep
     loadState();
 }
+
+stopwatchInit();

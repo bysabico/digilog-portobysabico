@@ -43,7 +43,8 @@ const displayStopwatch = document.getElementById('display-stopwatch'),
       resultsSession   = document.getElementById('lapResults'),
       customStopwatch  = document.getElementsByClassName('custom-stopwatch'),
       notifStopwatch   = document.getElementById('notif-container'),
-      lapTableHeader   = document.getElementById('lap-table-header')
+      lapTableHeader   = document.getElementById('lap-table-header'),
+      lapModal         = document.getElementById('lapModal')
 ;
 
 // ELEMENT MODAL HUB KE BOOTSTRAP
@@ -608,16 +609,6 @@ function loadState() {
     // dia jalan atw gak?
     if (load.running) {
 
-        // biar gaada BUG pas ke refresh
-        // klik refresh dan lagi jalan, itu bisa crash tabrakan
-        // kenapa?
-        // refresh itu "kondisi menyendiri" atau mengosongkan seluruh operasi terhadap tampilan maupun perintah js (rehat sejenak)
-        // nah, kalau refresh kelar, harapannya ya jalan biasa si stopwatch dan gaada konflik internal.
-        // makanya ada clearInterval, dimana momen rehat sejenak (refresh) ini ga ikut dihitung jadi dianggap self reward
-        // so ketika refresh udh selesai, stopwatch bisa lanjutin kerja lagi tanpa beban dengan suasa yang baru
-        if (stopwatchInterval) 
-        clearInterval (stopwatchInterval);
-
         startStopwatch();
 
     } else {
@@ -632,7 +623,7 @@ function loadState() {
     }
 }
 
-// = EVENT LISTENER : biar fungsinya berjalan yep =
+// = EVENT LISTENER =
 startBtn.addEventListener('click', startStopwatch);
 pauseBtn.addEventListener('click', pauseStopwatch);
 resetBtn.addEventListener('click', resetStopwatch);
@@ -644,10 +635,10 @@ closeModalResult.addEventListener('click', closeLapModal);
 
 let resultSessionOpen = false;
 
-document.getElementById('lapModal').addEventListener('shown.bs.modal', () => {
+lapModal.addEventListener('shown.bs.modal', () => {
     resultSessionOpen = true;
 });
-document.getElementById('lapModal').addEventListener('hidden.bs.modal', () => {
+lapModal.addEventListener('hidden.bs.modal', () => {
     resultSessionOpen = false;
 });
 

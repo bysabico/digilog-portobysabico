@@ -44,18 +44,21 @@ const displayStopwatch = document.getElementById('display-stopwatch'),
       customStopwatch  = document.getElementsByClassName('custom-stopwatch'),
       notifStopwatch   = document.getElementById('notif-container'),
       lapTableHeader   = document.getElementById('lap-table-header'),
-      lapModal         = document.getElementById('lapModal')
+      lapModal         = document.getElementById('lapModal'),
+      deskripsiModalDigiStopwatch = document.getElementById('deskripsiModalDigiStopwatch')
 ;
 
 // ELEMENT MODAL HUB KE BOOTSTRAP
-let modal = new bootstrap.Modal(document.getElementById('lapModal'));
+let modal = new bootstrap.Modal(lapModal),
+    descDigiStopwatchModal = new bootstrap.Modal(deskripsiModalDigiStopwatch)
+;
 
-// PENCET LAP = ADA BUNYI
+// sound saat ada data lap
 const beep = new Audio(
     "https://actions.google.com/sounds/v1/cartoon/wood_plank_flicks.ogg"
 );
 
-// bunyi notifikasi
+// bunyi notifikasi slowest, fastest, dan melewati lap sebelum
 const notifSound = new Audio (
     "https://actions.google.com/sounds/v1/cartoon/clang_and_wobble.ogg"
 )
@@ -378,6 +381,10 @@ function closeLapModal() {
     clearSession();
 }
 
+function closeDescModal() {
+    descDigiStopwatchModal.hide();
+}
+
 // = CLEAR SESSION =
 function clearSession() {
 
@@ -485,38 +492,28 @@ function renderLaps() {
 
     lapTableHeader.classList.remove('d-none');
 
-    // ada di bagian showResult() baca aja
+    // sama kayak di showResult()
     const fastest = laps.reduce((prev, curr) => curr.lapTime < prev.lapTime ? curr : prev);
     const slowest = laps.reduce((prev, curr) => curr.lapTime > prev.lapTime ? curr : prev);
 
-    // kenapa pake forEach? forEach lebih simpel dari for of
-    // ver for of;
     for (let categoryLap of laps) {
 
-        // variabel penampung seluruh data lap (bagian bawah setelah di klik lap) saat dan setelah selesai sesi
-        let lapPackage = '';
-        let rowClass = '';
+        let lapPackage = '',
+            rowClass = '';
 
         if (categoryLap.lapTime === fastest.lapTime) {
 
-            // pakai variabel lapPackage soalnya dia kan yg pegang semua data lap.
-            // nah, kalau ada lap paling cepat (fastest) ditandain disini aturannya
             lapPackage = '<span class="badge">🟢</span>';
 
             rowClass = 'fastest-lap-row';
             
         } else if (categoryLap.lapTime === slowest.lapTime) {
 
-            // pakai variabel lapPackage soalnya dia kan yg pegang semua data lap.
-            // nah, kalau ada lap paling lambat (slowest) ditandain disini aturannya
             lapPackage = '<span class="badge">🔴</span>';
 
             rowClass = 'slowest-lap-row';
 
         }
-
-        // buat div untuk nampung seluruh data lap
-        // const divLapsData = document.createElement('div');
 
         const trLapsData = document.createElement('tr');
         
@@ -569,26 +566,15 @@ function saveState() {
 // = LOAD STATE =
 function loadState() {
 
-    // kotak memori dan biar ga dilupain pas ke refresh~
-    // kalau user PERNAH klik start = ada isinya dan ga dilupain
-    // tapi kalau GK PERNAH ya berarti kosong atau null dan 0 (sesuai aturan awal yg state)
     const load = JSON.parse(localStorage.getItem('data-stopwatch'));
 
-    // data ini butuh ! satu aja cukup karena ada penahannya si return
-    // kalau data ini nilainya null atau kosong, return jadi pengingat buat STOP ga lanjutin perintah dibawahnya
-    // tapi kalau ada nilainya, si return ga nahan dan bakal lanjutin perintah selanjutnya
-    // ! macam guru piket gerbang sekolah
-    // kalau ga pakai dasi atau melanggar peraturan sekolah (null/0 = gaada nilai). Bakal di stop ga boleh masuk ke sekolah.
-    // tapi kalau pakai dasi (ada nilai) maka boleh masuk sekolah~
     if (!load) {
         renderLaps();
         return;
     };
 
-    // pengaturan data tersimpan dan tetap muncul di layar dan bisa dilanjutkan
     elapsedTime = load.elapsedTime;
     lastLapTime = load.lastLapTime;
-    // lastDurationLap = load.lastDurationLap;
     lapCount = load.lapCount;
     laps = load.laps || [];
 
@@ -601,19 +587,15 @@ function loadState() {
     startClockTime = load.startClockTime ? new Date(load.startClockTime) : null;
     endClockTime = load.endClockTime ? new Date(load.endClockTime) : null;
 
-    // balikin angka dan list lap ke layar
     displayTimeStopwatch(elapsedTime);
     renderLaps();
 
-    // cek stopwatch terakhir pas web ke referesh / mati 
-    // dia jalan atw gak?
     if (load.running) {
 
         startStopwatch();
 
     } else {
 
-        // dengan kondisi diatas, maka di cek kembali tampilannya~ biar ga crash atau sesuai yang dimau
         startBtn.classList.remove('d-none');
         pauseBtn.classList.add('d-none');
         lapBtn.disabled = true;
@@ -630,10 +612,10 @@ resetBtn.addEventListener('click', resetStopwatch);
 lapBtn.addEventListener('click', lap);
 closeModalResult.addEventListener('click', closeLapModal);
 
-// event listener device
-// let backspaceCount = 0;
 
-let resultSessionOpen = false;
+// event listener memakai tombol di keyboard
+let resultSessionOpen = false,
+    descDigilogOpen = false;
 
 lapModal.addEventListener('shown.bs.modal', () => {
     resultSessionOpen = true;
@@ -642,12 +624,26 @@ lapModal.addEventListener('hidden.bs.modal', () => {
     resultSessionOpen = false;
 });
 
+deskripsiModalDigiStopwatch.addEventListener('shown.bs.modal', () => {
+    descDigilogOpen = true;
+});
+deskripsiModalDigiStopwatch.addEventListener('hidden.bs.modal', () => {
+    descDigilogOpen = false;
+});
+
 document.addEventListener('keydown', (e) => {
 
     if (resultSessionOpen) {
         e.preventDefault();
         e.stopImmediatePropagation();
         closeLapModal();
+        return;
+    }
+
+    if (descDigilogOpen) {
+        e.preventDefault();
+        e.stopImmediatePropagation();
+        closeDescModal();
         return;
     }
 
@@ -671,15 +667,13 @@ document.addEventListener('keydown', (e) => {
     if (e.code === 'Backspace') {
         e.preventDefault();
         resetBtn.click();
-    }  
+    }
 });
 
 
 // = INIT =
-// kenapa yang dipangil cuma 4 ini?
-// soalnya fungsi lain itu bergantung sama 'pergerakkan user'(klik = .addEventListener)
 function stopwatchInit() {
-    autoActiveNavbar(); //dari func navbar-fitur-digilog yep
+    autoActiveNavbar();
     loadState();
 }
 

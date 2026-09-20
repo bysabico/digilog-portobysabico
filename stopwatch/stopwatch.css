@@ -86,7 +86,8 @@ body {
 
 #stopwatchTitle {
     font-family: 'Oxanium', monospace;
-    /* letter-spacing: 4px; */
+    font-size: clamp(1rem, 5vw, 3rem) !important;
+    letter-spacing: 4px;
     cursor: pointer;
     font-weight: 600;
 }
@@ -140,7 +141,7 @@ body {
 
 #display-stopwatch {
     font-family: 'Urbanist', sans-serif !important;
-    font-size: clamp(2rem, 9vw, 7rem) !important;
+    font-size: clamp(5rem, 12vw, 13rem) !important;
     letter-spacing: 7px !important;
 }
 

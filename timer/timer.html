@@ -75,14 +75,14 @@
                 <div class="mode-panel mb-4 d-none" id="section-mode-pomodoro">
 
                     <!-- BUNGKUS POMODORO SETTING -->
-                    <button type="button" id="toggle-setting-pomodoro-btn" class="btn btn-outline-light btn-sm w-100 d-flex justify-content-between align-items-center mb-3">
+                    <button type="button" id="toggle-setting-pomodoro-btn" class="btn btn-outline-light btn-sm w-100 d-flex justify-content-between align-items-center">
                         <span>POMODORO SETTING</span>
                         <span>
                             <i id="toggle-setting-pomodoro-icon" class="fa-solid fa-caret-up"></i>
                         </span>
                     </button>
 
-                    <div id="pomodoro-settings">
+                    <div id="pomodoro-settings" class="btn btn-outline-light btn-sm w-100 d-flex justify-content-between align-items-center flex-column p-3 mb-3">
 
                         <!-- INPUT FOKUS -->
                         <div class="mb-3">
@@ -115,13 +115,13 @@
                                 <!-- TARGET -->
                                 <label for="" class="form-label">Jumlah Pengulangan</label>
                                 <div class="input-group mb-2">
-                                    <input type="number" name="" id="jumlah-pengulangan" class="form-control" placeholder="1">
+                                    <input type="number" name="" id="jumlah-pengulangan" class="form-control" placeholder="0">
                                 </div>
 
                                 <!-- TAK TERBATAS -->
-                                <div class="form-check">
-                                    <input type="checkbox" name="" id="unlimited-pengulangan" class="form-check-input">
-                                    <label for="unlimited-pengulangan" class="form-check-label">Pengulangan Tanpa Batas</label>
+                                <div class="form-check d-flex align-items-center gap-1 text-start">
+                                    <input type="checkbox" name="" id="unlimited-pengulangan" class="form-check-input mt-0 repeat-custome">
+                                    <label for="unlimited-pengulangan" class="form-check-label repeat-custome">Pengulangan Tanpa Batas</label>
                                 </div>
                             </div>
                         </div>

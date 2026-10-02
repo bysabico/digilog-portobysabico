@@ -204,13 +204,13 @@ function playTickSound() {
     playBeep(1000, 0.1, 0.1, 'square');
 }
 
-function playAlarmSound() {
+function playTimerSound() {
     const beepTimes = [0, 0.4, 0.8, 1.2, 1.6, 2.0];
 
     beepTimes.forEach((delay, i) => {
         setTimeout(() => {
-            playBeep(i % 2 === 0 ? 1046 : 784, 0.45, 0.35, 'triangle'), delay * 1000;
-        })
+            playBeep(i % 2 === 0 ? 1046 : 784, 0.45, 0.35, 'triangle');
+        }, delay * 1000)
     })
 }
 
@@ -353,8 +353,12 @@ function updateDisplayTimer() {
 
 function updateRunningLabel() {
     if (mode === 'pomodoro') {
-        const phaseLabel = currentPhase === 'fokus' ? 'Pomodoro' : 'Istirahat';
-        runningTimerName.textContent = `${currentName} - ${phaseLabel} (Pengulangan ${currentRepeat} / ${formatRepeat(totalRepeat)})`;
+        const phaseLabel = currentPhase === 'fokus' ? 'POMODORO' : 'ISTIRAHAT';
+        runningTimerName.innerHTML = ` ${phaseLabel}  
+
+        <br>
+
+        ${currentName} (${currentRepeat} / ${formatRepeat(totalRepeat)})`;
     } else {
         runningTimerName.textContent = `${currentName}`;
     }
@@ -424,6 +428,7 @@ function resetTampilan() {
     startTimerBtn.classList.remove('d-none');
     pauseTimerBtn.classList.add('d-none');
     resetTimerBtn.classList.add('d-none');
+
     if(mode === 'pomodoro') {
         pomodoroSettings.classList.remove('d-none');
         toggleSettingPomodoroIcon.className = 'fa-solid fa-caret-up';
@@ -469,7 +474,7 @@ async function tick() {
     }
 
     clearInterval(intervalTimer);
-    playAlarmSound();
+    playTimerSound();
 
     if (mode === 'biasa') {
         await addResult(currentName, 'Timer', '-', totalSeconds, totalSeconds, 'Selesai');
@@ -486,7 +491,7 @@ async function tick() {
         currentPhase = 'break';
         totalSeconds = breakDuration;
         reminingSeconds = breakDuration;
-        statusText.textContent = `Waktunya istirahat, (Siklus ${currentRepeat}/${formatRepeat(totalRepeat)})`;
+        statusText.textContent = `Waktunya istirahat, (${currentRepeat}/${formatRepeat(totalRepeat)})`;
         startTimerInterval();
     } else {
         // baru selesai istirahat -> cek apakah masih ada siklus berikutnya
@@ -495,7 +500,7 @@ async function tick() {
             currentPhase = 'fokus';
             totalSeconds = focusDuration;
             reminingSeconds = focusDuration;
-            statusText.textContent = `Waktunya belajar, (Siklus ${currentRepeat}/${formatRepeat(totalRepeat)})`;
+            statusText.textContent = `Waktunya belajar, (${currentRepeat}/${formatRepeat(totalRepeat)})`;
             startTimerInterval();
         } else {
             statusText.textContent = `Semua ${formatRepeat(totalRepeat)} siklus belajar selesai! >.<`;
@@ -640,7 +645,7 @@ pauseTimerBtn.addEventListener('click', () => {
         // startTimerBtn.classList.add('d-none');
         // pauseTimerBtn.classList.remove('d-none');
         statusText.innerHTML = `
-            <div class="text-center"> Starting <span class="dot">.</span><span class="dot">.</span><span class="dot">.</span></div>'
+            <div class="text-center"> Starting <span class="dot">.</span><span class="dot">.</span><span class="dot">.</span></div>
         `;
         pauseTimerBtn.innerHTML = `
             <i class="fa-solid fa-pause d-inline d-md-none"></i>

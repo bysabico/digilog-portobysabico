@@ -298,6 +298,10 @@ input[type=number] {
     margin-right: auto;
 }
 
+#startBtn {
+    margin-top: 1.1rem;
+}
+
 /* setting pomodoro */
 #pomodoro-settings > div {
     max-width: 420px;
@@ -320,4 +324,12 @@ input[type=number] {
 .timer-name-badge {
     display: inline-block;
     max-width: 100%;
+}
+
+/* hover */
+
+#pomodoro-settings:hover{
+    background-color: transparent;
+    color: #f1f5f9;
+    cursor: pointer;
 }

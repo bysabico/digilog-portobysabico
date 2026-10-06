@@ -87,7 +87,9 @@ const inputsSection = document.getElementById('inputs-section'),
       breakdownSelesai = document.getElementById('breakdown-selesai'),
       breakdownReset = document.getElementById('breakdown-reset'),
 
-      sectionDivider = document.getElementById('section-divider')
+      sectionDivider = document.getElementById('section-divider'),
+
+      endTimeText = document.getElementById('end-time-text')
 ;
 
 let autoCloseTimeout = null,
@@ -492,6 +494,7 @@ async function tick() {
         totalSeconds = breakDuration;
         reminingSeconds = breakDuration;
         statusText.textContent = `Waktunya istirahat, (${currentRepeat}/${formatRepeat(totalRepeat)})`;
+        endTimeText.textContent = `Selesai pada ${calculateEndTime(totalSeconds)}`;
         startTimerInterval();
     } else {
         // baru selesai istirahat -> cek apakah masih ada siklus berikutnya
@@ -501,12 +504,22 @@ async function tick() {
             totalSeconds = focusDuration;
             reminingSeconds = focusDuration;
             statusText.textContent = `Waktunya belajar, (${currentRepeat}/${formatRepeat(totalRepeat)})`;
+            endTimeText.textContent = `Selesai pada ${calculateEndTime(totalSeconds)}`;
             startTimerInterval();
         } else {
             statusText.textContent = `Semua ${formatRepeat(totalRepeat)} siklus belajar selesai! >.<`;
             resetTampilan();
         }
     }
+}
+
+// end time
+function calculateEndTime(durationInSeconds) {
+    const endTime = new Date(Date.now() + durationInSeconds * 1000);
+    const hh = String(endTime.getHours()).padStart(2, '0');
+    const mm = String(endTime.getMinutes()).padStart(2, '0');
+    const ss = String(endTime.getSeconds()).padStart(2, '0');
+    return `${hh}:${mm}:${ss}`;
 }
 
 startTimerBtn.addEventListener('click', async () => {
@@ -565,6 +578,8 @@ startTimerBtn.addEventListener('click', async () => {
         totalSeconds = focusDuration;
         reminingSeconds = focusDuration;
     }
+
+    endTimeText.textContent = `Selesai pada ${calculateEndTime(totalSeconds)}`;
 
     namaTimer.disabled = true;
     durasiJamTimer.disabled = true;
@@ -625,6 +640,7 @@ resetTimerBtn.addEventListener('click', async () => {
 
     resetTampilan();
     statusText.textContent = '';
+    endTimeText.textContent = '';
     displayTimer.textContent = '00:00';
     progressBar.style.width = '0%';
 });

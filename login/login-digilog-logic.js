@@ -42,17 +42,12 @@ function userInput() {
 function showAlertMessage(message) {
     
   // tampilin alert
-  alertMessage.textContent = message;
-  customAlert.style.remove('d-none');
-
-  // klik random biar alert ketutup
-  customAlert.addEventListener('click', () => {
-    customAlert.style.add('d-none');
-  });
+  alertMessage.innerHTML = message;
+  customAlert.classList.remove('d-none');
 
   // alert tertutup otomatis
   setTimeout(() => {
-    customAlert.style.add('d-none');
+    customAlert.classList.add('d-none');
   }, 2000);  
 }
 
@@ -61,22 +56,21 @@ function sendUserInput() {
   
   // kalau username dan checkbox anonim belum diisi, keluar peringatan ini
   if(!usernameInput.value.trim() && !anonCheckbox.checked){
-    showAlertMessage('Ayo isi nama atau centang "Login as Anonim"');
+    showAlertMessage('Isi nama atau ceklis "Login as Anonim" dulu, yaa~');
     return;
   };
 
   // username atau checkbox anonim diisi = langsung lanjut ke main page
   const finalNameUser = anonCheckbox.checked ? "HOOMAN" : usernameInput.value;
 
-  // hmmmm masih error ding :(
   if (rememberMeCheckbox.checked) {
 
-    localStorage.setItem('username-or-anonim',finalNameUser);
+    localStorage.setItem('username-or-anonim', finalNameUser);
 
   } else {
 
     sessionStorage.setItem('login-once', 'true');
-    sessionStorage.setItem('username-or-anonim',finalNameUser);
+    sessionStorage.setItem('username-or-anonim', finalNameUser);
     
   }
 
@@ -107,6 +101,11 @@ function sendUserInput() {
     window.location.href = "../main/main-digilog.html";
   }, 1500)
 }
+
+// klik random biar alert ketutup
+customAlert.addEventListener('click', () => {
+  customAlert.classList.add('d-none');
+});
 
 // enter = ke kirim
 usernameInput.addEventListener('keydown', (e) => {

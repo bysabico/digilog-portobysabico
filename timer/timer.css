@@ -333,3 +333,11 @@ input[type=number] {
     color: #f1f5f9;
     cursor: pointer;
 }
+
+/* end time */
+.end-time-text {
+    color: #94a3b8;
+    font-size: clamp(0.9rem, 2vw, 1.2rem);
+    margin-top: -0.5rem;
+    margin-bottom: 1rem;
+}

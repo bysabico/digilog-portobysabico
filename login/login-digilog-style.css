@@ -4,7 +4,7 @@ h2, #send-btn, #alert-message, footer {
 }
 
 #username, label {
-  font-family: 'josefin sans', serif;
+  font-family: 'oxanium', serif;
 }
 
 /* body */
@@ -53,6 +53,8 @@ h2:hover, .custom-checkbox:hover {
 #username {
   border: 0.2px solid #2FA4FF;
   box-shadow: 2px 2px 2px #333;
+  font-size: clamp(18px, 4.5vw, 24px);
+  color: #2FA4FF !important;
 }
 
 #username:focus {
@@ -68,6 +70,38 @@ input:checked {
   transition: box-shadow 0.3s ease;
 }
 
+.custom-checkbox {
+  gap: 10px;
+  /* background-color: #dcdeed; */
+  line-height: 1;
+  transition: color 0.3s ease, opacity 0.3s ease;
+}
+
+.custom-checkbox .form-check-input {
+  margin-top: 0;
+}
+
+.form-check-input, .custom-checkbox {
+  width: clamp(18px, 4.5vw, 24px);
+  height: clamp(18px, 4.5vw, 24px);
+  font-size: clamp(18px, 4.5vw, 24px);
+}
+
+/* disabled style */
+
+/* kalau checkbox di dalamnya CHECKED */
+.custom-checkbox:has(.form-check-input:checked) {
+  background-color: #2FA4FF;
+  color: #fff;
+}
+
+/* kalau checkbox di dalamnya DISABLED */
+.custom-checkbox:has(.form-check-input:disabled) {
+  color: #999;
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
 /* send-btn style */
 #send-btn:hover {
   transform: translateY(-1px);
@@ -81,18 +115,22 @@ input:checked {
   z-index: 9999;
   backdrop-filter: blur(3px);
   background: rgba(0, 0, 0, 0.4);
-  display: none !important;
 }
 
 .alert-box {
-  background-color: #fff;
-  color: #000;
+  background-color: red;
+  color: #fff;
   padding: 20px 30px;
   border-radius: 10px;
   max-width: 300px;
   text-align: center;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
   animation: popIn 0.3s ease;
+}
+
+#alert-message {
+  margin: 20px;
+  font-size: clamp(1.1rem, 4vw, 1.5rem);
 }
 
 @keyframes popIn {

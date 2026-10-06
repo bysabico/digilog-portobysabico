@@ -42,11 +42,11 @@
       <div class="username-input mb-3 my-2">
 
         <!-- login pakai namaa [input text] -->
-        <input type="text" name="" id="username" class="form-control text-center fs-5 p-3" placeholder="Siapa namanyaa? (˶ˆᗜˆ˵)" required>
+        <input type="text" name="" id="username" class="form-control text-center p-3" placeholder="Siapa namanyaa? (˶ˆᗜˆ˵)" required>
 
         <!-- login secara anonim [input checkbox] -->
         <div class="form-check mb-2 my-4">
-          <label for="anon-checkbox" class="form-check-label custom-checkbox d-flex w-100">
+          <label for="anon-checkbox" class="form-check-label custom-checkbox d-flex align-items-center p-3 w-100">
             <input type="checkbox" name="" class="form-check-input me-2" id="anon-checkbox">
             Login as Anonim
           </label>
@@ -54,7 +54,7 @@
 
         <!-- remember me checkbox~ -->
         <div class="form-check">
-          <label for="remember-me" class="form-check-label custom-checkbox d-flex w-100">
+          <label for="remember-me" class="form-check-label custom-checkbox d-flex align-items-center p-3 w-100">
             <input type="checkbox" name="" class="form-check-input me-2" id="remember-me">
             Remember me
           </label>
@@ -68,15 +68,6 @@
             Login <i class="fa-solid fa-right-to-bracket"></i>
           </button>
         </div>
-
-        <!-- alert/peringatan untuk user agar mengisi username -->
-        <div class="alert-overlay position-fixed d-flex justify-content-center align-items-center" id="custom-alert">
-          <div class="alert-box">
-            <p id="alert-message">
-              <!-- pesan user untuk isi username/klik checkbox anonim -->
-            </p>
-          </div>
-        </div>
       </div>
     </div>
 
@@ -84,6 +75,15 @@
     <footer class="footer-container fs-4 text-end me-1 pe-3" data-bs-toggle="modal" data-bs-target="#login-digilog-footer" hidden>
       <p class="opacity-75"> &copy; bysabico </p>
     </footer>
+  </div>
+
+  <!-- alert/peringatan untuk user agar mengisi username -->
+  <div class="alert-overlay position-fixed d-flex justify-content-center align-items-center d-none" id="custom-alert">
+    <div class="alert-box d-flex justify-content-center align-items-center">
+      <p id="alert-message">
+        <!-- pesan user untuk isi username/klik checkbox anonim -->
+      </p>
+    </div>
   </div>
 
   <div class="modal fade p-5" id="login-digilog-footer">

@@ -12,6 +12,8 @@ fetch('../navbar/navbar-digilog.html')
           modalLogoutContent = document.getElementById('content-logoutbyebye'),
           modal = new bootstrap.Modal(modalLogout);
 
+    if (!logoutBtn) return;
+
     logoutBtn.addEventListener('click', (e) => {
         e.preventDefault();
         modal.show();
@@ -28,8 +30,6 @@ fetch('../navbar/navbar-digilog.html')
             }, 600)
         }, 2000)
     })
-
-    if (!logoutBtn) return;
 })
 .catch(error => {
     console.error('gagal load navbar:', error)
@@ -77,7 +77,7 @@ function showGreeting() {
         greeting.innerHTML = `Selamat Siang, ${usernameInputed}`;
     } 
     // 14 - 18 kurang = sore
-    else if (hour >= 14 && hour < 18) {
+    else if (hour > 14 && hour < 18) {
         greeting.innerHTML = `Selamat Sore, ${usernameInputed}`;
     } 
     // lebih dari 18 = malam

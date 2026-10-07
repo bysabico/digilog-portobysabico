@@ -93,7 +93,10 @@ const inputsSection = document.getElementById('inputs-section'),
 ;
 
 let autoCloseTimeout = null,
-    autoCloseInterval = null;
+    autoCloseInterval = null,
+    endTimestamp = null
+;
+
 const autoCloseSecondTime = 10000;
 
 toggleSettingPomodoroBtn.addEventListener('click', () => {
@@ -452,6 +455,7 @@ function resetTampilan() {
     modeBiasaRadio.disabled = false;
     modePomodoroRadio.disabled = false;
     currentPhase = null;
+    endTimestamp = null;
 
     clearInterval(intervalTimer);
     intervalTimer = null;
@@ -466,8 +470,10 @@ function startTimerInterval() {
 }
 
 async function tick() {
+
+    reminingSeconds = Math.max(0, Math.round((endTimestamp - Date.now()) / 1000));
+
     if(reminingSeconds > 0) {
-        reminingSeconds--;
         updateDisplayTimer();
         if(reminingSeconds > 0 && reminingSeconds <= 10) {
             playTickSound();
@@ -515,7 +521,9 @@ async function tick() {
 
 // end time
 function calculateEndTime(durationInSeconds) {
-    const endTime = new Date(Date.now() + durationInSeconds * 1000);
+
+    endTimestamp = Date.now() + durationInSeconds * 1000;
+    const endTime = new Date(endTimestamp);
     const hh = String(endTime.getHours()).padStart(2, '0');
     const mm = String(endTime.getMinutes()).padStart(2, '0');
     const ss = String(endTime.getSeconds()).padStart(2, '0');

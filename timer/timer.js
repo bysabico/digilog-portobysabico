@@ -94,7 +94,8 @@ const inputsSection = document.getElementById('inputs-section'),
 
 let autoCloseTimeout = null,
     autoCloseInterval = null,
-    endTimestamp = null
+    endTimestamp = null,
+    pauseDisplayInterval = null
 ;
 
 const autoCloseSecondTime = 10000;
@@ -520,15 +521,25 @@ async function tick() {
 }
 
 // end time
-function calculateEndTime(durationInSeconds) {
-
-    endTimestamp = Date.now() + durationInSeconds * 1000;
-    const endTime = new Date(endTimestamp);
-    const hh = String(endTime.getHours()).padStart(2, '0');
-    const mm = String(endTime.getMinutes()).padStart(2, '0');
-    const ss = String(endTime.getSeconds()).padStart(2, '0');
+function formatClockTime(timestamp) {
+    const d = new Date(timestamp);
+    const hh = String(d.getHours()).padStart(2, '0');
+    const mm = String(d.getMinutes()).padStart(2, '0');
+    const ss = String(d.getSeconds()).padStart(2, '0');
     return `${hh}:${mm}:${ss}`;
 }
+
+function calculateEndTime(durationInSeconds) {
+    endTimestamp = Date.now() + durationInSeconds * 1000;
+    return formatClockTime(endTimestamp);
+}
+
+function updateEndTimeLive() {
+    const projectedEnd = Date.now() + reminingSeconds * 1000;
+    endTimeText.textContent = `Perkiraan selesai ${formatClockTime(projectedEnd)}`;
+}
+
+// btn
 
 startTimerBtn.addEventListener('click', async () => {
     const defaultName = mode === 'pomodoro' ? 'Pomodoro' : 'Timer';
@@ -637,6 +648,9 @@ startTimerBtn.addEventListener('click', async () => {
 
 resetTimerBtn.addEventListener('click', async () => {
     clearInterval(intervalTimer);
+    clearInterval(pauseDisplayInterval);
+    pauseDisplayInterval = null;
+
     const used = totalSeconds - reminingSeconds;
 
     if (mode === 'biasa') {
@@ -664,7 +678,17 @@ pauseTimerBtn.addEventListener('click', () => {
             <i class="fa-solid fa-play d-inline d-md-none"></i>
             <span class="d-none d-md-inline">RESUME</span>
         `; 
+
+        updateEndTimeLive();
+        pauseDisplayInterval = setInterval(updateEndTimeLive, 1000);
     } else {
+        
+        clearInterval(pauseDisplayInterval);
+
+        pauseDisplayInterval = null;
+
+        endTimeText.textContent = `Selesai pada ${calculateEndTime(reminingSeconds)}`;
+
         intervalTimer = setInterval(tick, 1000);
         // startTimerBtn.classList.add('d-none');
         // pauseTimerBtn.classList.remove('d-none');

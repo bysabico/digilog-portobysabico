@@ -89,7 +89,13 @@ const inputsSection = document.getElementById('inputs-section'),
 
       sectionDivider = document.getElementById('section-divider'),
 
-      endTimeText = document.getElementById('end-time-text')
+      endTimeText = document.getElementById('end-time-text'),
+
+      breakdownPause = document.getElementById('breakdown-pause'),
+      extraInfoPanel = document.getElementById('extra-info-panel'),
+      infoToggleBtn = document.getElementById('info-toggle-btn'),
+      breakdownModeTimer = document.getElementById('breakdown-mode-timer'),
+      breakdownModePomodoro = document.getElementById('breakdown-mode-pomodoro')
 ;
 
 let autoCloseTimeout = null,
@@ -97,6 +103,8 @@ let autoCloseTimeout = null,
     endTimestamp = null,
     pauseDisplayInterval = null
 ;
+
+let sessionWasPaused = false;
 
 const autoCloseSecondTime = 10000;
 
@@ -370,6 +378,14 @@ function updateRunningLabel() {
     }
 }
 
+function buildReplayData() {
+    if (mode === 'biasa') {
+        return { mode: 'biasa', durasi: totalSeconds };
+    } else {
+        return { mode: 'pomodoro', focus: focusDuration, breakDur: breakDuration, totalRepeat: totalRepeat };
+    }
+}
+
 async function addResult(name, modeVal, phaseLabel, target, used, status) {
     if (currentDayKey !== todayKey()) {
         await loadResultsForToday();
@@ -387,7 +403,10 @@ async function addResult(name, modeVal, phaseLabel, target, used, status) {
             hour: '2-digit',
             minute: '2-digit',
             second: '2-digit'
-        })
+        }),
+        endTime: formatClockTime(Date.now()),
+        wasPaused: sessionWasPaused,
+        replay: buildReplayData()
     })
 
     renderResults();
@@ -415,16 +434,65 @@ function renderResults() {
     hasilTimer.innerHTML = results.map((result, index) => `
         <tr>
             <td>${index + 1}</td>
-            <td>${result.name}</td>
+            <td>${result.wasPaused ? '⏸ ' : ''}${result.name}</td>
             <td class="d-none d-md-table-cell"><span class='badge ${result.mode === 'pomodoro' ? 'badge-mode-belajar' : 'badge-mode-biasa'}'>${result.mode}</span></td>
             <td class="d-none d-md-table-cell">${result.phaseLabel}</td>
             <td class="d-none d-md-table-cell">${formatTime(result.target)}</td>
             <td>${formatTime(result.used)}</td>
             <td><span class='badge ${result.status === 'Selesai' ? 'badge-status-selesai' : 'badge-status-reset'}'>${result.status}</span></td>
             <td class="d-none d-md-table-cell">${result.time}</td>
+            <td class="d-none d-md-table-cell">${result.endTime || '-'}</td>
+            <td>
+                <button class="btn btn-sm btn-outline-info replay-btn" data-index="${index}" title="Jalankan ulang">
+                    <i class="fa-solid fa-rotate-right"></i>
+                </button>
+            </td>
         </tr>
     `).join('');
 }
+
+function replaySession(result) {
+    if (!result.replay) return;
+    const data = result.replay;
+
+    if (data.mode === 'pomodoro') {
+        modePomodoroRadio.checked = true;
+        modePomodoroRadio.dispatchEvent(new Event('change'));
+
+        jamPomodoro.value = Math.floor(data.focus / 3600);
+        menitPomodoro.value = Math.floor((data.focus % 3600) / 60);
+        detikPomodoro.value = data.focus % 60;
+
+        jamIstirahat.value = Math.floor(data.breakDur / 3600);
+        menitIstirahat.value = Math.floor((data.breakDur % 3600) / 60);
+        detikIstirahat.value = data.breakDur % 60;
+
+        if (data.totalRepeat === Infinity) {
+            unlimitedPengulangan.checked = true;
+        } else {
+            unlimitedPengulangan.checked = false;
+            jumlahPengulangan.value = data.totalRepeat;
+        }
+        unlimitedPengulangan.dispatchEvent(new Event('change'));
+    } else {
+        modeBiasaRadio.checked = true;
+        modeBiasaRadio.dispatchEvent(new Event('change'));
+
+        durasiJamTimer.value = Math.floor(data.durasi / 3600);
+        durasiMenitTimer.value = Math.floor((data.durasi % 3600) / 60);
+        durasiDetikTimer.value = data.durasi % 60;
+    }
+
+    namaTimer.value = result.name;
+    startTimerBtn.click();
+}
+
+hasilTimer.addEventListener('click', (e) => {
+    const btn = e.target.closest('.replay-btn');
+    if (!btn) return;
+    const idx = parseInt(btn.dataset.index, 10);
+    replaySession(results[idx]);
+});
 
 // 
 function resetTampilan() {
@@ -464,6 +532,7 @@ function resetTampilan() {
 
 function startTimerInterval() {
     getAudioCtx();
+    sessionWasPaused = false;
     updateDisplayTimer();
     updateRunningLabel();
     statusText.innerHTML = 'Starting <span class="dot">.</span><span class="dot"> .</span><span class="dot"> .</span>';
@@ -588,7 +657,7 @@ startTimerBtn.addEventListener('click', async () => {
         }
 
         if (!unlimitedPengulangan.checked && (!totalRepeat || totalRepeat <= 0)) {
-            showTriggerModal('Jumlah pengulangan harus lebih dari 0, atau centang Pengulangan Tanpa Batas');
+            showTriggerModal('Jumlah pengulangan harus lebih dari 0 atau centang Pengulangan Tanpa Batas');
             return;
         }
 
@@ -671,6 +740,7 @@ pauseTimerBtn.addEventListener('click', () => {
     if (intervalTimer) {
         clearInterval(intervalTimer);
         intervalTimer = null;
+        sessionWasPaused = true;
         // startTimerBtn.classList.remove('d-none');
         // pauseTimerBtn.classList.add('d-none');
         statusText.textContent = 'Paused ⏸️';
@@ -762,12 +832,51 @@ document.addEventListener('keydown', (e) => {
     }
 });
 
+// info tambahan btn
+infoToggleBtn.addEventListener('click', () => {
+    extraInfoPanel.classList.toggle('d-none');
+    infoToggleBtn.classList.toggle('active');
+});
+
+
+breakdownModal.addEventListener('hidden.bs.modal', () => {
+    extraInfoPanel.classList.add('d-none');
+    infoToggleBtn.classList.remove('active');
+
+    [breakdownSelesai, breakdownReset].forEach(el => {
+        const tooltip = bootstrap.Tooltip.getInstance(el);
+        if (tooltip) tooltip.hide();
+    });
+});
+
 // isi angka breakdown pas modal Bootstrap mau muncul (event bawaan Bootstrap)
 breakdownModal.addEventListener('show.bs.modal', () => {
-    const selesaiCount = results.filter(r => r.status === 'Selesai').length;
-    const resetCount = results.filter(r => r.status === 'Reset').length;
+    const selesaiResults = results.filter(r => r.status === 'Selesai');
+    const resetResults = results.filter(r => r.status === 'Reset');
+    const pauseCount = results.filter(r => r.wasPaused).length;
+    const timerCount = results.filter(r => r.mode === 'Timer').length;
+    const pomodoroCount = results.filter(r => r.mode === 'pomodoro').length;
 
     breakdownTotal.textContent = results.length;
-    breakdownSelesai.textContent = selesaiCount;
-    breakdownReset.textContent = resetCount;
+    breakdownSelesai.textContent = selesaiResults.length;
+    breakdownReset.textContent = resetResults.length;
+    breakdownPause.textContent = pauseCount;
+    breakdownModeTimer.textContent = timerCount;
+    breakdownModePomodoro.textContent = pomodoroCount;
+
+    
+    const selesaiTimer = selesaiResults.filter(r => r.mode === 'Timer').length;
+    const selesaiPomodoro = selesaiResults.filter(r => r.mode === 'pomodoro').length;
+    const resetTimer = resetResults.filter(r => r.mode === 'Timer').length;
+    const resetPomodoro = resetResults.filter(r => r.mode === 'pomodoro').length;
+
+    breakdownSelesai.setAttribute('data-bs-title', `Timer: ${selesaiTimer} | Pomodoro: ${selesaiPomodoro}`);
+    breakdownReset.setAttribute('data-bs-title', `Timer: ${resetTimer} | Pomodoro: ${resetPomodoro}`);
+
+    
+    [breakdownSelesai, breakdownReset].forEach(el => {
+        const existingTooltip = bootstrap.Tooltip.getInstance(el);
+        if (existingTooltip) existingTooltip.dispose();
+        new bootstrap.Tooltip(el);
+    });
 });

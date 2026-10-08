@@ -572,7 +572,7 @@ async function tick() {
     }
 
     const phaseLabel = currentPhase === 'fokus' ? 'Pomodoro' : 'Istirahat';
-    await addResult(currentName, 'pomodoro', phaseLabel, totalSeconds, totalSeconds, 'Selesai');
+    await addResult(currentName, 'Pomodoro', phaseLabel, totalSeconds, totalSeconds, 'Selesai');
 
     if (currentPhase === 'fokus') {
         // baru selesai fokus -> lanjut ke istirahat
@@ -856,42 +856,51 @@ infoToggleBtn.addEventListener('click', () => {
 
 breakdownModal.addEventListener('hidden.bs.modal', () => {
     extraInfoPanel.classList.add('d-none');
+    infoDivider.classList.add('d-none');
     infoToggleBtn.classList.remove('active');
 
-    [breakdownSelesai, breakdownReset].forEach(el => {
+    [breakdownSelesai, breakdownReset, breakdownPause, breakdownModeTimer, breakdownModePomodoro].forEach(el => {
         const tooltip = bootstrap.Tooltip.getInstance(el);
         if (tooltip) tooltip.hide();
     });
 });
 
 // isi angka breakdown pas modal Bootstrap mau muncul (event bawaan Bootstrap)
+const isTimerMode = r => String(r.mode).toLowerCase() === 'timer';
+const isPomodoroMode = r => String(r.mode).toLowerCase() === 'pomodoro';
+
 breakdownModal.addEventListener('show.bs.modal', () => {
     const selesaiResults = results.filter(r => r.status === 'Selesai');
     const resetResults = results.filter(r => r.status === 'Reset');
-    const pauseCount = results.filter(r => r.wasPaused).length;
-    const timerCount = results.filter(r => r.mode === 'Timer').length;
-    const pomodoroCount = results.filter(r => r.mode === 'pomodoro').length;
+    const pausedResults = results.filter(r => r.wasPaused);
+    const timerResults = results.filter(isTimerMode);
+    const pomodoroResults = results.filter(isPomodoroMode);
 
     breakdownTotal.textContent = results.length;
     breakdownSelesai.textContent = selesaiResults.length;
     breakdownReset.textContent = resetResults.length;
-    breakdownPause.textContent = pauseCount;
-    breakdownModeTimer.textContent = timerCount;
-    breakdownModePomodoro.textContent = pomodoroCount;
+    breakdownPause.textContent = pausedResults.length;
+    breakdownModeTimer.textContent = timerResults.length;
+    breakdownModePomodoro.textContent = pomodoroResults.length;
 
-    
-    const selesaiTimer = selesaiResults.filter(r => r.mode === 'Timer').length;
-    const selesaiPomodoro = selesaiResults.filter(r => r.mode === 'pomodoro').length;
-    const resetTimer = resetResults.filter(r => r.mode === 'Timer').length;
-    const resetPomodoro = resetResults.filter(r => r.mode === 'pomodoro').length;
+    // format isi tooltip
+    const byMode = list =>
+        `Timer: ${list.filter(isTimerMode).length} | Pomodoro: ${list.filter(isPomodoroMode).length}`;
+    const byStatus = list =>
+        `Selesai: ${list.filter(r => r.status === 'Selesai').length} | Reset: ${list.filter(r => r.status === 'Reset').length} | Pause: ${list.filter(r => r.wasPaused).length}`;
 
-    breakdownSelesai.setAttribute('data-bs-title', `Timer: ${selesaiTimer} | Pomodoro: ${selesaiPomodoro}`);
-    breakdownReset.setAttribute('data-bs-title', `Timer: ${resetTimer} | Pomodoro: ${resetPomodoro}`);
+    breakdownSelesai.setAttribute('data-bs-title', byMode(selesaiResults));
+    breakdownReset.setAttribute('data-bs-title', byMode(resetResults));
+    breakdownPause.setAttribute('data-bs-title',
+        `${byMode(pausedResults.filter(r => r.status === 'Reset'))}`
+    );
+    breakdownModeTimer.setAttribute('data-bs-title', byStatus(timerResults));
+    breakdownModePomodoro.setAttribute('data-bs-title', byStatus(pomodoroResults));
 
-    
-    [breakdownSelesai, breakdownReset].forEach(el => {
-        const existingTooltip = bootstrap.Tooltip.getInstance(el);
-        if (existingTooltip) existingTooltip.dispose();
-        new bootstrap.Tooltip(el);
+    // re-init semua tooltip karena isinya berubah tiap modal dibuka
+    [breakdownSelesai, breakdownReset, breakdownPause, breakdownModeTimer, breakdownModePomodoro].forEach(el => {
+        const existing = bootstrap.Tooltip.getInstance(el);
+        if (existing) existing.dispose();
+        new bootstrap.Tooltip(el, { html: true });
     });
 });

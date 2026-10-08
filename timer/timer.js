@@ -101,8 +101,11 @@ const inputsSection = document.getElementById('inputs-section'),
 let autoCloseTimeout = null,
     autoCloseInterval = null,
     endTimestamp = null,
-    pauseDisplayInterval = null
+    pauseDisplayInterval = null,
+    pauseStartTimestamp = null
 ;
+
+totalPausedMs = 0;
 
 let sessionWasPaused = false;
 let sessionStartTimestamp = null;
@@ -394,7 +397,9 @@ async function addResult(name, modeVal, phaseLabel, target, used, status) {
         await loadResultsForToday();
     }
 
+    const pausedMs = totalPausedMs + (pauseStartTimestamp ? Date.now() - pauseStartTimestamp : 0);
     const now = new Date();
+
     results.unshift({
         name,
         mode: modeVal,
@@ -405,6 +410,7 @@ async function addResult(name, modeVal, phaseLabel, target, used, status) {
         time: formatClockTime(sessionStartTimestamp || now),
         endTime: formatClockTime(Date.now()),
         wasPaused: sessionWasPaused,
+        pausedSeconds: Math.round(pausedMs / 1000),
         replay: buildReplayData()
     })
 
@@ -437,7 +443,9 @@ function renderResults() {
             <td class="d-none d-md-table-cell"><span class='badge ${result.mode === 'pomodoro' ? 'badge-mode-belajar' : 'badge-mode-biasa'}'>${result.mode}</span></td>
             <td class="d-none d-md-table-cell">${result.phaseLabel}</td>
             <td class="d-none d-md-table-cell">${formatTime(result.target)}</td>
-            <td>${formatTime(result.used)}</td>
+            <td>
+                ${formatTime(result.used + (result.pausedSeconds || 0))}
+            </td>
             <td><span class='badge ${result.status === 'Selesai' ? 'badge-status-selesai' : 'badge-status-reset'}'>${result.status}</span></td>
             <td class="d-none d-md-table-cell">${result.time}</td>
             <td class="d-none d-md-table-cell">${result.endTime || '-'}</td>
@@ -533,6 +541,8 @@ function startTimerInterval() {
     getAudioCtx();
     sessionWasPaused = false;
     sessionStartTimestamp = Date.now();
+    totalPausedMs = 0;
+    pauseStartTimestamp = null;
     updateDisplayTimer();
     updateRunningLabel();
     statusText.innerHTML = 'Starting <span class="dot">.</span><span class="dot"> .</span><span class="dot"> .</span>';
@@ -741,6 +751,7 @@ pauseTimerBtn.addEventListener('click', () => {
         clearInterval(intervalTimer);
         intervalTimer = null;
         sessionWasPaused = true;
+        pauseStartTimestamp = Date.now();
         // startTimerBtn.classList.remove('d-none');
         // pauseTimerBtn.classList.add('d-none');
         statusText.textContent = 'Paused ⏸️';
@@ -752,6 +763,10 @@ pauseTimerBtn.addEventListener('click', () => {
         updateEndTimeLive();
         pauseDisplayInterval = setInterval(updateEndTimeLive, 1000);
     } else {
+        if (pauseStartTimestamp) {
+            totalPausedMs += Date.now() - pauseStartTimestamp;
+            pauseStartTimestamp = null;
+        }
         
         clearInterval(pauseDisplayInterval);
 

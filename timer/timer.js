@@ -105,6 +105,7 @@ let autoCloseTimeout = null,
 ;
 
 let sessionWasPaused = false;
+let sessionStartTimestamp = null;
 
 const autoCloseSecondTime = 10000;
 
@@ -181,6 +182,8 @@ let mode = 'biasa',
     currentDayKey = null,
     results = []
 ;
+
+
 
 // STATE FOR AUDIO
 let audioCtx = null;
@@ -399,11 +402,7 @@ async function addResult(name, modeVal, phaseLabel, target, used, status) {
         target,
         used,
         status,
-        time: now.toLocaleTimeString('id-ID', {
-            hour: '2-digit',
-            minute: '2-digit',
-            second: '2-digit'
-        }),
+        time: formatClockTime(sessionStartTimestamp || now),
         endTime: formatClockTime(Date.now()),
         wasPaused: sessionWasPaused,
         replay: buildReplayData()
@@ -433,7 +432,7 @@ function renderResults() {
 
     hasilTimer.innerHTML = results.map((result, index) => `
         <tr>
-            <td>${index + 1}</td>
+            <td>${results.length - index}</td>
             <td>${result.wasPaused ? '⏸ ' : ''}${result.name}</td>
             <td class="d-none d-md-table-cell"><span class='badge ${result.mode === 'pomodoro' ? 'badge-mode-belajar' : 'badge-mode-biasa'}'>${result.mode}</span></td>
             <td class="d-none d-md-table-cell">${result.phaseLabel}</td>
@@ -533,6 +532,7 @@ function resetTampilan() {
 function startTimerInterval() {
     getAudioCtx();
     sessionWasPaused = false;
+    sessionStartTimestamp = Date.now();
     updateDisplayTimer();
     updateRunningLabel();
     statusText.innerHTML = 'Starting <span class="dot">.</span><span class="dot"> .</span><span class="dot"> .</span>';

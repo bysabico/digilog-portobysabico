@@ -186,7 +186,33 @@ let mode = 'biasa',
     results = []
 ;
 
+// worker buat detak timer, supaya tetap jalan walau tab di background
+const timerWorkerCode = `
+    let id = null;
+    onmessage = (e) => {
+        if (e.data === 'start') {
+            clearInterval(id);
+            id = setInterval(() => postMessage('tick'), 1000);
+        } else if (e.data === 'stop') {
+            clearInterval(id);
+            id = null;
+        }
+    };
+`;
+const timerWorker = new Worker(
+    URL.createObjectURL(new Blob([timerWorkerCode], { type: 'application/javascript' }))
+);
+timerWorker.onmessage = () => tick();
 
+function startTicking() {
+    timerWorker.postMessage('start');
+    intervalTimer = true; // dipakai sebagai penanda "lagi jalan" di tombol pause
+}
+
+function stopTicking() {
+    timerWorker.postMessage('stop');
+    intervalTimer = null;
+}
 
 // STATE FOR AUDIO
 let audioCtx = null;
@@ -200,39 +226,48 @@ function getAudioCtx() {
     return audioCtx;
 }
 
-function playBeep(frequency, duration, volume =0.15, type ='sine') {
+function playBeep(frequency, duration, volume = 0.15, type = 'sine', delay = 0) {
     try {
         const ctx = getAudioCtx(),
               oscillator = ctx.createOscillator(),
-              gainNode = ctx.createGain();
+              gainNode = ctx.createGain(),
+              startAt = ctx.currentTime + delay;
 
         oscillator.type = type;
         oscillator.frequency.value = frequency;
-        gainNode.gain.value = volume;
+        gainNode.gain.setValueAtTime(volume, startAt);
         oscillator.connect(gainNode);
         gainNode.connect(ctx.destination);
-        oscillator.start();
-        
-        gainNode.gain.exponentialRampToValueAtTime(0.00001, ctx.currentTime + duration);
-        oscillator.stop(ctx.currentTime + duration);
+        oscillator.start(startAt);
+
+        gainNode.gain.exponentialRampToValueAtTime(0.00001, startAt + duration);
+        oscillator.stop(startAt + duration);
     } catch (error) {
         // kalau error = diem
     }
-}
-
-function playTickSound() {
-    playBeep(1000, 0.1, 0.1, 'square');
 }
 
 function playTimerSound() {
     const beepTimes = [0, 0.4, 0.8, 1.2, 1.6, 2.0];
 
     beepTimes.forEach((delay, i) => {
-        setTimeout(() => {
-            playBeep(i % 2 === 0 ? 1046 : 784, 0.45, 0.35, 'triangle');
-        }, delay * 1000)
-    })
+        playBeep(i % 2 === 0 ? 1046 : 784, 0.45, 0.35, 'triangle', delay);
+    });
 }
+
+// function playTickSound() {
+//     playBeep(1000, 0.1, 0.1, 'square');
+// }
+
+// function playTimerSound() {
+//     const beepTimes = [0, 0.4, 0.8, 1.2, 1.6, 2.0];
+
+//     beepTimes.forEach((delay, i) => {
+//         setTimeout(() => {
+//             playBeep(i % 2 === 0 ? 1046 : 784, 0.45, 0.35, 'triangle');
+//         }, delay * 1000)
+//     })
+// }
 
 // BTN
 modeBiasaRadio.addEventListener('change', () => {
@@ -533,8 +568,10 @@ function resetTampilan() {
     currentPhase = null;
     endTimestamp = null;
 
-    clearInterval(intervalTimer);
-    intervalTimer = null;
+    // clearInterval(intervalTimer);
+    // intervalTimer = null;
+
+    stopTicking();
 }
 
 function startTimerInterval() {
@@ -546,7 +583,9 @@ function startTimerInterval() {
     updateDisplayTimer();
     updateRunningLabel();
     statusText.innerHTML = 'Starting <span class="dot">.</span><span class="dot"> .</span><span class="dot"> .</span>';
-    intervalTimer = setInterval (tick, 1000);
+    // intervalTimer = setInterval (tick, 1000);
+
+    startTicking();
 }
 
 async function tick() {
@@ -561,7 +600,8 @@ async function tick() {
         return
     }
 
-    clearInterval(intervalTimer);
+    // clearInterval(intervalTimer);
+    stopTicking();
     playTimerSound();
 
     if (mode === 'biasa') {
@@ -748,8 +788,10 @@ resetTimerBtn.addEventListener('click', async () => {
 
 pauseTimerBtn.addEventListener('click', () => {
     if (intervalTimer) {
-        clearInterval(intervalTimer);
-        intervalTimer = null;
+        // clearInterval(intervalTimer);
+        // intervalTimer = null;
+
+        stopTicking();
         sessionWasPaused = true;
         pauseStartTimestamp = Date.now();
         // startTimerBtn.classList.remove('d-none');
@@ -774,7 +816,10 @@ pauseTimerBtn.addEventListener('click', () => {
 
         endTimeText.textContent = `Selesai pada ${calculateEndTime(reminingSeconds)}`;
 
-        intervalTimer = setInterval(tick, 1000);
+        // intervalTimer = setInterval(tick, 1000);
+
+        startTicking();
+
         // startTimerBtn.classList.add('d-none');
         // pauseTimerBtn.classList.remove('d-none');
         statusText.innerHTML = `

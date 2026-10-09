@@ -141,8 +141,10 @@ body {
 
 #display-stopwatch {
     font-family: 'Urbanist', sans-serif !important;
-    font-size: clamp(5rem, 12vw, 13rem) !important;
-    letter-spacing: 7px !important;
+    font-size: clamp(3rem, 17vw, 13rem) !important;
+    letter-spacing: 0.05em !important;
+    white-space: nowrap;
+    max-width: 100%;
 }
 
 /* CSS TERHUBUNG DI JS */
@@ -166,13 +168,13 @@ body {
 #display-stopwatch.running {
     font-family: 'oxanium', monospace !important;
     font-weight: 900;
-    transform: scale(1.2);
-    letter-spacing: 10px !important;
+    /* transform: scale(1.1); */
+    letter-spacing: clamp(2px, 1vw, 10px) !important;
 }
 
 #display-stopwatch.fokus {
     font-family: 'lilita one', cursive !important;
-    transform: scale(1.3);
+    /* transform: scale(1.15); */
     font-weight: 700 !important;
     text-shadow: 0 0 8px #f87171, 0 0 16px #f3e9a8;
 }
@@ -180,6 +182,16 @@ body {
 #display-stopwatch.glow {
     font-family: 'Urbanist', serif !important;
     text-shadow: 0 0 5px #22c55e, 0 0 10px #22c55e, 0 0 20px #22c55e, 0 0 40px #22c55e;
+}
+
+@media (max-width: 576px) {
+    #display-stopwatch,
+    #display-stopwatch.running,
+    #display-stopwatch.fokus {
+        transform: none;
+        font-size: 10.5vw !important;
+        letter-spacing: 1px !important;
+    }
 }
 
 /* MODAL */

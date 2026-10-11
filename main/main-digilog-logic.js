@@ -197,13 +197,14 @@ function showYearPicker(instance) {
 
     const container = instance.calendarContainer,
           days = container.querySelector('.flatpickr-days'),
-          weekdays = container.querySelector('.flatpickr-weekdays');
+          weekdays = container.querySelector('.flatpickr-weekdays'),
+          yearGrid = container.querySelector(".year-grid");
     
     // sembunyikan flatpickr days
     days.style.display = 'none';
     if(weekdays) weekdays.style.display = 'none';
 
-    if (container.querySelector(".year-grid")) return;
+    if (yearGrid) return;
 
     // bikin grid tahun flatpickr
     const grid = document.createElement("div");

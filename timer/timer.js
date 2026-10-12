@@ -95,7 +95,17 @@ const inputsSection = document.getElementById('inputs-section'),
       extraInfoPanel = document.getElementById('extra-info-panel'),
       infoToggleBtn = document.getElementById('info-toggle-btn'),
       breakdownModeTimer = document.getElementById('breakdown-mode-timer'),
-      breakdownModePomodoro = document.getElementById('breakdown-mode-pomodoro')
+      breakdownModePomodoro = document.getElementById('breakdown-mode-pomodoro'),
+
+      extendModalEl = document.getElementById('extend-modal'),
+      extendModalTitle = document.getElementById('extend-modal-title'),
+      extendCountdownText = document.getElementById('countdown-extend-modal'),
+      extendAutoBar = document.getElementById('extend-auto-bar'),
+      extendSkipBtn = document.getElementById('extend-skip-btn'),
+
+      extendToggle = document.getElementById('extend-toggle'),
+      extendQuestion = document.getElementById('extend-question'),
+      extendOptionsBox = document.getElementById('extend-options')
 ;
 
 let autoCloseTimeout = null,
@@ -105,10 +115,19 @@ let autoCloseTimeout = null,
     pauseStartTimestamp = null
 ;
 
-totalPausedMs = 0;
+
+let totalPausedMs = 0;
 
 let sessionWasPaused = false;
 let sessionStartTimestamp = null;
+
+const extendModal = new bootstrap.Modal(extendModalEl);
+const extendWaitSeconds = 15;
+const alarmSeconds = 10;
+
+let extendCountdownInterval = null,
+    pendingFinishTs = null,
+    alarmOscillators = [];
 
 const autoCloseSecondTime = 10000;
 
@@ -248,16 +267,18 @@ function playBeep(frequency, duration, volume = 0.15, type = 'sine', delay = 0) 
 }
 
 function playTimerSound() {
-    const beepTimes = [0, 0.4, 0.8, 1.2, 1.6, 2.0];
+    // const beepTimes = [0, 0.4, 0.8, 1.2, 1.6, 2.0];
 
-    beepTimes.forEach((delay, i) => {
-        playBeep(i % 2 === 0 ? 1046 : 784, 0.45, 0.35, 'triangle', delay);
-    });
+    // beepTimes.forEach((delay, i) => {
+    //     playBeep(i % 2 === 0 ? 1046 : 784, 0.45, 0.35, 'triangle', delay);
+    // });
+
+    playAlarmLoop(alarmSeconds);
 }
 
-// function playTickSound() {
-//     playBeep(1000, 0.1, 0.1, 'square');
-// }
+function playTickSound() {
+    playBeep(1000, 0.1, 0.1, 'square');
+}
 
 // function playTimerSound() {
 //     const beepTimes = [0, 0.4, 0.8, 1.2, 1.6, 2.0];
@@ -351,6 +372,18 @@ function formatTime(seconds) {
     const min = Math.floor(seconds / 60).toString().padStart(2, '0');
     const sec = (seconds % 60).toString().padStart(2, '0');
     return `${min}:${sec}`;
+}
+
+function formatTotalTime(totalSec) {
+    const h = Math.floor(totalSec / 3600),
+          m = Math.floor((totalSec % 3600) / 60),
+          s = totalSec % 60;
+
+    const parts = [];
+    if (h) parts.push(`${h} jam`);
+    if (m) parts.push(`${m} menit`);
+    if (s || parts.length === 0) parts.push(`${s} detik`);
+    return parts.join(' ');
 }
 
 // hitung warna nama sesi semakin nyata saat waktunya udh mau selesai
@@ -571,6 +604,9 @@ function resetTampilan() {
     // clearInterval(intervalTimer);
     // intervalTimer = null;
 
+    pauseTimerBtn.disabled = false;
+    resetTimerBtn.disabled = false;
+
     stopTicking();
 }
 
@@ -589,53 +625,64 @@ function startTimerInterval() {
 }
 
 async function tick() {
+    if (!intervalTimer) return; // abaikan tick sisa setelah timer dihentikan
 
     reminingSeconds = Math.max(0, Math.round((endTimestamp - Date.now()) / 1000));
 
-    if(reminingSeconds > 0) {
+    if (reminingSeconds > 0) {
         updateDisplayTimer();
-        if(reminingSeconds > 0 && reminingSeconds <= 10) {
+        if (reminingSeconds <= 10) {
             playTickSound();
         }
-        return
+        return;
     }
 
-    // clearInterval(intervalTimer);
     stopTicking();
-    playTimerSound();
 
+    // ===== MODE TIMER =====
     if (mode === 'biasa') {
+        if (extendToggle.checked) {
+            showExtendPrompt();
+            return;
+        }
+        playTimerSound();
         await addResult(currentName, 'Timer', '-', totalSeconds, totalSeconds, 'Selesai');
         statusText.textContent = `Timer "${currentName}" selesai!`;
         resetTampilan();
         return;
     }
 
+    // ===== MODE POMODORO =====
     const phaseLabel = currentPhase === 'fokus' ? 'Pomodoro' : 'Istirahat';
-    await addResult(currentName, 'Pomodoro', phaseLabel, totalSeconds, totalSeconds, 'Selesai');
+    const isFinalPhase = currentPhase === 'break' && currentRepeat >= totalRepeat;
+    const askExtend = isFinalPhase && extendToggle.checked;
+
+    if (!askExtend) playTimerSound(); // kalau mau tanya, alarm panjang diputar oleh showExtendPrompt()
+    await addResult(currentName, 'pomodoro', phaseLabel, totalSeconds, totalSeconds, 'Selesai');
 
     if (currentPhase === 'fokus') {
-        // baru selesai fokus -> lanjut ke istirahat
+        // selesai fokus -> istirahat
         currentPhase = 'break';
         totalSeconds = breakDuration;
         reminingSeconds = breakDuration;
         statusText.textContent = `Waktunya istirahat, (${currentRepeat}/${formatRepeat(totalRepeat)})`;
         endTimeText.textContent = `Selesai pada ${calculateEndTime(totalSeconds)}`;
         startTimerInterval();
+    } else if (currentRepeat < totalRepeat) {
+        // selesai istirahat, masih ada siklus berikutnya
+        currentRepeat++;
+        currentPhase = 'fokus';
+        totalSeconds = focusDuration;
+        reminingSeconds = focusDuration;
+        statusText.textContent = `Waktunya belajar, (${currentRepeat}/${formatRepeat(totalRepeat)})`;
+        endTimeText.textContent = `Selesai pada ${calculateEndTime(totalSeconds)}`;
+        startTimerInterval();
+    } else if (askExtend) {
+        // siklus terakhir habis dan user minta ditanya
+        showExtendPrompt();
     } else {
-        // baru selesai istirahat -> cek apakah masih ada siklus berikutnya
-        if (currentRepeat < totalRepeat) {
-            currentRepeat++;
-            currentPhase = 'fokus';
-            totalSeconds = focusDuration;
-            reminingSeconds = focusDuration;
-            statusText.textContent = `Waktunya belajar, (${currentRepeat}/${formatRepeat(totalRepeat)})`;
-            endTimeText.textContent = `Selesai pada ${calculateEndTime(totalSeconds)}`;
-            startTimerInterval();
-        } else {
-            statusText.textContent = `Semua ${formatRepeat(totalRepeat)} siklus belajar selesai! >.<`;
-            resetTampilan();
-        }
+        statusText.textContent = `Semua ${formatRepeat(totalRepeat)} siklus belajar selesai! >.<`;
+        resetTampilan();
     }
 }
 
@@ -658,9 +705,184 @@ function updateEndTimeLive() {
     endTimeText.textContent = `Perkiraan selesai ${formatClockTime(projectedEnd)}`;
 }
 
+// toggle extended
+extendToggle.checked = localStorage.getItem('timer-extend-enabled') === 'true';
+extendToggle.addEventListener('change', () => {
+    localStorage.setItem('timer-extend-enabled', extendToggle.checked);
+    extendToggle.blur(); 
+})
+
+const extendOptions = {
+    biasa: {
+        question: 'Apakah mau diperpanjang?',
+        items: [
+            { label: '+30s', value: 30 },
+            { label: '+1min', value: 60 },
+            { label: '+5min', value: 300 },
+            { label: '+15min', value: 900 },
+            { label: '+30min', value: 1800 }
+        ]
+    },
+    pomodoro: {
+        question: 'Mau tambah siklus?',
+        items: [
+            { label: '+1 siklus', value: 1 },
+            { label: '+2 siklus', value: 2 },
+            { label: '+3 siklus', value: 3 },
+            { label: '+5 siklus', value: 5 }
+        ]
+    }
+};
+
+function renderExtendOptions() {
+    const cfg = extendOptions[mode];
+    extendQuestion.textContent = cfg.question;
+    extendOptionsBox.innerHTML = cfg.items.map(item =>
+        `<button type="button" class="btn btn-outline-info extend-btn" data-value="${item.value}">${item.label}</button>`
+    ).join('');
+}
+
+extendOptionsBox.addEventListener('click', (e) => {
+    const btn = e.target.closest('.extend-btn');
+    if (!btn) return;
+    const value = parseInt(btn.dataset.value, 10);
+    if (mode === 'biasa') extendSession(value);
+    else extendCycles(value);
+});
+
+function playAlarmLoop(durationSeconds = 15) {
+    stopAlarm();
+    try {
+        const ctx = getAudioCtx();
+        for (let i = 0; i * 0.5 < durationSeconds; i++) {
+            const startAt = ctx.currentTime + i * 0.5,
+                  osc = ctx.createOscillator(),
+                  gain = ctx.createGain();
+
+            osc.type = 'triangle';
+            osc.frequency.value = i % 2 === 0 ? 1046 : 784;
+            gain.gain.setValueAtTime(0.35, startAt);
+            gain.gain.exponentialRampToValueAtTime(0.00001, startAt + 0.45);
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+            osc.start(startAt);
+            osc.stop(startAt + 0.45);
+            alarmOscillators.push(osc);
+        }
+    } catch (error) {
+        // kalau error = diem
+    }
+}
+
+function stopAlarm() {
+    alarmOscillators.forEach(osc => {
+        try { osc.stop(); } catch (error) { /* sudah berhenti */ }
+    });
+    alarmOscillators = [];
+}
+
+function closeExtendPrompt() {
+    clearInterval(extendCountdownInterval);
+    extendCountdownInterval = null;
+    stopAlarm();
+    extendModal.hide();
+}
+
+// tambah waktu (mode Timer)
+function extendSession(extraSeconds) {
+    if (pendingFinishTs === null) return;
+    pendingFinishTs = null;
+    closeExtendPrompt();
+
+    totalSeconds += extraSeconds;
+    reminingSeconds = extraSeconds;
+
+    endTimeText.textContent = `Selesai pada ${calculateEndTime(reminingSeconds)}`;
+    statusText.innerHTML = 'Starting <span class="dot">.</span><span class="dot"> .</span><span class="dot"> .</span>';
+    pauseTimerBtn.disabled = false;
+    resetTimerBtn.disabled = false;
+
+    updateDisplayTimer();
+    startTicking();
+}
+
+extendSkipBtn.addEventListener('click', finishSession);
+
+function showExtendPrompt() {
+    pendingFinishTs = endTimestamp || Date.now();
+
+    updateDisplayTimer();
+    endTimeText.textContent = '';
+    statusText.textContent = mode === 'biasa'
+        ? `Timer "${currentName}" selesai!`
+        : `Semua ${formatRepeat(totalRepeat)} siklus selesai!`;
+    pauseTimerBtn.disabled = true;
+    resetTimerBtn.disabled = true;
+
+    bootstrap.Modal.getInstance(breakdownModal)?.hide();
+
+    extendModalTitle.textContent = mode === 'biasa'
+        ? `${currentName} selesai!`
+        : `${currentName}: ${formatRepeat(totalRepeat)} siklus selesai!`;
+    renderExtendOptions(); 
+    playAlarmLoop(extendWaitSeconds);
+
+    const deadline = Date.now() + extendWaitSeconds * 1000;
+    extendCountdownText.textContent = extendWaitSeconds;
+    extendAutoBar.style.transition = 'none';
+    extendAutoBar.style.width = '100%';
+
+    extendCountdownInterval = setInterval(() => {
+        const left = Math.max(0, Math.ceil((deadline - Date.now()) / 1000));
+        extendCountdownText.textContent = left;
+        extendAutoBar.style.width = `${(left / extendWaitSeconds) * 100}%`;
+        if (left <= 0) finishSession();
+    }, 250);
+
+    extendModal.show();
+}
+
+// tambah siklus (Pomodoro)
+function extendCycles(extraCycles) {
+    if (pendingFinishTs === null) return;
+    pendingFinishTs = null;
+    closeExtendPrompt();
+
+    totalRepeat += extraCycles;
+    currentRepeat++;
+    currentPhase = 'fokus';
+    totalSeconds = focusDuration;
+    reminingSeconds = focusDuration;
+
+    pauseTimerBtn.disabled = false;
+    resetTimerBtn.disabled = false;
+
+    endTimeText.textContent = `Selesai pada ${calculateEndTime(totalSeconds)}`;
+    startTimerInterval();
+}
+
+// tidak ada tanggapan / 'klik' Selesai
+async function finishSession() {
+    if (pendingFinishTs === null) return;
+    const finishedAt = pendingFinishTs;
+    pendingFinishTs = null;
+    closeExtendPrompt();
+
+    if (mode === 'biasa') {
+        await addResult(currentName, 'Timer', '-', totalSeconds, totalSeconds, 'Selesai', finishedAt);
+        statusText.textContent = `Timer "${currentName}" selesai!`;
+    } else {
+        statusText.textContent = `Semua ${formatRepeat(totalRepeat)} siklus belajar selesai! >.<`;
+    }
+    resetTampilan();
+}
+
 // btn
 
 startTimerBtn.addEventListener('click', async () => {
+
+    stopAlarm();
+
     const defaultName = mode === 'pomodoro' ? 'Pomodoro' : 'Timer';
     const name = namaTimer.value.trim() || defaultName;
 
@@ -766,7 +988,8 @@ startTimerBtn.addEventListener('click', async () => {
 })
 
 resetTimerBtn.addEventListener('click', async () => {
-    clearInterval(intervalTimer);
+    stopAlarm();
+    stopTicking();
     clearInterval(pauseDisplayInterval);
     pauseDisplayInterval = null;
 
@@ -816,8 +1039,6 @@ pauseTimerBtn.addEventListener('click', () => {
 
         endTimeText.textContent = `Selesai pada ${calculateEndTime(reminingSeconds)}`;
 
-        // intervalTimer = setInterval(tick, 1000);
-
         startTicking();
 
         // startTimerBtn.classList.add('d-none');
@@ -840,7 +1061,7 @@ namaTimer.addEventListener('keydown', (e) => {
         e.preventDefault();
         const firstDurasiInput = mode === 'pomodoro' ? jamPomodoro : durasiJamTimer;
         firstDurasiInput.focus();
-        firstDurasiInput.select(); // biar langsung bisa ketik timpa angkanya
+        firstDurasiInput.select(); 
     }
 });
 
@@ -872,10 +1093,11 @@ setupDurasiArrowNav([jamPomodoro, menitPomodoro, detikPomodoro]);
 setupDurasiArrowNav([jamIstirahat, menitIstirahat, detikIstirahat]);
 
 document.addEventListener('keydown', (e) => {
+    if (extendModalEl.classList.contains('show')) return;
+    
     const active = document.activeElement;
-    const isTypingNama = active === namaTimer; // biar spasi tetap bisa diketik normal di nama sesi
+    const isTypingNama = active === namaTimer;
 
-    // SPASI: start kalau belum jalan, pause/resume kalau lagi jalan
     if (e.code === 'Space' && !isTypingNama) {
         e.preventDefault();
         if (!startTimerBtn.classList.contains('d-none')) {
@@ -885,7 +1107,6 @@ document.addEventListener('keydown', (e) => {
         }
     }
 
-    // BACKSPACE: reset (cuma aktif kalau tombol reset kelihatan & user gak lagi ngetik di kolom input)
     if (e.key === 'Backspace' && !resetTimerBtn.classList.contains('d-none') && active.tagName !== 'INPUT') {
         e.preventDefault();
         resetTimerBtn.click();
@@ -904,15 +1125,22 @@ breakdownModal.addEventListener('hidden.bs.modal', () => {
     infoDivider.classList.add('d-none');
     infoToggleBtn.classList.remove('active');
 
-    [breakdownSelesai, breakdownReset, breakdownPause, breakdownModeTimer, breakdownModePomodoro].forEach(el => {
+    breakdownTooltipEls().forEach(el => {
         const tooltip = bootstrap.Tooltip.getInstance(el);
         if (tooltip) tooltip.hide();
     });
 });
 
-// isi angka breakdown pas modal Bootstrap mau muncul (event bawaan Bootstrap)
+// isi angka breakdown pas modal Bootstrap mau muncul
 const isTimerMode = r => String(r.mode).toLowerCase() === 'timer';
 const isPomodoroMode = r => String(r.mode).toLowerCase() === 'pomodoro';
+const sessionSeconds = r => (r.used || 0) + (r.pausedSeconds || 0);
+const sumSeconds = list => list.reduce((total, r) => total + sessionSeconds(r), 0);
+
+const breakdownTooltipEls = () => [
+    breakdownTotal, breakdownSelesai, breakdownReset,
+    breakdownPause, breakdownModeTimer, breakdownModePomodoro
+];
 
 breakdownModal.addEventListener('show.bs.modal', () => {
     const selesaiResults = results.filter(r => r.status === 'Selesai');
@@ -928,22 +1156,23 @@ breakdownModal.addEventListener('show.bs.modal', () => {
     breakdownModeTimer.textContent = timerResults.length;
     breakdownModePomodoro.textContent = pomodoroResults.length;
 
-    // format isi tooltip
     const byMode = list =>
         `Timer: ${list.filter(isTimerMode).length} | Pomodoro: ${list.filter(isPomodoroMode).length}`;
-    const byStatus = list =>
-        `Selesai: ${list.filter(r => r.status === 'Selesai').length} | Reset: ${list.filter(r => r.status === 'Reset').length} | Pause: ${list.filter(r => r.wasPaused).length}`;
 
+    // total waktu
+    breakdownTotal.setAttribute('data-bs-title', `Total waktu: ${formatTotalTime(sumSeconds(results))}`);
+    breakdownModeTimer.setAttribute('data-bs-title', `Total waktu: ${formatTotalTime(sumSeconds(timerResults))}`);
+    breakdownModePomodoro.setAttribute('data-bs-title', `Total waktu: ${formatTotalTime(sumSeconds(pomodoroResults))}`);
+
+    // breakdown mode per status (tetap)
     breakdownSelesai.setAttribute('data-bs-title', byMode(selesaiResults));
     breakdownReset.setAttribute('data-bs-title', byMode(resetResults));
     breakdownPause.setAttribute('data-bs-title',
-        `${byMode(pausedResults.filter(r => r.status === 'Reset'))}`
+        `${byMode(pausedResults)}`
     );
-    breakdownModeTimer.setAttribute('data-bs-title', byStatus(timerResults));
-    breakdownModePomodoro.setAttribute('data-bs-title', byStatus(pomodoroResults));
 
-    // re-init semua tooltip karena isinya berubah tiap modal dibuka
-    [breakdownSelesai, breakdownReset, breakdownPause, breakdownModeTimer, breakdownModePomodoro].forEach(el => {
+    // re-init tooltip karena isinya berubah tiap modal dibuka
+    breakdownTooltipEls().forEach(el => {
         const existing = bootstrap.Tooltip.getInstance(el);
         if (existing) existing.dispose();
         new bootstrap.Tooltip(el, { html: true });

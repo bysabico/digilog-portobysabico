@@ -299,6 +299,8 @@ modeBiasaRadio.addEventListener('change', () => {
 
     inputNamaSesi.textContent = 'NAMA TIMER';
     namaTimer.placeholder = 'Meeting, Belajar, dan lainnya...';
+
+    namaTimer.focus();
 });
 
 modePomodoroRadio.addEventListener('change', () => {
@@ -309,6 +311,8 @@ modePomodoroRadio.addEventListener('change', () => {
 
     inputNamaSesi.textContent = 'NAMA TASK';
     namaTimer.placeholder = 'Belajar, Coding, dan lainnya...';
+
+    namaTimer.focus();
 });
 
 unlimitedPengulangan.addEventListener('change', () => {
@@ -604,6 +608,7 @@ function resetTampilan() {
 
     clearActiveSession();
     stopTicking();
+    namaTimer.focus();
 }
 
 function startTimerInterval() {
@@ -907,7 +912,6 @@ function clearActiveSession() {
     localStorage.removeItem(ACTIVE_KEY);
 }
 
-// tampilan "timer sedang berjalan" (sama persis dengan yang ada di tombol Start)
 function enterRunningUI() {
     namaTimer.disabled = true;
     durasiJamTimer.disabled = true;
@@ -958,7 +962,6 @@ async function restoreActiveSession() {
     }
     if (!data) return;
 
-    // pulihkan mode (sekalian ganti judul & label lewat event change)
     const modeRadio = data.mode === 'pomodoro' ? modePomodoroRadio : modeBiasaRadio;
     modeRadio.checked = true;
     modeRadio.dispatchEvent(new Event('change'));
@@ -977,7 +980,6 @@ async function restoreActiveSession() {
     pauseStartTimestamp = data.pauseStartTimestamp;
     sessionWasPaused = data.sessionWasPaused;
 
-    // kalau waktunya sudah lewat selagi halaman nggak aktif, catat sesi yang sudah selesai
     if (!data.paused) {
         while (endTimestamp <= Date.now()) {
             const finishedAt = endTimestamp;
@@ -1014,7 +1016,6 @@ async function restoreActiveSession() {
         }
     }
 
-    // timer masih berjalan atau sedang di-pause: tampilkan lagi
     enterRunningUI();
     updateRunningLabel();
 

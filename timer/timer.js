@@ -337,10 +337,6 @@ function storageKey(dayKey){
 async function loadResultsForToday() {
     const key = todayKey();
     currentDayKey = key;
-    todayDateBadge.textContent = todayLabel();
-    loadingState.classList.remove('d-none');
-    resultsEmpty.classList.add('d-none');
-    resultsTimerTable.classList.add('d-none');
 
     try {
         const stored = localStorage.getItem(storageKey(key));
@@ -349,7 +345,6 @@ async function loadResultsForToday() {
         results = [];
     }
 
-    loadingState.classList.add('d-none');
     renderResults();
 }
 
@@ -542,7 +537,7 @@ function replaySession(result) {
         menitIstirahat.value = Math.floor((data.breakDur % 3600) / 60);
         detikIstirahat.value = data.breakDur % 60;
 
-        if (data.totalRepeat === Infinity) {
+        if (data.totalRepeat === Infinity || data.totalRepeat === null) {
             unlimitedPengulangan.checked = true;
         } else {
             unlimitedPengulangan.checked = false;
@@ -607,6 +602,7 @@ function resetTampilan() {
     pauseTimerBtn.disabled = false;
     resetTimerBtn.disabled = false;
 
+    clearActiveSession();
     stopTicking();
 }
 
@@ -622,6 +618,7 @@ function startTimerInterval() {
     // intervalTimer = setInterval (tick, 1000);
 
     startTicking();
+    saveActiveSession();
 }
 
 async function tick() {
@@ -804,11 +801,13 @@ function extendSession(extraSeconds) {
 
     updateDisplayTimer();
     startTicking();
+    saveActiveSession();
 }
 
 extendSkipBtn.addEventListener('click', finishSession);
 
 function showExtendPrompt() {
+    if (mode === 'pomodoro') clearActiveSession();
     pendingFinishTs = endTimestamp || Date.now();
 
     updateDisplayTimer();
@@ -877,8 +876,169 @@ async function finishSession() {
     resetTampilan();
 }
 
-// btn
+// func untuk save timer saat ter refresh
+const ACTIVE_KEY = 'timer-active-session';
 
+function saveActiveSession() {
+    try {
+        localStorage.setItem(ACTIVE_KEY, JSON.stringify({
+            mode,
+            name: currentName,
+            totalSeconds,
+            reminingSeconds,
+            endTimestamp,
+            paused: !intervalTimer,
+            phase: currentPhase,
+            repeat: currentRepeat,
+            totalRepeat: totalRepeat === Infinity ? null : totalRepeat, // Infinity gak bisa disimpan di JSON
+            focusDuration,
+            breakDuration,
+            sessionStartTimestamp,
+            totalPausedMs,
+            pauseStartTimestamp,
+            sessionWasPaused
+        }));
+    } catch (error) {
+        // gagal simpan: timer tetap jalan normal
+    }
+}
+
+function clearActiveSession() {
+    localStorage.removeItem(ACTIVE_KEY);
+}
+
+// tampilan "timer sedang berjalan" (sama persis dengan yang ada di tombol Start)
+function enterRunningUI() {
+    namaTimer.disabled = true;
+    durasiJamTimer.disabled = true;
+    durasiMenitTimer.disabled = true;
+    durasiDetikTimer.disabled = true;
+
+    jamPomodoro.disabled = true;
+    menitPomodoro.disabled = true;
+    detikPomodoro.disabled = true;
+    jamIstirahat.disabled = true;
+    menitIstirahat.disabled = true;
+    detikIstirahat.disabled = true;
+
+    jumlahPengulangan.disabled = true;
+    unlimitedPengulangan.disabled = true;
+
+    modeBiasaRadio.disabled = true;
+    modePomodoroRadio.disabled = true;
+
+    startTimerBtn.classList.add('d-none');
+    startTimerBtn.classList.remove('w-100');
+    startTimerBtn.classList.add('w-50');
+
+    pauseTimerBtn.classList.remove('d-none');
+    pauseTimerBtn.classList.remove('w-100');
+    pauseTimerBtn.classList.add('w-50');
+
+    resetTimerBtn.classList.remove('d-none');
+    resetTimerBtn.classList.remove('w-100');
+    resetTimerBtn.classList.add('w-50');
+
+    inputsSection.classList.add('d-none');
+    runningTimer.classList.remove('d-none');
+    runningTimerName.classList.remove('d-none');
+
+    if (mode === 'pomodoro') {
+        pomodoroSettings.classList.add('d-none');
+        toggleSettingPomodoroIcon.className = 'fa-solid fa-caret-up';
+    }
+}
+
+async function restoreActiveSession() {
+    let data = null;
+    try {
+        data = JSON.parse(localStorage.getItem(ACTIVE_KEY));
+    } catch (error) {
+        data = null;
+    }
+    if (!data) return;
+
+    // pulihkan mode (sekalian ganti judul & label lewat event change)
+    const modeRadio = data.mode === 'pomodoro' ? modePomodoroRadio : modeBiasaRadio;
+    modeRadio.checked = true;
+    modeRadio.dispatchEvent(new Event('change'));
+
+    currentName = data.name;
+    totalSeconds = data.totalSeconds;
+    reminingSeconds = data.reminingSeconds;
+    endTimestamp = data.endTimestamp;
+    currentPhase = data.phase;
+    currentRepeat = data.repeat;
+    totalRepeat = data.totalRepeat === null ? Infinity : data.totalRepeat;
+    focusDuration = data.focusDuration;
+    breakDuration = data.breakDuration;
+    sessionStartTimestamp = data.sessionStartTimestamp;
+    totalPausedMs = data.totalPausedMs;
+    pauseStartTimestamp = data.pauseStartTimestamp;
+    sessionWasPaused = data.sessionWasPaused;
+
+    // kalau waktunya sudah lewat selagi halaman nggak aktif, catat sesi yang sudah selesai
+    if (!data.paused) {
+        while (endTimestamp <= Date.now()) {
+            const finishedAt = endTimestamp;
+
+            if (mode === 'biasa') {
+                await addResult(currentName, 'Timer', '-', totalSeconds, totalSeconds, 'Selesai', finishedAt);
+                statusText.textContent = `Timer "${currentName}" selesai!`;
+                resetTampilan();
+                return;
+            }
+
+            const phaseLabel = currentPhase === 'fokus' ? 'Pomodoro' : 'Istirahat';
+            await addResult(currentName, 'pomodoro', phaseLabel, totalSeconds, totalSeconds, 'Selesai', finishedAt);
+
+            if (currentPhase === 'fokus') {
+                currentPhase = 'break';
+                totalSeconds = breakDuration;
+            } else if (currentRepeat < totalRepeat) {
+                currentRepeat++;
+                currentPhase = 'fokus';
+                totalSeconds = focusDuration;
+            } else {
+                statusText.textContent = `Semua ${formatRepeat(totalRepeat)} siklus belajar selesai! >.<`;
+                resetTampilan();
+                return;
+            }
+
+            // fase berikutnya mulai tepat saat fase sebelumnya berakhir
+            sessionStartTimestamp = finishedAt;
+            totalPausedMs = 0;
+            pauseStartTimestamp = null;
+            sessionWasPaused = false;
+            endTimestamp = finishedAt + totalSeconds * 1000;
+        }
+    }
+
+    // timer masih berjalan atau sedang di-pause: tampilkan lagi
+    enterRunningUI();
+    updateRunningLabel();
+
+    if (data.paused) {
+        statusText.textContent = 'Paused ⏸️';
+        pauseTimerBtn.innerHTML = `
+            <i class="fa-solid fa-play d-inline d-md-none"></i>
+            <span class="d-none d-md-inline">RESUME</span>
+        `;
+        updateDisplayTimer();
+        updateEndTimeLive();
+        pauseDisplayInterval = setInterval(updateEndTimeLive, 1000);
+    } else {
+        reminingSeconds = Math.max(0, Math.round((endTimestamp - Date.now()) / 1000));
+        updateDisplayTimer();
+        endTimeText.textContent = `Selesai pada ${formatClockTime(endTimestamp)}`;
+        statusText.innerHTML = 'Starting <span class="dot">.</span><span class="dot"> .</span><span class="dot"> .</span>';
+        startTicking();
+    }
+
+    saveActiveSession();
+}
+
+// btn
 startTimerBtn.addEventListener('click', async () => {
 
     stopAlarm();
@@ -1027,6 +1187,7 @@ pauseTimerBtn.addEventListener('click', () => {
 
         updateEndTimeLive();
         pauseDisplayInterval = setInterval(updateEndTimeLive, 1000);
+        saveActiveSession();
     } else {
         if (pauseStartTimestamp) {
             totalPausedMs += Date.now() - pauseStartTimestamp;
@@ -1050,10 +1211,12 @@ pauseTimerBtn.addEventListener('click', () => {
             <i class="fa-solid fa-pause d-inline d-md-none"></i>
             <span class="d-none d-md-inline">PAUSE</span>
         `;
+        saveActiveSession();
     }
 });
 
 loadResultsForToday();
+restoreActiveSession();
 namaTimer.focus();
 
 namaTimer.addEventListener('keydown', (e) => {
@@ -1122,7 +1285,6 @@ infoToggleBtn.addEventListener('click', () => {
 
 breakdownModal.addEventListener('hidden.bs.modal', () => {
     extraInfoPanel.classList.add('d-none');
-    infoDivider.classList.add('d-none');
     infoToggleBtn.classList.remove('active');
 
     breakdownTooltipEls().forEach(el => {

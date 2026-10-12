@@ -377,3 +377,37 @@ input[type=number] {
 .badge-mode-belajar {
     background-color: #f97316; 
 }
+
+/* tabel biar ga terpotong saat di hp */
+@media (max-width: 575.98px) {
+    .table > :not(caption) > * > * {
+        padding: 0.4rem 0.25rem !important;
+        font-size: 0.75rem;
+    }
+
+    #results-timer-table th {
+        font-size: 0.7rem;
+        letter-spacing: 0;
+    }
+    
+    #results-timer-table td:nth-child(2) {
+        max-width: 90px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    #results-timer-table .badge {
+        font-size: 0.65rem;
+    }
+
+    #results-timer-table .replay-btn {
+        padding: 0.15rem 0.4rem;
+        font-size: 0.7rem;
+    }
+}
+
+/* light mode */
+[data-bs-theme='light'] #running-timer-name {
+    color: #000 !important;
+}

@@ -107,20 +107,24 @@ body {
     transition: all 0.35s ease;
 }
 
-.btn-stopwatch-costume {
-    flex: 0 0 28% !important;
-    min-width: 80px;
-    min-height: 50px;
-    /* style lain yang udah ada sebelumnya tetep di sini */
+#btn-stopwatch {
+    max-width: 520px;
+    margin-left: auto;
+    margin-right: auto;
 }
 
-@media (min-width: 768px) {
-    .btn-stopwatch-costume {
-        flex: 0 0 auto;
-        width: auto;
-        max-width: 220px;
-        min-width: 140px;
-    }
+.btn-stopwatch-costume {
+    flex: 1 1 0;
+    min-width: 0;
+    height: clamp(3rem, 7vw, 3.75rem);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    border-radius: 12px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    font-size: clamp(1rem, 2.6vw, 1.3rem) !important; /* !important karena class fs-4 di HTML juga pakai !important */
 }
 
 .costume-stopwatch:hover {
@@ -141,7 +145,7 @@ body {
 
 #display-stopwatch {
     font-family: 'Urbanist', sans-serif !important;
-    font-size: clamp(3rem, 17vw, 13rem) !important;
+    font-size: clamp(3rem, 11vw, 13rem) !important;
     letter-spacing: 0.05em !important;
     white-space: nowrap;
     max-width: 100%;
@@ -169,7 +173,7 @@ body {
     font-family: 'oxanium', monospace !important;
     font-weight: 900;
     /* transform: scale(1.1); */
-    letter-spacing: clamp(2px, 1vw, 10px) !important;
+    letter-spacing: clamp(1px, 0.4vw, 6px) !important;
 }
 
 #display-stopwatch.fokus {
@@ -184,12 +188,16 @@ body {
     text-shadow: 0 0 5px #22c55e, 0 0 10px #22c55e, 0 0 20px #22c55e, 0 0 40px #22c55e;
 }
 
+#display-stopwatch.glow-slowest {
+    text-shadow: 0 0 5px #ef4444, 0 0 10px #ef4444, 0 0 20px #ef4444, 0 0 40px #ef4444;
+}
+
 @media (max-width: 576px) {
     #display-stopwatch,
     #display-stopwatch.running,
     #display-stopwatch.fokus {
         transform: none;
-        font-size: 10.5vw !important;
+        font-size: 15vw !important;
         letter-spacing: 1px !important;
     }
 }
@@ -296,12 +304,6 @@ b {
 
 /* table-lap */
 
-.table-lap th, .table-lap td, tbody {
-    padding: 8px 12px;
-    text-align: center;
-    font-size: clamp(1.1rem, 3vw, 1.6rem) !important;
-}
-
 .table-lap thead {
     border-bottom: 2px solid #dee2e6;
     font-weight: 600;
@@ -315,9 +317,52 @@ b {
     color: #ef4444;
 }
 
-@media (max-width: 576px) {
-    .table-lap th, .table-lap td {
-        padding: 6px 4px;
+ /* table-lap: disamain gayanya dengan tabel timer */
+.table-lap {
+    border-color: #334155 !important;
+}
+
+.table-lap > :not(caption) > * > * {
+    padding: 0.5rem 0.75rem !important;
+    background-color: transparent;
+    color: var(--bs-body-color);
+    font-size: 0.85rem !important;
+    text-align: center;
+}
+
+.table-lap thead {
+    border-bottom: 2px solid #334155;
+    font-weight: 600;
+}
+
+.table-lap small {
+    font-size: inherit;
+}
+
+@media (min-width: 992px) {
+    .table-lap > :not(caption) > * > * {
+        font-size: 0.95rem !important;
+    }
+}
+
+@media (max-width: 575.98px) {
+    .table-lap > :not(caption) > * > * {
+        padding: 0.4rem 0.25rem !important;
         font-size: 0.75rem !important;
     }
+}
+
+/* warna fastest / slowest (selektor ditambah .table-lap biar menang dari aturan di atas) */
+.table-lap .fastest-lap-row,
+.table-lap .fastest-lap-row td,
+.table-lap .fastest-lap-row strong,
+.table-lap .fastest-lap-row small {
+    color: #198753;
+}
+
+.table-lap .slowest-lap-row,
+.table-lap .slowest-lap-row td,
+.table-lap .slowest-lap-row strong,
+.table-lap .slowest-lap-row small {
+    color: #ef4444;
 }

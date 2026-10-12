@@ -143,9 +143,21 @@ function startStopwatch() {
     saveState();
 }
 
+// agar tampilan stopwatch menyesuaikan ukuran layar
+function fitDisplay() {
+    displayStopwatch.style.removeProperty('font-size');
+    const maxW = displayStopwatch.clientWidth;
+    const curW = displayStopwatch.scrollWidth;
+    if (curW > maxW) {
+        const baseSize = parseFloat(getComputedStyle(displayStopwatch).fontSize);
+        displayStopwatch.style.setProperty('font-size', `${baseSize * maxW / curW}px`, 'important');
+    }
+}
+
 // displayTimeStopwatch(elapsedTime) = komando tampilan stopwatch dilayar.
 function displayTimeStopwatch(elapsedTime) {
     displayStopwatch.innerHTML = formatTime(elapsedTime);
+    fitDisplay();
 }
 
 // ===== FORMAT & DISPLAY =====
@@ -288,6 +300,7 @@ function pauseStopwatch() {
     lapBtn.disabled = true;
 
     saveState();
+    fitDisplay();
 }
 
 // = RESET =
@@ -425,6 +438,7 @@ function clearSession() {
     startBtn.classList.remove('d-none');
     pauseBtn.classList.add('d-none');
     lapBtn.disabled = true;
+    fitDisplay();
 }
 
 // = LAP =
@@ -550,7 +564,7 @@ function renderLaps() {
 function saveState() {
 
     localStorage.setItem('data-stopwatch', JSON.stringify ({
-
+        
         elapsedTime,
         lastLapTime,
         lastDurationLap,
@@ -559,7 +573,8 @@ function saveState() {
         startClockTime,
         endClockTime,
         running: !!stopwatchInterval,
-        notifFlags
+        notifFlags,
+        savedAt: Date.now()
     }));
 }
 
@@ -574,6 +589,11 @@ function loadState() {
     };
 
     elapsedTime = load.elapsedTime;
+
+    if (load.running && load.savedAt) {
+        elapsedTime += Date.now() - load.savedAt;
+    }
+
     lastLapTime = load.lastLapTime;
     lapCount = load.lapCount;
     laps = load.laps || [];
@@ -611,7 +631,7 @@ pauseBtn.addEventListener('click', pauseStopwatch);
 resetBtn.addEventListener('click', resetStopwatch);
 lapBtn.addEventListener('click', lap);
 closeModalResult.addEventListener('click', closeLapModal);
-
+window.addEventListener('resize', fitDisplay);
 
 // event listener memakai tombol di keyboard
 let resultSessionOpen = false,

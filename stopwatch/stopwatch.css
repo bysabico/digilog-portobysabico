@@ -352,7 +352,6 @@ b {
     }
 }
 
-/* warna fastest / slowest (selektor ditambah .table-lap biar menang dari aturan di atas) */
 .table-lap .fastest-lap-row,
 .table-lap .fastest-lap-row td,
 .table-lap .fastest-lap-row strong,

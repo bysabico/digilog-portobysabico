@@ -154,9 +154,9 @@ const fp = flatpickr("#seeCalendar", {
     defaultDate: "today",
     // max date = hari ini (jadi ga bisa pilih tanggal masa depan)
     maxDate: "today",
-    // disable pilih tanggal
+    // disable pilih tanggal selain hari ini
     clickOpens: false,
-    // disable pilih tahun
+    // bisa pilih tahun sebelumnya
     onReady: function(_, __, instance) {
         const yearEl = instance.currentYearElement;
         if (!yearEl) return;
@@ -175,10 +175,9 @@ const fp = flatpickr("#seeCalendar", {
         // hapus grid tahun
         if (grid) grid.remove();
 
-        // tampilkan flatpickr-days dan flatpickr-weekdays lagi saat flatpickr tahun diklik
+        // tampilkan flatpickr-days dan flatpickr-weekdays lagi saat flatpickr tahun diklik kembali
         if(days) days.style.display = '';
         if(weekdays) weekdays.style.display = '';
-
 
         requestAnimationFrame(() => {
             instance.setDate(today, true);
@@ -223,6 +222,7 @@ function showYearPicker(instance) {
 
             // display days diubah jadi tahun
             days.style.display = "";
+            if (weekdays) weekdays.style.display = "";
         };
         grid.appendChild(item);
     }

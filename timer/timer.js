@@ -1333,7 +1333,7 @@ namaTimer.addEventListener('keydown', (e) => {
     }
 });
 
-function setupDurasiArrowNav(inputs) {
+function setupDurasiArrowNav(inputs, onEnter) {
     inputs.forEach((input, index) => {
         input.addEventListener('keydown', (e) => {
             if (e.key === 'ArrowRight' && index < inputs.length - 1) {
@@ -1348,7 +1348,9 @@ function setupDurasiArrowNav(inputs) {
             }
             if (e.key === 'Enter') {
                 e.preventDefault();
-                if (!startTimerBtn.classList.contains('d-none')) {
+                if (onEnter) {
+                    onEnter(index);
+                } else if (!startTimerBtn.classList.contains('d-none')) {
                     startTimerBtn.click();
                 }
             }
@@ -1356,9 +1358,32 @@ function setupDurasiArrowNav(inputs) {
     });
 }
 
+// pengaturan enter timer vs pomodoro
+const focusSelect = el => { el.focus(); el.select(); };
+const startIfIdle = () => {
+    if (!startTimerBtn.classList.contains('d-none')) startTimerBtn.click();
+};
+
+// timer mode, enter = start
 setupDurasiArrowNav([durasiJamTimer, durasiMenitTimer, durasiDetikTimer]);
-setupDurasiArrowNav([jamPomodoro, menitPomodoro, detikPomodoro]);
-setupDurasiArrowNav([jamIstirahat, menitIstirahat, detikIstirahat]);
+
+// pomodoro mode, enter = ke bawah
+const fokusInputs = [jamPomodoro, menitPomodoro, detikPomodoro];
+const istirahatInputs = [jamIstirahat, menitIstirahat, detikIstirahat];
+
+setupDurasiArrowNav(fokusInputs, i => focusSelect(istirahatInputs[i]));
+
+setupDurasiArrowNav(istirahatInputs, () => {
+    if (jumlahPengulangan.disabled) startIfIdle();
+    else focusSelect(jumlahPengulangan);
+});
+
+jumlahPengulangan.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+        e.preventDefault();
+        startIfIdle();
+    }
+});
 
 document.addEventListener('keydown', (e) => {
     if (extendModalEl.classList.contains('show')) return;

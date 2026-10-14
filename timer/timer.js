@@ -63,11 +63,11 @@ const inputsSection = document.getElementById('inputs-section'),
       resetTimerBtn = document.getElementById('resetBtn'),
 
       statusText = document.getElementById('status-text'),
-      loadingState = document.getElementById('loading-state'),
+    //   loadingState = document.getElementById('loading-state'),
       resultsEmpty = document.getElementById('results-empty'),
       resultsTimerTable = document.getElementById('results-timer-table'),
       hasilTimer = document.getElementById('hasil-timer'),
-      todayDateBadge = document.getElementById('today-date-badge'),
+    //   todayDateBadge = document.getElementById('today-date-badge'),
       saveNote = document.getElementById('save-note'),
 
       triggerModal = document.getElementById('trigger-modal'),
@@ -300,6 +300,8 @@ modeBiasaRadio.addEventListener('change', () => {
     inputNamaSesi.textContent = 'NAMA TIMER';
     namaTimer.placeholder = 'Meeting, Belajar, dan lainnya...';
 
+    renderNameSuggestions();
+    presetHint.classList.add('d-none');
     namaTimer.focus();
 });
 
@@ -312,6 +314,8 @@ modePomodoroRadio.addEventListener('change', () => {
     inputNamaSesi.textContent = 'NAMA TASK';
     namaTimer.placeholder = 'Belajar, Coding, dan lainnya...';
 
+    renderNameSuggestions();
+    presetHint.classList.add('d-none');
     namaTimer.focus();
 });
 
@@ -324,14 +328,14 @@ function todayKey() {
     return `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`
 }
 
-function todayLabel() {
-    return new Date().toLocaleDateString('id-ID', { 
-        weekday: 'long', 
-        day: 'numeric', 
-        month: 'long', 
-        year: 'numeric' 
-    });
-}
+// function todayLabel() {
+//     return new Date().toLocaleDateString('id-ID', { 
+//         weekday: 'long', 
+//         day: 'numeric', 
+//         month: 'long', 
+//         year: 'numeric' 
+//     });
+// }
 
 function storageKey(dayKey){
     return `timer-results:${dayKey}`
@@ -451,14 +455,6 @@ function updateRunningLabel() {
     }
 }
 
-function buildReplayData() {
-    if (mode === 'biasa') {
-        return { mode: 'biasa', durasi: totalSeconds };
-    } else {
-        return { mode: 'pomodoro', focus: focusDuration, breakDur: breakDuration, totalRepeat: totalRepeat };
-    }
-}
-
 async function addResult(name, modeVal, phaseLabel, target, used, status) {
     if (currentDayKey !== todayKey()) {
         await loadResultsForToday();
@@ -478,7 +474,6 @@ async function addResult(name, modeVal, phaseLabel, target, used, status) {
         endTime: formatClockTime(Date.now()),
         wasPaused: sessionWasPaused,
         pausedSeconds: Math.round(pausedMs / 1000),
-        replay: buildReplayData()
     })
 
     renderResults();
@@ -507,7 +502,7 @@ function renderResults() {
         <tr>
             <td>${results.length - index}</td>
             <td>${result.wasPaused ? '⏸ ' : ''}${result.name}</td>
-            <td class="d-none d-md-table-cell"><span class='badge ${result.mode === 'pomodoro' ? 'badge-mode-belajar' : 'badge-mode-biasa'}'>${result.mode}</span></td>
+            <td class="d-none d-md-table-cell"><span class='badge ${String(result.mode).toLowerCase() === 'pomodoro' ? 'badge-mode-belajar' : 'badge-mode-biasa'}'>${result.mode}</span></td>
             <td class="d-none d-md-table-cell">${result.phaseLabel}</td>
             <td class="d-none d-md-table-cell">${formatTime(result.target)}</td>
             <td>
@@ -516,56 +511,51 @@ function renderResults() {
             <td><span class='badge ${result.status === 'Selesai' ? 'badge-status-selesai' : 'badge-status-reset'}'>${result.status}</span></td>
             <td class="d-none d-md-table-cell">${result.time}</td>
             <td class="d-none d-md-table-cell">${result.endTime || '-'}</td>
-            <td>
-                <button class="btn btn-sm btn-outline-info replay-btn" data-index="${index}" title="Jalankan ulang">
-                    <i class="fa-solid fa-rotate-right"></i>
-                </button>
-            </td>
         </tr>
     `).join('');
 }
 
-function replaySession(result) {
-    if (!result.replay) return;
-    const data = result.replay;
+// function replaySession(result) {
+//     if (!result.replay) return;
+//     const data = result.replay;
 
-    if (data.mode === 'pomodoro') {
-        modePomodoroRadio.checked = true;
-        modePomodoroRadio.dispatchEvent(new Event('change'));
+//     if (data.mode === 'pomodoro') {
+//         modePomodoroRadio.checked = true;
+//         modePomodoroRadio.dispatchEvent(new Event('change'));
 
-        jamPomodoro.value = Math.floor(data.focus / 3600);
-        menitPomodoro.value = Math.floor((data.focus % 3600) / 60);
-        detikPomodoro.value = data.focus % 60;
+//         jamPomodoro.value = Math.floor(data.focus / 3600);
+//         menitPomodoro.value = Math.floor((data.focus % 3600) / 60);
+//         detikPomodoro.value = data.focus % 60;
 
-        jamIstirahat.value = Math.floor(data.breakDur / 3600);
-        menitIstirahat.value = Math.floor((data.breakDur % 3600) / 60);
-        detikIstirahat.value = data.breakDur % 60;
+//         jamIstirahat.value = Math.floor(data.breakDur / 3600);
+//         menitIstirahat.value = Math.floor((data.breakDur % 3600) / 60);
+//         detikIstirahat.value = data.breakDur % 60;
 
-        if (data.totalRepeat === Infinity || data.totalRepeat === null) {
-            unlimitedPengulangan.checked = true;
-        } else {
-            unlimitedPengulangan.checked = false;
-            jumlahPengulangan.value = data.totalRepeat;
-        }
-        unlimitedPengulangan.dispatchEvent(new Event('change'));
-    } else {
-        modeBiasaRadio.checked = true;
-        modeBiasaRadio.dispatchEvent(new Event('change'));
+//         if (data.totalRepeat === Infinity || data.totalRepeat === null) {
+//             unlimitedPengulangan.checked = true;
+//         } else {
+//             unlimitedPengulangan.checked = false;
+//             jumlahPengulangan.value = data.totalRepeat;
+//         }
+//         unlimitedPengulangan.dispatchEvent(new Event('change'));
+//     } else {
+//         modeBiasaRadio.checked = true;
+//         modeBiasaRadio.dispatchEvent(new Event('change'));
 
-        durasiJamTimer.value = Math.floor(data.durasi / 3600);
-        durasiMenitTimer.value = Math.floor((data.durasi % 3600) / 60);
-        durasiDetikTimer.value = data.durasi % 60;
-    }
+//         durasiJamTimer.value = Math.floor(data.durasi / 3600);
+//         durasiMenitTimer.value = Math.floor((data.durasi % 3600) / 60);
+//         durasiDetikTimer.value = data.durasi % 60;
+//     }
 
-    namaTimer.value = result.name;
-    startTimerBtn.click();
-}
+//     namaTimer.value = result.name;
+//     startTimerBtn.click();
+// }
 
 hasilTimer.addEventListener('click', (e) => {
     const btn = e.target.closest('.replay-btn');
     if (!btn) return;
     const idx = parseInt(btn.dataset.index, 10);
-    replaySession(results[idx]);
+    // replaySession(results[idx]);
 });
 
 // 
@@ -660,7 +650,7 @@ async function tick() {
     const askExtend = isFinalPhase && extendToggle.checked;
 
     if (!askExtend) playTimerSound(); // kalau mau tanya, alarm panjang diputar oleh showExtendPrompt()
-    await addResult(currentName, 'pomodoro', phaseLabel, totalSeconds, totalSeconds, 'Selesai');
+    await addResult(currentName, 'Pomodoro', phaseLabel, totalSeconds, totalSeconds, 'Selesai');
 
     if (currentPhase === 'fokus') {
         // selesai fokus -> istirahat
@@ -992,7 +982,7 @@ async function restoreActiveSession() {
             }
 
             const phaseLabel = currentPhase === 'fokus' ? 'Pomodoro' : 'Istirahat';
-            await addResult(currentName, 'pomodoro', phaseLabel, totalSeconds, totalSeconds, 'Selesai', finishedAt);
+            await addResult(currentName, 'Pomodoro', phaseLabel, totalSeconds, totalSeconds, 'Selesai', finishedAt);
 
             if (currentPhase === 'fokus') {
                 currentPhase = 'break';
@@ -1038,6 +1028,216 @@ async function restoreActiveSession() {
 
     saveActiveSession();
 }
+
+// set default time on timer
+// const defaultToggle = document.getElementById('default-toggle');
+
+// const defaultKey = m => `timer-default-${m}`;
+
+// function readDefault(m) {
+//     try {
+//         return JSON.parse(localStorage.getItem(defaultKey(m)));
+//     } catch (error) {
+//         return null;
+//     }
+// }
+
+// function currentDefaultData() {
+//     if (mode === 'biasa') {
+//         return {
+//             h: durasiJamTimer.value,
+//             m: durasiMenitTimer.value,
+//             s: durasiDetikTimer.value
+//         };
+//     }
+//     return {
+//         fh: jamPomodoro.value, fm: menitPomodoro.value, fs: detikPomodoro.value,
+//         bh: jamIstirahat.value, bm: menitIstirahat.value, bs: detikIstirahat.value,
+//         repeat: jumlahPengulangan.value,
+//         unlimited: unlimitedPengulangan.checked
+//     };
+// }
+
+// // dipanggil saat Start (setelah validasi lolos)
+// function saveDefaultIfChecked() {
+//     if (!defaultToggle.checked) return;
+//     try {
+//         localStorage.setItem(defaultKey(mode), JSON.stringify(currentDefaultData()));
+//     } catch (error) {
+//         // gagal simpan: abaikan
+//     }
+// }
+
+// // isi kolom durasi dari default (dua mode sekaligus, sekali saat halaman dibuka)
+// function applyDefaults() {
+//     const b = readDefault('biasa');
+//     if (b) {
+//         durasiJamTimer.value = b.h;
+//         durasiMenitTimer.value = b.m;
+//         durasiDetikTimer.value = b.s;
+//     }
+
+//     const p = readDefault('pomodoro');
+//     if (p) {
+//         jamPomodoro.value = p.fh;
+//         menitPomodoro.value = p.fm;
+//         detikPomodoro.value = p.fs;
+//         jamIstirahat.value = p.bh;
+//         menitIstirahat.value = p.bm;
+//         detikIstirahat.value = p.bs;
+//         jumlahPengulangan.value = p.repeat;
+//         unlimitedPengulangan.checked = p.unlimited;
+//         jumlahPengulangan.disabled = p.unlimited;
+//     }
+// }
+
+// function syncDefaultToggle() {
+//     defaultToggle.checked = !!readDefault(mode);
+// }
+
+// defaultToggle.addEventListener('change', () => {
+//     if (!defaultToggle.checked) localStorage.removeItem(defaultKey(mode));
+//     defaultToggle.blur();
+// });
+
+const nameSuggestions = document.getElementById('nama-suggestions'),
+      presetHint = document.getElementById('preset-hint');
+
+const PRESET_KEY = 'timer-name-presets';
+const PRESET_MAX = 30; // maksimal 30 nama, yang paling lama nggak dipakai dibuang duluan
+
+// kunci per mode + nama (huruf besar/kecil dianggap sama)
+const presetId = (m, name) => `${m}:${name.trim().toLowerCase()}`;
+
+function loadPresets() {
+    try {
+        return JSON.parse(localStorage.getItem(PRESET_KEY)) || {};
+    } catch (error) {
+        return {};
+    }
+}
+
+function toSec(h, m, s) {
+    return (parseInt(h, 10) || 0) * 3600 + (parseInt(m, 10) || 0) * 60 + (parseInt(s, 10) || 0);
+}
+
+// baca isi kolom durasi sesuai mode yang aktif
+function readDurationData() {
+    if (mode === 'biasa') {
+        return {
+            h: durasiJamTimer.value,
+            m: durasiMenitTimer.value,
+            s: durasiDetikTimer.value
+        };
+    }
+    return {
+        fh: jamPomodoro.value, fm: menitPomodoro.value, fs: detikPomodoro.value,
+        bh: jamIstirahat.value, bm: menitIstirahat.value, bs: detikIstirahat.value,
+        repeat: jumlahPengulangan.value,
+        unlimited: unlimitedPengulangan.checked
+    };
+}
+
+// isi kolom durasi dari data tersimpan
+function applyDurationData(d) {
+    if (mode === 'biasa') {
+        durasiJamTimer.value = d.h;
+        durasiMenitTimer.value = d.m;
+        durasiDetikTimer.value = d.s;
+    } else {
+        jamPomodoro.value = d.fh;
+        menitPomodoro.value = d.fm;
+        detikPomodoro.value = d.fs;
+        jamIstirahat.value = d.bh;
+        menitIstirahat.value = d.bm;
+        detikIstirahat.value = d.bs;
+        jumlahPengulangan.value = d.repeat;
+        unlimitedPengulangan.checked = d.unlimited;
+        jumlahPengulangan.disabled = d.unlimited;
+    }
+}
+
+// teks kecil di samping nama di daftar saran
+function presetLabel(p) {
+    const d = p.data;
+    if (p.mode === 'biasa') return formatTotalTime(toSec(d.h, d.m, d.s));
+    const rep = d.unlimited ? '∞' : (d.repeat || 1);
+    return `${formatTotalTime(toSec(d.fh, d.fm, d.fs))} / ${formatTotalTime(toSec(d.bh, d.bm, d.bs))} × ${rep}`;
+}
+
+// simpan durasi untuk nama ini (dipanggil saat Start)
+function saveNamePreset(name) {
+    const clean = name.trim();
+    if (!clean) return;
+
+    const presets = loadPresets();
+    presets[presetId(mode, clean)] = {
+        name: clean,
+        mode,
+        data: readDurationData(),
+        lastUsed: Date.now()
+    };
+
+    // buang yang paling lama nggak dipakai kalau kebanyakan
+    const keys = Object.keys(presets);
+    if (keys.length > PRESET_MAX) {
+        keys.sort((a, b) => presets[a].lastUsed - presets[b].lastUsed)
+            .slice(0, keys.length - PRESET_MAX)
+            .forEach(k => delete presets[k]);
+    }
+
+    try {
+        localStorage.setItem(PRESET_KEY, JSON.stringify(presets));
+    } catch (error) {
+        // gagal simpan: timer tetap jalan normal
+    }
+    renderNameSuggestions();
+}
+
+// isi daftar saran sesuai mode yang aktif, yang terbaru di atas
+function renderNameSuggestions() {
+    const typed = namaTimer.value.trim().toLowerCase();
+
+    nameSuggestions.innerHTML = '';
+    Object.values(loadPresets())
+        .filter(p => p.mode === mode)
+        .filter(p => !typed || p.name.toLowerCase().startsWith(typed))
+        .sort((a, b) => b.lastUsed - a.lastUsed)
+        .forEach(p => {
+            const opt = document.createElement('option');
+            opt.value = p.name;
+            opt.label = presetLabel(p);
+            nameSuggestions.appendChild(opt);
+        });
+}
+
+// kalau nama cocok dengan yang pernah dipakai, isi kolom waktunya
+function tryApplyPreset() {
+    const typed = namaTimer.value.trim();
+    renderNameSuggestions();
+    presetHint.classList.add('d-none');
+    if (!typed || namaTimer.disabled) return;
+
+    const p = loadPresets()[presetId(mode, typed)];
+    if (!p) return;
+
+    applyDurationData(p.data);
+    presetHint.textContent = `Waktu terakhir "${p.name}" terisi otomatis`;
+    presetHint.classList.remove('d-none');
+}
+
+// 'change' jalan saat Enter atau pindah kolom, jadi waktu nggak berubah-ubah selagi kamu masih mengetik
+namaTimer.addEventListener('change', tryApplyPreset);
+
+namaTimer.addEventListener('input', (e) => {
+    // memilih dari daftar saran nggak punya inputType 'insertText', jadi langsung diisi
+    if (!e.inputType || e.inputType === 'insertReplacementText') {
+        tryApplyPreset();
+    } else {
+        renderNameSuggestions();
+        presetHint.classList.add('d-none');
+    }
+});
 
 // btn
 startTimerBtn.addEventListener('click', async () => {
@@ -1100,6 +1300,8 @@ startTimerBtn.addEventListener('click', async () => {
         reminingSeconds = focusDuration;
     }
 
+    // saveDefaultIfChecked();
+    if (namaTimer.value.trim()) saveNamePreset(namaTimer.value);
     endTimeText.textContent = `Selesai pada ${calculateEndTime(totalSeconds)}`;
 
     namaTimer.disabled = true;
@@ -1217,7 +1419,10 @@ pauseTimerBtn.addEventListener('click', () => {
 });
 
 loadResultsForToday();
+// applyDefaults();
+// syncDefaultToggle();
 restoreActiveSession();
+renderNameSuggestions();
 namaTimer.focus();
 
 namaTimer.addEventListener('keydown', (e) => {

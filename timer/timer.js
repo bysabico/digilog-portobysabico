@@ -103,7 +103,9 @@ const inputsSection = document.getElementById('inputs-section'),
 
       extendToggle = document.getElementById('extend-toggle'),
       extendQuestion = document.getElementById('extend-question'),
-      extendOptionsBox = document.getElementById('extend-options')
+      extendOptionsBox = document.getElementById('extend-options'),
+
+      extendToggleLabel = document.getElementById('extend-toggle-label')
 ;
 
 let autoCloseTimeout = null,
@@ -282,6 +284,8 @@ modeBiasaRadio.addEventListener('change', () => {
     inputNamaSesi.textContent = 'NAMA TIMER';
     namaTimer.placeholder = 'Meeting, Belajar, dan lainnya...';
 
+    extendToggleLabel.textContent = 'Tambah waktu';
+
     renderNameSuggestions();
     presetHint.classList.add('d-none');
     namaTimer.focus();
@@ -295,6 +299,8 @@ modePomodoroRadio.addEventListener('change', () => {
 
     inputNamaSesi.textContent = 'NAMA TASK';
     namaTimer.placeholder = 'Belajar, Coding, dan lainnya...';
+
+    extendToggleLabel.textContent = 'Tambah siklus';
 
     renderNameSuggestions();
     presetHint.classList.add('d-none');

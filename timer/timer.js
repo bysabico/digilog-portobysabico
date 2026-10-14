@@ -127,7 +127,7 @@ let sessionStartTimestamp = null;
 
 const extendModal = new bootstrap.Modal(extendModalEl);
 const extendWaitSeconds = 15;
-const alarmSeconds = 10;
+const alarmSeconds = 5;
 
 const tickerSec = 60;
 let tickerShown = false;
@@ -277,8 +277,15 @@ function playTimerSound() {
     playAlarmLoop(alarmSeconds);
 }
 
+// bunyi detik terakhir sebelum timer habis
 function playTickSound() {
     playBeep(1000, 0.1, 0.1, 'square');
+}
+
+// bunyi papan info sebelum istirahat habis (ticker)    
+function playTickerChime() {
+    playBeep(880, 0.25, 0.25, 'sine', 0);
+    playBeep(1175, 0.35, 0.25, 'sine', 0.3);
 }
 
 // BTN
@@ -650,6 +657,7 @@ function updateTicker() {
         tickerTrack.style.animationDuration = `${Math.max(10, msg.length * 0.2)}s`;
         phaseTicker.classList.remove('d-none');
         tickerShown = true;
+        playTickerChime();
     } else if (!shouldShow && tickerShown) {
         hideTicker();
     }

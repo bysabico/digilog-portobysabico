@@ -1312,6 +1312,35 @@ setupDurasiArrowNav([jamIstirahat, menitIstirahat, detikIstirahat]);
 
 document.addEventListener('keydown', (e) => {
     if (extendModalEl.classList.contains('show')) return;
+
+    const formVisible = !inputsSection.classList.contains('d-none');
+
+    if (formVisible && e.altKey && !e.ctrlKey && !e.shiftKey && !e.metaKey) {
+
+        // alt+T = timer
+        if (e.code === 'KeyT') {
+            e.preventDefault();
+            modeBiasaRadio.checked = true;
+            modeBiasaRadio.dispatchEvent(new Event('change'));
+            namaTimer.focus();
+        }
+
+        // alt+P = pomodoro
+        if (e.code === 'KeyP') {
+            e.preventDefault();
+            modePomodoroRadio.checked = true;
+            modePomodoroRadio.dispatchEvent(new Event('change'));
+            namaTimer.focus();
+        }
+
+        // alt+O = on/off extended btn
+        if (e.code === 'KeyO') {
+            e.preventDefault();
+            extendToggle.checked = !extendToggle.checked;
+            extendToggle.dispatchEvent(new Event('change'));
+        }
+
+    }   
     
     const active = document.activeElement;
     const isTypingNama = active === namaTimer;

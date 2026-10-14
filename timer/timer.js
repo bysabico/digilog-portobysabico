@@ -105,7 +105,11 @@ const inputsSection = document.getElementById('inputs-section'),
       extendQuestion = document.getElementById('extend-question'),
       extendOptionsBox = document.getElementById('extend-options'),
 
-      extendToggleLabel = document.getElementById('extend-toggle-label')
+      extendToggleLabel = document.getElementById('extend-toggle-label'),
+
+      phaseTicker = document.getElementById('phase-ticker'),
+      tickerTrack = document.getElementById('ticker-track'),
+      tickerText = document.getElementById('ticker-text')
 ;
 
 let autoCloseTimeout = null,
@@ -124,6 +128,9 @@ let sessionStartTimestamp = null;
 const extendModal = new bootstrap.Modal(extendModalEl);
 const extendWaitSeconds = 15;
 const alarmSeconds = 10;
+
+const tickerSec = 60;
+let tickerShown = false;
 
 let extendCountdownInterval = null,
     pendingFinishTs = null,
@@ -418,6 +425,8 @@ function updateDisplayTimer() {
 
     displayTimer.classList.toggle('finished', reminingSeconds <= 0);
     progressBar.classList.toggle('phase-break', currentPhase === 'break');
+
+    updateTicker();
 }
 
 function updateRunningLabel() {
@@ -534,6 +543,7 @@ function resetTampilan() {
 
     clearActiveSession();
     stopTicking();
+    hideTicker();
     namaTimer.focus();
 }
 
@@ -610,6 +620,46 @@ async function tick() {
     } else {
         statusText.textContent = `Semua ${formatRepeat(totalRepeat)} siklus belajar selesai! >.<`;
         resetTampilan();
+    }
+}
+
+// papan informasi
+function tickerMessage() {
+    if(currentPhase === 'fokus') {
+        return `Fokus segera selesai. Sebentar lagi istirahat!`;
+    }
+
+    if(currentRepeat >= totalRepeat) {
+       return 'Istirahat terakhir hampir selesai. Semua siklus segera tuntas! >.<';
+    }
+
+    return `Istirahat segera selesai. Sebentar lagi masuk ke siklus ${currentRepeat + 1}!`;
+}
+
+function hideTicker() {
+    phaseTicker.classList.add('d-none');
+    tickerShown = false;
+}
+
+function updateTicker() {
+    const shouldShow = mode === 'pomodoro' && totalSeconds > tickerSec && reminingSeconds > 0 && reminingSeconds <= tickerSec;
+
+    if(shouldShow && !tickerShown) {
+        const msg = tickerMessage();
+        tickerText.innerHTML = `⏳ <span class="ticker-count" id="ticker-count"></span> lagi, ${msg}`;
+        tickerTrack.style.animationDuration = `${Math.max(10, msg.length * 0.2)}s`;
+        phaseTicker.classList.remove('d-none');
+        tickerShown = true;
+    } else if (!shouldShow && tickerShown) {
+        hideTicker();
+    }
+
+    if (tickerShown) {
+        const count = document.getElementById('ticker-count');
+        if (count) {
+            count.textContent = formatTime(reminingSeconds);
+            count.classList.toggle('urgent', reminingSeconds <= 10);
+        }
     }
 }
 

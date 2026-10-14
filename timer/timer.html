@@ -56,7 +56,10 @@
                 <!-- INPUT NAMA TIMER -->
                 <div class="nama-timer mb-5">
                     <label class="form-label costume-style-timer" for="input-nama-timer" id="input-nama-sesi">NAMA TIMER</label>
-                    <input type="text" id="input-nama-timer" class="form-control" placeholder="Meeting, Belajar, dan lainnya...">
+                    <input type="text" id="input-nama-timer" class="form-control" placeholder="Meeting, Belajar, dan lainnya..." list="nama-suggestions" autocomplete="off">
+                    
+                    <datalist id="nama-suggestions"></datalist>
+                    <small class="text-secondary d-none" id="preset-hint"></small>
                 </div>
 
                 <!-- INPUT DURASI MODE BIASA -->
@@ -130,9 +133,11 @@
                 </div>
 
                 <!-- btn perpanjangan timer -->
-                <div class="form-check form-switch d-flex align-items-center justify-content-center gap-2 ps-0 mb-4">
-                    <input class="form-check-input ms-0 mt-0" type="checkbox" role="switch" id="extend-toggle">
-                    <label class="form-check-label" for="extend-toggle">Mau perpanjang</label>
+                <div class="d-flex flex-wrap justify-content-center align-items-center gap-3 mb-4">
+                    <div class="form-check form-switch d-flex align-items-center gap-2 ps-0 mb-0">
+                        <input class="form-check-input ms-0 mt-0" type="checkbox" role="switch" id="extend-toggle">
+                        <label class="form-check-label" for="extend-toggle">Tambah waktu</label>
+                    </div>
                 </div>
             </div>
 
@@ -198,15 +203,9 @@
                 </div>
             </div>
 
-            <!-- loading -->
-            <!-- <div class="empty-state" id="loading-state">
-                <div class="spinner-border spinner-border-sm text-info me-2" role="status"></div>
-                Memuat data. . .
-            </div> -->
-
             <!-- hasil timer -->
             <div class="empty-state d-none" id="results-empty">
-                Belum ada timer yang dijalankan hari ini.
+                <!-- hasil timer belum ada = kosong ajaaa-->
             </div>
 
             <!-- tabel hasil timer harian -->
@@ -225,7 +224,6 @@
                             <th>STATUS</th>
                             <th class="d-none d-md-table-cell">START</th>
                             <th class="d-none d-md-table-cell">END</th>
-                            <th>REPLAY</th>
                         </tr>
                     </thead>
 

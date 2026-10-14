@@ -1348,10 +1348,35 @@ breakdownModal.addEventListener('hidden.bs.modal', () => {
     });
 });
 
-const isTimerMode = r => String(r.mode).toLowerCase() === 'timer';
-const isPomodoroMode = r => String(r.mode).toLowerCase() === 'pomodoro';
-const sessionSeconds = r => (r.used || 0) + (r.pausedSeconds || 0);
-const sumSeconds = list => list.reduce((total, r) => total + sessionSeconds(r), 0);
+// extend modal agar langsung focus ke pilihan di dalamnya
+extendModalEl.addEventListener('shown.bs.modal', () => {
+    const first = extendOptionsBox.querySelector('.extend-btn');
+    if (first) first.focus();
+});
+
+// extend modal agar bisa memakai keyboard untuk memilih/navigasi
+extendModalEl.addEventListener('keydown', (e) => {
+    const btns = [...extendOptionsBox.querySelectorAll('.extend-btn')];
+    if (!btns.length) return;
+    const i = btns.indexOf(document.activeElement);
+
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
+        e.preventDefault();
+        btns[i === -1 ? 0 : (i + 1) % btns.length].focus();
+    } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+        e.preventDefault();
+        btns[i === -1 ? 0 : (i - 1 + btns.length) % btns.length].focus();
+    } else if (e.key === 'Backspace') {
+        e.preventDefault();
+        finishSession();
+    }
+});
+
+const isTimerMode = r => String(r.mode).toLowerCase() === 'timer', 
+      isPomodoroMode = r => String(r.mode).toLowerCase() === 'pomodoro',
+      sessionSeconds = r => (r.used || 0) + (r.pausedSeconds || 0),
+      sumSeconds = list => list.reduce((total, r) => total + sessionSeconds(r), 0)
+;
 
 const breakdownTooltipEls = () => [
     breakdownTotal, breakdownSelesai, breakdownReset,

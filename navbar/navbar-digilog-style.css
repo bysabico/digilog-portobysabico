@@ -99,6 +99,11 @@ nav #digitalBtn, #analogBtn, #btn12, #btn24 {
     box-shadow: 2px 2px 5px #132266, 4px 4px 10px  #cbc64b;
 }
 
+/* light mode */
+[data-bs-theme="light"] #digilog-brand {
+    color: rgb(17, 1, 1) !important;
+}
+
 /* DARK MODE */
 [data-bs-theme="dark"] #analogBtn.active, #digitalBtn.active, #btn12.active, #btn24.active {
     border-bottom: 4px solid #FFC18E !important;

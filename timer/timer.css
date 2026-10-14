@@ -421,3 +421,52 @@ input[type=number] {
     box-shadow: 0 0 0 3px rgba(13, 202, 240, 0.4);
     outline: none;
 }
+
+/* papan info style */
+
+.ticker {
+    overflow: hidden;
+    white-space: nowrap;
+    border-radius: 10px;
+    background: rgba(250, 204, 21, 0.18);
+    border: 1px solid rgba(250, 204, 21, 0.45);
+    padding: 0.5rem 0;
+    margin-bottom: 1rem;
+    font-weight: 600;
+}
+
+.ticker-count {
+    display: inline-block;
+    min-width: 5ch;                    
+    text-align: center;
+    font-variant-numeric: tabular-nums;
+    font-weight: 700;
+    padding: 0 0.4rem;
+    border-radius: 6px;
+    background: rgba(0, 0, 0, 0.2);
+}
+
+.ticker-count.urgent {
+    color: #ef4444;
+    animation: ticker-blink 1s steps(2, start) infinite;
+}
+
+@keyframes ticker-blink {
+    to { visibility: hidden; }
+}
+
+.ticker-track {
+    display: inline-block;
+    padding-left: 100%;  
+    animation: ticker-scroll 14s linear infinite;
+}
+
+@keyframes ticker-scroll {
+    from { transform: translateX(0); }
+    to   { transform: translateX(-100%); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .ticker { white-space: normal; text-align: center; padding: 0.5rem 1rem; }
+    .ticker-track { animation: none; padding-left: 0; }
+}

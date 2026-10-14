@@ -411,3 +411,13 @@ input[type=number] {
 [data-bs-theme='light'] #running-timer-name {
     color: #000 !important;
 }
+
+/* btn focus extended */
+.extend-btn:focus,
+.extend-btn:focus-visible {
+    background-color: #0dcaf0;
+    border-color: #0dcaf0;
+    color: #000;
+    box-shadow: 0 0 0 3px rgba(13, 202, 240, 0.4);
+    outline: none;
+}

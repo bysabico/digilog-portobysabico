@@ -496,3 +496,8 @@ input[type=number] {
     font-size: clamp(1.1rem, 3vw, 1.8rem);
     text-shadow: 0 0 10px rgba(250, 204, 21, 0.5);
 }
+
+/* report kemarin */
+.report-row + .report-row {
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+}

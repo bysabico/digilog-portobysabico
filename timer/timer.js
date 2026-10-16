@@ -414,8 +414,23 @@ function getTimerColor(percent) {
     return `rgb(${r}, ${g}, ${b})`;
 }
 
+function fitTimerDisplay() {
+    displayTimer.style.removeProperty('font-size');
+    const maxW = displayTimer.clientWidth;
+    if (!maxW) return;
+    const curW = displayTimer.scrollWidth;
+    if (curW > maxW) {
+        const base = parseFloat(getComputedStyle(displayTimer).fontSize);
+        displayTimer.style.setProperty('font-size', `${base * maxW / curW}px`, 'important');
+    }
+}
+
+window.addEventListener('resize', fitTimerDisplay);
+
 function updateDisplayTimer() {
     displayTimer.textContent = formatTime(reminingSeconds);
+
+    fitTimerDisplay();
 
     const percent = totalSeconds > 0 ? (reminingSeconds / totalSeconds) * 100 : 0;
 

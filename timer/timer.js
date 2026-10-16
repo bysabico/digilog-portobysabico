@@ -552,6 +552,7 @@ function resetTampilan() {
     stopTicking();
     hideTicker();
     namaTimer.focus();
+    runningTimer.classList.remove('is-paused');
 }
 
 function startTimerInterval() {
@@ -1018,7 +1019,10 @@ async function restoreActiveSession() {
         `;
         updateDisplayTimer();
         updateEndTimeLive();
+
         pauseDisplayInterval = setInterval(updateEndTimeLive, 1000);
+
+        runningTimer.classList.add('is-paused');
     } else {
         reminingSeconds = Math.max(0, Math.round((endTimestamp - Date.now()) / 1000));
         updateDisplayTimer();
@@ -1299,6 +1303,9 @@ pauseTimerBtn.addEventListener('click', () => {
         stopTicking();
         sessionWasPaused = true;
         pauseStartTimestamp = Date.now();
+
+        runningTimer.classList.add('is-paused');
+
         statusText.textContent = 'Paused ⏸️';
         pauseTimerBtn.innerHTML = `
             <i class="fa-solid fa-play d-inline d-md-none"></i>
@@ -1317,6 +1324,7 @@ pauseTimerBtn.addEventListener('click', () => {
         clearInterval(pauseDisplayInterval);
 
         pauseDisplayInterval = null;
+        runningTimer.classList.remove('is-paused');
 
         endTimeText.textContent = `Selesai pada ${calculateEndTime(reminingSeconds)}`;
 

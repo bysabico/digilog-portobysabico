@@ -501,3 +501,9 @@ input[type=number] {
 .report-row + .report-row {
     border-top: 1px solid rgba(255, 255, 255, 0.08);
 }
+
+/* btn resume */
+#pauseBtn.btn-success {
+    background-color: #22c55e;
+    border-color: #22c55e;
+}

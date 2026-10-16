@@ -470,3 +470,28 @@ input[type=number] {
     .ticker { white-space: normal; text-align: center; padding: 0.5rem 1rem; }
     .ticker-track { animation: none; padding-left: 0; }
 }
+
+/* end time running */
+#running-timer #display-timer {
+    transition: color 0.3s linear, opacity 0.4s ease;
+}
+
+.end-time-text,
+.progress,
+.ticker {
+    transition: opacity 0.4s ease, color 0.4s ease, font-size 0.3s ease;
+}
+
+#running-timer.is-paused #display-timer,
+#running-timer.is-paused .timer-name-badge,
+#running-timer.is-paused .progress,
+#running-timer.is-paused .ticker {
+    opacity: 0.25 !important;
+}
+
+#running-timer.is-paused .end-time-text {
+    color: #facc15;
+    font-weight: 700;
+    font-size: clamp(1.1rem, 3vw, 1.8rem);
+    text-shadow: 0 0 10px rgba(250, 204, 21, 0.5);
+}

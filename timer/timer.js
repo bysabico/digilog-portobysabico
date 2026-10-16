@@ -632,6 +632,11 @@ async function tick() {
 
 // papan informasi
 function tickerMessage() {
+
+    if(mode === 'biasa') {
+        return 'Timer segera selesai. Siap-siap, konfirmasi tambah waktu!';
+    }
+
     if(currentPhase === 'fokus') {
         return `Fokus segera selesai. Sebentar lagi istirahat!`;
     }
@@ -649,7 +654,8 @@ function hideTicker() {
 }
 
 function updateTicker() {
-    const shouldShow = mode === 'pomodoro' && totalSeconds > tickerSec && reminingSeconds > 0 && reminingSeconds <= tickerSec;
+    const tickerActive = mode === 'pomodoro' || (mode === 'biasa' && extendToggle.checked)
+    const shouldShow = tickerActive && totalSeconds > tickerSec && reminingSeconds > 0 && reminingSeconds <= tickerSec;
 
     if(shouldShow && !tickerShown) {
         const msg = tickerMessage();

@@ -109,7 +109,12 @@ const inputsSection = document.getElementById('inputs-section'),
 
       phaseTicker = document.getElementById('phase-ticker'),
       tickerTrack = document.getElementById('ticker-track'),
-      tickerText = document.getElementById('ticker-text')
+      tickerText = document.getElementById('ticker-text'),
+
+      dailyReportEl = document.getElementById('daily-report-modal'),
+      dailyReportWhen = document.getElementById('daily-report-when'),
+      dailyReportDate = document.getElementById('daily-report-date'),
+      dailyReportBody = document.getElementById('daily-report-body')
 ;
 
 let autoCloseTimeout = null,
@@ -1427,6 +1432,14 @@ document.addEventListener('keydown', (e) => {
 
     if (extendModalEl.classList.contains('show')) return;
 
+    if (dailyReportEl?.classList.contains('show')) {
+        if (e.key === 'Backspace') {
+            e.preventDefault();
+            bootstrap.Modal.getInstance(dailyReportEl)?.hide();
+        }
+        return;
+    }
+
     const ringkasanOpen = breakdownModal.classList.contains('show');
     const altOnly = e.altKey && !e.ctrlKey && !e.shiftKey && !e.metaKey;
 
@@ -1581,3 +1594,115 @@ breakdownModal.addEventListener('show.bs.modal', () => {
         new bootstrap.Tooltip(el, { html: true });
     });
 });
+
+// munculin hasil results timer kemarin
+const dailyReportModal = new bootstrap.Modal(dailyReportEl);
+const REPORT_SEEN_KEY = 'timer-report-seen';
+const RESULTS_PREFIX = 'timer-results:';
+
+function dayKeyToDate(key) {
+    const [y, m, d] = key.split('-').map(Number);
+    return new Date(y, m - 1, d);
+}
+
+function findLastUsageDay() {
+    const today = dayKeyToDate(todayKey());
+    let best = null;
+
+    for (let i = 0; i < localStorage.length; i++) {
+        const k = localStorage.key(i);
+        if (!k || !k.startsWith(RESULTS_PREFIX)) continue;
+
+        const dayKey = k.slice(RESULTS_PREFIX.length);
+        const date = dayKeyToDate(dayKey);
+        if (isNaN(date) || date >= today) continue;
+
+        let list;
+        try { list = JSON.parse(localStorage.getItem(k)); } catch (error) { continue; }
+        if (!Array.isArray(list) || list.length === 0) continue;
+
+        if (!best || date > best.date) best = { dayKey, date, list };
+    }
+    return best;
+}
+
+function buildDailyReport(list) {
+    const selesai = list.filter(r => r.status === 'Selesai').length;
+    const reset = list.filter(r => r.status === 'Reset').length;
+    const paused = list.filter(r => r.wasPaused).length;
+    const timerList = list.filter(isTimerMode);
+    const pomoList = list.filter(isPomodoroMode);
+
+    const byName = {};
+    list.forEach(r => {
+        const key = String(r.name).trim().toLowerCase();
+        if (!byName[key]) byName[key] = { name: r.name, secs: 0 };
+        byName[key].secs += sessionSeconds(r);
+    });
+    const top = Object.values(byName).sort((a, b) => b.secs - a.secs)[0];
+
+    return [
+        ['Total sesi', list.length],
+        ['Selesai', selesai],
+        ['Reset', reset],
+        ['Tingkat selesai', `${Math.round(selesai / list.length * 100)}%`],
+        ['Total waktu', formatTotalTime(sumSeconds(list))],
+        ['Mode Timer', `${timerList.length} sesi · ${formatTotalTime(sumSeconds(timerList))}`],
+        ['Mode Pomodoro', `${pomoList.length} sesi · ${formatTotalTime(sumSeconds(pomoList))}`],
+        ['Pernah dijeda', paused],
+        ['Paling banyak', top ? `${top.name} (${formatTotalTime(top.secs)})` : '-']
+    ];
+}
+
+function showDailyReport(day) {
+    const diff = Math.round((dayKeyToDate(todayKey()) - day.date) / 86400000);
+    dailyReportWhen.textContent = diff === 1 ? 'Kemarin' : `${diff} Hari Lalu`;
+    dailyReportDate.textContent = day.date.toLocaleDateString('id-ID', {
+        weekday: 'long', day: 'numeric', month: 'long', year: 'numeric'
+    });
+
+    dailyReportBody.innerHTML = '';
+    buildDailyReport(day.list).forEach(([label, value]) => {
+        const row = document.createElement('div');
+        row.className = 'd-flex justify-content-between align-items-center gap-3 py-2 report-row';
+
+        const l = document.createElement('span');
+        l.textContent = label;
+
+        const v = document.createElement('span');
+        v.className = 'fw-bold text-end';
+        v.textContent = value;
+
+        row.append(l, v);
+        dailyReportBody.appendChild(row);
+    });
+
+    dailyReportModal.show();
+}
+
+function maybeShowDailyReport() {
+    if (inputsSection.classList.contains('d-none')) return;
+    if (document.querySelector('.modal.show')) return;
+
+    if (currentDayKey !== todayKey()) loadResultsForToday();
+
+    const last = findLastUsageDay();
+    if (!last || localStorage.getItem(REPORT_SEEN_KEY) === last.dayKey) return;
+
+    localStorage.setItem(REPORT_SEEN_KEY, last.dayKey);
+    showDailyReport(last);
+}
+
+maybeShowDailyReport();
+setInterval(maybeShowDailyReport, 60 * 1000);
+document.addEventListener('visibilitychange', () => {
+    if (!document.hidden) maybeShowDailyReport();
+});
+
+// test hasil results timer kemarin
+// localStorage.setItem('timer-results:2026-10-15', JSON.stringify([
+//   {name:'Belajar', mode:'Timer', phaseLabel:'-', target:1500, used:1500, status:'Selesai', time:'08:00:00', endTime:'08:25:00', wasPaused:false, pausedSeconds:0},
+//   {name:'Coding', mode:'Pomodoro', phaseLabel:'Pomodoro', target:1500, used:600, status:'Reset', time:'09:00:00', endTime:'09:10:00', wasPaused:true, pausedSeconds:30}
+// ]));
+// localStorage.removeItem('timer-report-seen');
+// maybeShowDailyReport();

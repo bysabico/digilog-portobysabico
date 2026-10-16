@@ -1394,13 +1394,34 @@ jumlahPengulangan.addEventListener('keydown', (e) => {
 });
 
 document.addEventListener('keydown', (e) => {
+    if (e.defaultPrevented) return;
+
     if (extendModalEl.classList.contains('show')) return;
+
+    const ringkasanOpen = breakdownModal.classList.contains('show');
+    const altOnly = e.altKey && !e.ctrlKey && !e.shiftKey && !e.metaKey;
+
+    if (ringkasanOpen) {
+        if (e.key === 'Backspace' || (altOnly && e.code === 'KeyR')) {
+            e.preventDefault();
+            bootstrap.Modal.getOrCreateInstance(breakdownModal).hide();
+        } else if (altOnly && e.code === 'KeyI') {
+            e.preventDefault();
+            infoToggleBtn.click();
+        }
+        return;
+    }
+
+    if (altOnly && e.code === 'KeyR') {
+        e.preventDefault();
+        if (results.length > 0) bootstrap.Modal.getOrCreateInstance(breakdownModal).show();
+        return;
+    }
 
     const formVisible = !inputsSection.classList.contains('d-none');
 
-    if (formVisible && e.altKey && !e.ctrlKey && !e.shiftKey && !e.metaKey) {
+    if (formVisible && altOnly) {
 
-        // alt+T = timer
         if (e.code === 'KeyT') {
             e.preventDefault();
             modeBiasaRadio.checked = true;
@@ -1408,7 +1429,6 @@ document.addEventListener('keydown', (e) => {
             namaTimer.focus();
         }
 
-        // alt+P = pomodoro
         if (e.code === 'KeyP') {
             e.preventDefault();
             modePomodoroRadio.checked = true;
@@ -1416,15 +1436,13 @@ document.addEventListener('keydown', (e) => {
             namaTimer.focus();
         }
 
-        // alt+O = on/off extended btn
         if (e.code === 'KeyO') {
             e.preventDefault();
             extendToggle.checked = !extendToggle.checked;
             extendToggle.dispatchEvent(new Event('change'));
         }
+    }
 
-    }   
-    
     const active = document.activeElement;
     const isTypingNama = active === namaTimer;
 
@@ -1435,6 +1453,11 @@ document.addEventListener('keydown', (e) => {
         } else if (!pauseTimerBtn.classList.contains('d-none')) {
             pauseTimerBtn.click();
         }
+    }
+
+    if (e.key === 'Enter' && !pauseTimerBtn.classList.contains('d-none') && !isTypingNama) {
+        e.preventDefault();
+        pauseTimerBtn.click();
     }
 
     if (e.key === 'Backspace' && !resetTimerBtn.classList.contains('d-none') && active.tagName !== 'INPUT') {

@@ -71,7 +71,7 @@
 
                 <!-- INPUT DURASI MODE BIASA -->
                 <div class="mode-panel mb-4" id="section-mode-biasa">
-                    <label class="form-label costume-style-timer" for="durasi-detik">Durasi Timer</label>
+                    <label class="form-label costume-style-timer" for="durasi-jam-timer-biasa">Durasi Timer</label>
                     <div class="d-flex align-items-center gap-2">
                         <input type="number" id="durasi-jam-timer-biasa" class="form-control text-center costume-durasi" min="0" max="23" placeholder="HH">
                         <span>:</span>
@@ -96,7 +96,7 @@
 
                         <!-- INPUT FOKUS -->
                         <div class="mb-3">
-                            <label for="" class="form-label fw-bold fs-5">FOKUS</label>
+                            <label for="jam-pomodoro" class="form-label fw-bold fs-5">FOKUS</label>
                             <div class="d-flex align-items-center gap-2">
                                 <input type="number" name="" id="jam-pomodoro" class="form-control form-control-lg text-center costume-durasi" value='0' min="0" max="23" placeholder="HH">
                                 <span>:</span>
@@ -108,7 +108,7 @@
 
                         <!-- INPUT ISTIRAHAT -->
                         <div class="mb-3">
-                            <label for="" class="form-label fw-bold text-warning-emphasis fs-5">ISTIRAHAT</label>
+                            <label for="jam-istirahat" class="form-label fw-bold text-warning-emphasis fs-5">ISTIRAHAT</label>
                             <div class="d-flex align-items-center gap-2">
                                 <input type="number" name="" id="jam-istirahat" class="form-control form-control-sm text-center costume-durasi" value='0' min="0" max="23" placeholder="HH">
                                 <span>:</span>
@@ -123,7 +123,7 @@
                             <div class="col-12">
 
                                 <!-- TARGET -->
-                                <label for="" class="form-label">Jumlah Pengulangan (Repeat)</label>
+                                <label for="jumlah-pengulangan" class="form-label">Jumlah Pengulangan (Repeat)</label>
                                 <div class="input-group mb-2">
                                     <input type="number" name="" id="jumlah-pengulangan" class="form-control" placeholder="0">
                                 </div>
@@ -374,6 +374,28 @@
                     <div class="progress">
                         <div id="extend-auto-bar" class="progress-bar bg-info" role="progressbar"></div>
                     </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL LAPORAN HARIAN -->
+    <div class="modal" id="daily-report-modal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header border-secondary">
+                    <h5 class="modal-title">
+                        <i class="fa-solid fa-chart-simple"></i>
+                        Laporan <span id="daily-report-when">Kemarin</span>
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body py-4">
+                    <p class="text-secondary small mb-3" id="daily-report-date"></p>
+                    <div id="daily-report-body"></div>
+                </div>
+                <div class="modal-footer border-secondary">
+                    <button type="button" class="btn btn-info btn-sm" data-bs-dismiss="modal">Oke</button>
                 </div>
             </div>
         </div>

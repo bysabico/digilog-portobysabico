@@ -573,6 +573,17 @@ function resetTampilan() {
     hideTicker();
     namaTimer.focus();
     runningTimer.classList.remove('is-paused');
+    setPauseButtonState(false);
+}
+
+function setPauseButtonState(isPaused) {
+    pauseTimerBtn.classList.toggle('btn-warning', !isPaused);
+    pauseTimerBtn.classList.toggle('btn-success', isPaused);
+    pauseTimerBtn.innerHTML = isPaused
+        ? `<i class="fa-solid fa-play d-inline d-md-none"></i>
+           <span class="d-none d-md-inline">RESUME</span>`
+        : `<i class="fa-solid fa-pause d-inline d-md-none"></i>
+           <span class="d-none d-md-inline">PAUSE</span>`;
 }
 
 function startTimerInterval() {
@@ -1033,10 +1044,7 @@ async function restoreActiveSession() {
 
     if (data.paused) {
         statusText.textContent = 'Paused ⏸️';
-        pauseTimerBtn.innerHTML = `
-            <i class="fa-solid fa-play d-inline d-md-none"></i>
-            <span class="d-none d-md-inline">RESUME</span>
-        `;
+        setPauseButtonState(true);
         updateDisplayTimer();
         updateEndTimeLive();
 
@@ -1327,10 +1335,7 @@ pauseTimerBtn.addEventListener('click', () => {
         runningTimer.classList.add('is-paused');
 
         statusText.textContent = 'Paused ⏸️';
-        pauseTimerBtn.innerHTML = `
-            <i class="fa-solid fa-play d-inline d-md-none"></i>
-            <span class="d-none d-md-inline">RESUME</span>
-        `; 
+        setPauseButtonState(true);
 
         updateEndTimeLive();
         pauseDisplayInterval = setInterval(updateEndTimeLive, 1000);
@@ -1353,10 +1358,7 @@ pauseTimerBtn.addEventListener('click', () => {
         statusText.innerHTML = `
             <div class="text-center"> Starting <span class="dot">.</span><span class="dot">.</span><span class="dot">.</span></div>
         `;
-        pauseTimerBtn.innerHTML = `
-            <i class="fa-solid fa-pause d-inline d-md-none"></i>
-            <span class="d-none d-md-inline">PAUSE</span>
-        `;
+        setPauseButtonState(false);;
         saveActiveSession();
     }
 });

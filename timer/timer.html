@@ -58,7 +58,7 @@
                 </div>
 
                 <!-- TITLE TIMER -->
-                <h1 class="text-center fs-2 mt-4 mb-3 custom-timer" id="timer-title" data-bs-toggle="modal" data-bs-target="#deskripsiModalDigiStopwatch" id='timerTitle'>TIMER</h1>
+                <h1 class="text-center fs-2 mt-4 mb-3 custom-timer" id="timer-title" data-bs-toggle="modal" data-bs-target="#desc-modal" title="Klik untuk lihat penjelasan">TIMER</h1>
 
                 <!-- INPUT NAMA TIMER -->
                 <div class="nama-timer mb-5">
@@ -396,6 +396,162 @@
                 </div>
                 <div class="modal-footer border-secondary">
                     <button type="button" class="btn btn-info btn-sm" data-bs-dismiss="modal">Oke</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL DESKRIPSI TIMER & POMODORO -->
+    <div class="modal fade" id="desc-modal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header border-secondary">
+                    <h5 class="modal-title">Digi Timer</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+
+                <div class="modal-body">
+
+                    <!-- tab untuk desc per mode -->
+                    <ul class="nav nav-pills nav-fill mb-3" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active" id="desc-tab-timer" data-bs-toggle="pill" data-bs-target="#desc-pane-timer" type="button" role="tab">TIMER</button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="desc-tab-pomodoro" data-bs-toggle="pill" data-bs-target="#desc-pane-pomodoro" type="button" role="tab">POMODORO</button>
+                        </li>
+                    </ul>
+
+                    <div class="tab-content">
+
+                        <!-- DESC TIMER -->
+                        <div class="tab-pane fade show active" id="desc-pane-timer" role="tabpanel">
+                            <p>Bagian dari project Digilog bysabico.
+                                <br>
+                                Timer hanya untuk satu sesi.
+                            </p>
+
+                            <h6>Cara pakai</h6>
+                            <ul>
+                                <li>Isi nama sesi (boleh kosong) dan durasi <b>HH : MM : SS</b>, lalu <b>Start</b>.</li>
+                                <li>Warna jam dan bar berubah dari hijau, kuning, lalu merah saat waktu hampir habis.</li>
+                                <li>Timer berbunyi <b>5 detik</b> saat waktu habis.</li>
+                            </ul>
+                            <h6>Tambah waktu</h6>
+                            <ul>
+                                <li>Nyalakan switch <b>Tambah waktu</b> sebelum Start.</li>
+                                <li>Papan info berjalan muncul di 60 detik terakhir (untuk timer lebih dari 1 menit dan mengaktifkan extended).</li>
+                                <li>Saat waktu habis muncul pilihan <b>+30s, +1min, +5min, +15min, +30min</b>.</li>
+                                <li>Tidak ada tanggapan dalam <b>15 detik</b>, sesi dicatat selesai.</li>
+                            </ul>
+                        </div>
+
+                        <!-- DESC POMODORO -->
+                        <div class="tab-pane fade" id="desc-pane-pomodoro" role="tabpanel">
+                            <p> Bagian dari project Digilog bysabico.
+                                <br>
+                                Pomodoro terdapat 2 fase; fokus dan istirahat.
+                            </p>
+
+                            <h6>Cara pakai</h6>
+                            <ul>
+                                <li>Isi nama sesi (boleh kosong).</li>
+                                <li>Atur <b>FOKUS</b> (default; 25 menit), <b>ISTIRAHAT</b> (default; 5 menit), dan <b>Jumlah Pengulangan</b>, atau centang <b>Pengulangan Tanpa Batas</b>. Bisa diubah sesuai keperluan.</li>
+                                <li>Saat istirahat, warna dibalik: merah, kuning, hijau.</li>
+                                <li>Papan info berjalan dan bunyi muncul di 60 detik terakhir tiap fase, sebelum pindah ke fase berikutnya.</li>
+                                <li>Setiap fase dicatat satu baris di tabel.</li>
+                                <li>Timer berbunyi <b>5 detik</b> saat waktu habis.</li>
+                            </ul>
+                            <h6>Tambah siklus</h6>
+                            <ul>
+                                <li>Nyalakan switch <b>Tambah siklus</b> sebelum Start.</li>
+                                <li>Setelah istirahat terakhir muncul pilihan <b>+1, +2, +3, +4, +5 siklus</b>.</li>
+                                <li>Tidak ada tanggapan dalam <b>15 detik</b>, sesi dicatat selesai.</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <hr>
+
+                    <!-- fitur yang sama di timer & pomodoro -->
+                    <h4>Fitur Utama</h4>
+                    <ul>
+                        <li><b>Task Recall:</b> nama sesi dan waktu akan diingat sehingga bisa dipakai ulang</li>
+                        <li><b>Automatic End-Time Calculation:</b> 
+                            saat jeda, perkiraan waktu selesai akan bertambah menyesuaikan otomatis dari jumlah waktu jeda.
+                        </li>
+
+                        <li><b>Saat refresh dan buka tab lain:</b> timer tetap lanjut, dan tidak berhenti.</li>
+                        
+                        <li><b>Pemakaian Hari Ini:</b> klik badge jumlah sesi untuk ringkasan.
+                            <span class="desc-desktop-only">Arahkan kursor ke angka untuk rincian.</span>
+                            <span class="desc-mobile-only">Ketuk angka untuk rincian.</span>
+                        </li>
+
+                        <li><b>Laporan harian:</b> muncul sekali saat ganti hari, berisi ringkasan pemakaian.</li>
+                    </ul>
+
+                    <!-- penjelasan table report/results -->
+                    <h5>#Session Report</h5>
+                    <p>Tampilan laporan disesuaikan dengan ukuran layar perangkat</p>
+                    <ul>
+                        <li>
+                            <b>Mobile</b>: no sesi, indikator jeda (pause), nama task, eksekusi (durasi pemakaian termasuk jeda), dan status sesi (selesai/reset)
+                        </li>
+
+                        <li>
+                            <b>Desktop</b>: no sesi, indikator jeda (pause), nama task, mode (timer/pomodoro), repeat (jumlah pengulangan hanya untuk pomodoro), target durasi (durasi yang terinput diawal), eksekusi (durasi pemakaian termasuk jeda), status (selesai/reset), start (waktu mulai), dan end (waktu selesai)
+                        </li>
+                    </ul>
+
+                    <hr>
+
+                    <!-- tombol -->
+                    <h4>Fungsi Tombol</h4>
+                    <ul>
+                        <!-- Tombol Start -->
+                        <li>
+                            <i class="fa-solid fa-play"></i> <b class="btn-desc-style">Start</b>
+                            : Mulai menghitung waktu.
+                        </li>
+                            
+                        <!-- Tombol Pause -->
+                        <li>
+                            <i class="fa-solid fa-pause"></i> <b class="btn-desc-style">Pause</b>
+                            : Jeda perhitungan waktu.
+                        </li>
+
+                        <!-- Tombol Reset -->
+                           
+                        <li>
+                            <i class="fa-solid fa-arrow-rotate-left"></i> <b class="btn-desc-style">Reset</b>
+                            : Hentikan sesi & tampilkan hasil sesi.
+                        </li>
+
+                        <!-- Tombol Extend -->
+                        <li>
+                            <i class="fa-solid fa-toggle-on"></i> <b class="btn-desc-style">Extend (Tambah waktu)</b>
+                            : Menambah waktu sesi.
+                        </li>
+                    </ul>
+
+                    <!-- keyboard -->
+                    <div class="desc-desktop-only">
+                        <h5>#Desktop</h5>
+                        <ul>
+                            <li><b class="btn-desc-style">Spasi</b> = start, pause, dan resume</li>
+                            <li><b class="btn-desc-style">Enter</b> = start, pause, resume, dan pindah ke kolom berikutnya</li>
+                            <li><b class="btn-desc-style">← →</b> = pindah antar kolom waktu input dan saat mengaktifkan penambahan waktu</li>
+                            <li><b class="btn-desc-style">Backspace</b> = reset dan selesai sesi saat mengaktifkan penambahan waktu</li>
+                            <li><b class="btn-desc-style">Alt+T</b> = mode Timer</li>
+                            <li><b class="btn-desc-style">Alt+P</b> = mode Pomodoro</li>
+                            <li><b class="btn-desc-style">Alt+O</b> = nyalakan atau matikan tambah waktu / siklus</li>
+                            <li><b class="btn-desc-style">Alt+R</b> = buka atau tutup ringkasan</li>
+                            <li><b class="btn-desc-style">Alt+I</b> = info lainnya dalam ringkasan</li>
+                        </ul>
+                    </div>
+
+                    <p class="text-end text-secondary small mb-0">— bysabico</p>
                 </div>
             </div>
         </div>

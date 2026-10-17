@@ -657,7 +657,7 @@ async function tick() {
         // siklus terakhir habis tp extended
         showExtendPrompt();
     } else {
-        statusText.textContent = `Semua ${formatRepeat(totalRepeat)} siklus belajar selesai! >.<`;
+        statusText.textContent = `${formatRepeat(totalRepeat)} siklus belajar selesai!`;
         resetTampilan();
     }
 }
@@ -752,6 +752,7 @@ const extendOptions = {
             { label: '+1 siklus', value: 1 },
             { label: '+2 siklus', value: 2 },
             { label: '+3 siklus', value: 3 },
+            { label: '+4 siklus', value: 4 },
             { label: '+5 siklus', value: 5 }
         ]
     }
@@ -1434,6 +1435,14 @@ document.addEventListener('keydown', (e) => {
 
     if (extendModalEl.classList.contains('show')) return;
 
+    if (descModalEl.classList.contains('show')) {
+        if(e.key === 'Backspace') {
+            e.preventDefault();
+            bootstrap.Modal.getInstance(descModalEl)?.hide();
+        }
+        return;
+    }
+
     if (dailyReportEl?.classList.contains('show')) {
         if (e.key === 'Backspace') {
             e.preventDefault();
@@ -1595,6 +1604,14 @@ breakdownModal.addEventListener('show.bs.modal', () => {
         if (existing) existing.dispose();
         new bootstrap.Tooltip(el, { html: true });
     });
+});
+
+// ===== MODAL DESKRIPSI =====
+const descModalEl = document.getElementById('desc-modal');
+
+descModalEl.addEventListener('show.bs.modal', () => {
+    const tabBtn = document.getElementById(mode === 'pomodoro' ? 'desc-tab-pomodoro' : 'desc-tab-timer');
+    bootstrap.Tab.getOrCreateInstance(tabBtn).show();
 });
 
 // munculin hasil results timer kemarin

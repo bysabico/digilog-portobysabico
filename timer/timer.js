@@ -1667,6 +1667,26 @@ const isTimerMode = r => String(r.mode).toLowerCase() === 'timer',
       sumSeconds = list => list.reduce((total, r) => total + sessionSeconds(r), 0)
 ;
 
+function topByStatus(list, status) {
+    const counts = {};
+
+    list.forEach(r => {
+        if (r.status !== status) return;
+
+        const key = String(r.name).trim().toLowerCase();
+        
+        if (!counts[key]) counts[key] = {
+            name: r.name,
+            count: 0
+        };
+
+        counts[key].count++;
+    });
+
+    return Object.values(counts).sort((a,b) => b.count - a.count)[0] || null;
+}
+
+
 const breakdownTooltipEls = () => [
     breakdownTotal, breakdownSelesai, breakdownReset,
     breakdownPause, breakdownModeTimer, breakdownModePomodoro
@@ -1746,6 +1766,18 @@ function findLastUsageDay() {
     return best;
 }
 
+// selalu HH:MM:SS, jam nggak dipotong (30 jam = 30:00:00)
+function formatHMS(totalSec) {
+    totalSec = Math.max(0, Math.round(totalSec));
+
+    const h = Math.floor(totalSec / 3600),
+          m = Math.floor((totalSec % 3600) / 60),
+          s = totalSec % 60,
+          p = n => String(n).padStart(2, '0');
+
+    return `${p(h)}:${p(m)}:${p(s)}`;
+}
+
 function buildDailyReport(list) {
     const selesai = list.filter(r => r.status === 'Selesai').length;
     const reset = list.filter(r => r.status === 'Reset').length;
@@ -1753,24 +1785,42 @@ function buildDailyReport(list) {
     const timerList = list.filter(isTimerMode);
     const pomoList = list.filter(isPomodoroMode);
 
+    const topSelesai = topByStatus(list, 'Selesai');
+    const topReset = topByStatus(list, 'Reset');
+    const topNote = t => t ? `Paling banyak: ${t.name} (${t.count}x)` : '';
+
     const byName = {};
     list.forEach(r => {
         const key = String(r.name).trim().toLowerCase();
-        if (!byName[key]) byName[key] = { name: r.name, secs: 0 };
+        if (!byName[key]) byName[key] = { 
+            name: r.name, 
+            secs: 0,
+            selesai: 0,
+            reset: 0
+        };
         byName[key].secs += sessionSeconds(r);
+
+        if (r.status === 'Selesai') byName[key].selesai++;
+        if (r.status === 'Reset') byName[key].reset++;
     });
+
     const top = Object.values(byName).sort((a, b) => b.secs - a.secs)[0];
+    const topTimeNote = top ? [top.selesai && `Selesai ${top.selesai}x`, top.reset && `Reset ${top.reset}x`].filter(Boolean).join(' · ') : '';
+
+    const selesaiTime = sumSeconds(list.filter(r => r.status === 'Selesai'));
+    const resetTime = sumSeconds(list.filter(r => r.status === 'Reset'));
+    const totalTimeNote = `Selesai ${formatTotalTime(selesaiTime)} / Reset ${formatTotalTime(resetTime)}`;
 
     return [
         ['Total sesi', list.length],
-        ['Selesai', selesai],
-        ['Reset', reset],
+        ['Selesai', selesai, topNote(topSelesai)],
+        ['Reset', reset, topNote(topReset)],
         ['Tingkat selesai', `${Math.round(selesai / list.length * 100)}%`],
-        ['Total waktu', formatTotalTime(sumSeconds(list))],
+        ['Total waktu', formatTotalTime(sumSeconds(list)), totalTimeNote],
         ['Mode Timer', `${timerList.length} sesi · ${formatTotalTime(sumSeconds(timerList))}`],
         ['Mode Pomodoro', `${pomoList.length} sesi · ${formatTotalTime(sumSeconds(pomoList))}`],
         ['Pernah dijeda', paused],
-        ['Paling banyak', top ? `${top.name} (${formatTotalTime(top.secs)})` : '-']
+        ['Waktu terbanyak', top ? `${top.name} (${formatTotalTime(top.secs)})` : '-', topTimeNote]
     ];
 }
 
@@ -1782,18 +1832,30 @@ function showDailyReport(day) {
     });
 
     dailyReportBody.innerHTML = '';
-    buildDailyReport(day.list).forEach(([label, value]) => {
+    buildDailyReport(day.list).forEach(([label, value, note]) => {
         const row = document.createElement('div');
-        row.className = 'd-flex justify-content-between align-items-center gap-3 py-2 report-row';
+        row.className = 'py-2 report-row';
+
+        const main = document.createElement('div');
+        main.className = 'd-flex justify-content-between align-items-center gap-3';
 
         const l = document.createElement('span');
         l.textContent = label;
 
         const v = document.createElement('span');
-        v.className = 'fw-bold text-end';
+        v.className = 'fw-bold text-end text-break';
         v.textContent = value;
 
-        row.append(l, v);
+        main.append(l, v);
+        row.appendChild(main);
+
+        if (note) {
+            const small = document.createElement('small');
+            small.className = 'd-block text-secondary mt-1';
+            small.textContent = note;
+            row.appendChild(small);
+        }
+
         dailyReportBody.appendChild(row);
     });
 

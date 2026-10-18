@@ -445,12 +445,29 @@ function formatTime(seconds) {
     return `${min}:${sec}`;
 }
 
+function formatDuration(totalSec) {
+    totalSec = Math.max(0, Math.round(totalSec));
+
+    const d = Math.floor(totalSec/86400),
+          h = Math.floor((totalSec % 86400) / 3600),
+          m = Math.floor((totalSec % 3600) / 3600),
+          s = totalSec % 60,
+          p = n => String(n).padStart(2, '0')
+    ;
+
+    if (d > 0) return `${d} hari ${p(h)}:${p(m)}:${p(s)}`;
+    if(h>0) return `${p(h)}:${p(m)}:${p(s)}`;
+    return `${p(m)}:${p(s)}`;
+}
+
 function formatTotalTime(totalSec) {
-    const h = Math.floor(totalSec / 3600),
+    const d = Math.floor(totalSec / 86400),
+          h = Math.floor((totalSec % 86400) / 3600),
           m = Math.floor((totalSec % 3600) / 60),
           s = totalSec % 60;
 
     const parts = [];
+    if (d) parts.push(`${d} hari`)
     if (h) parts.push(`${h} jam`);
     if (m) parts.push(`${m} menit`);
     if (s || parts.length === 0) parts.push(`${s} detik`);
@@ -504,7 +521,7 @@ function fitTimerDisplay() {
 window.addEventListener('resize', fitTimerDisplay);
 
 function updateDisplayTimer() {
-    displayTimer.textContent = formatTime(reminingSeconds);
+    displayTimer.textContent = reminingSeconds >= 3600 ? formatDuration(reminingSeconds) : formatTime(reminingSeconds);
 
     fitTimerDisplay();
 
@@ -589,9 +606,9 @@ function renderResults() {
             <td>${result.wasPaused ? '⏸ ' : ''}${result.name}</td>
             <td class="d-none d-md-table-cell"><span class='badge ${String(result.mode).toLowerCase() === 'pomodoro' ? 'badge-mode-belajar' : 'badge-mode-biasa'}'>${result.mode}</span></td>
             <td class="d-none d-md-table-cell">${result.phaseLabel}</td>
-            <td class="d-none d-md-table-cell">${formatTime(result.target)}</td>
-            <td>
-                ${formatTime(result.used + (result.pausedSeconds || 0))}
+            <td class="d-none d-md-table-cell text-nowrap">${formatDuration(result.target)}</td>
+            <td class="text-nowrap">
+                ${formatDuration(result.used + (result.pausedSeconds || 0))}
             </td>
             <td><span class='badge ${result.status === 'Selesai' ? 'badge-status-selesai' : 'badge-status-reset'}'>${result.status}</span></td>
             <td class="d-none d-md-table-cell">${result.time}</td>

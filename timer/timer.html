@@ -3,9 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
     <title>DIGI TIMER</title>
 
-    <title>DIGILOG STOPWATCH</title>
+    <!-- digilog favicon -->
+    <link rel="icon" type="image/png" sizes="32x32" href="../png/digilog-logo5.png">
 
     <!-- Link google font -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -135,16 +137,22 @@
                                 </div>
                             </div>
                         </div>
-
                     </div>
                 </div>
 
-                <!-- btn perpanjangan timer -->
+                <!-- btn perpanjangan timer dan laporan kemarin -->
                 <div class="d-flex flex-wrap justify-content-center align-items-center gap-3 mb-4">
                     <div class="form-check form-switch d-flex align-items-center gap-2 ps-0 mb-0">
                         <input class="form-check-input ms-0 mt-0" type="checkbox" role="switch" id="extend-toggle">
                         <label class="form-check-label" for="extend-toggle" id="extend-toggle-label" title='Alt+O'>Tambah waktu</label>
                     </div>
+
+                    <div class="text-center d-none" id="last-report-wrap">
+                        <button type="button" class="btn btn-link btn-sm text-secondary text-decoration-none" id="last-report-btn" title="Alt+L">
+                            <i class="fa-solid fa-chart-simple"></i> Laporan <span id="last-report-label">Kemarin</span>
+                        </button>
+                    </div>
+
                 </div>
 
                 <!-- untuk memfokuskan pencetan tombol extended -->
@@ -488,7 +496,7 @@
                             <span class="desc-mobile-only">Ketuk angka untuk rincian.</span>
                         </li>
 
-                        <li><b>Laporan harian:</b> muncul sekali saat ganti hari, berisi ringkasan pemakaian.</li>
+                        <li><b>Laporan harian:</b> muncul saat ganti hari dan bisa dibuka lagi lewat tombol <b>Laporan kemarin</b> di sebelah tombol 'Tambah Waktu'.</li>
                     </ul>
 
                     <!-- penjelasan table report/results -->
@@ -548,6 +556,7 @@
                             <li><b class="btn-desc-style">Alt+O</b> = nyalakan atau matikan tambah waktu / siklus</li>
                             <li><b class="btn-desc-style">Alt+R</b> = buka atau tutup ringkasan</li>
                             <li><b class="btn-desc-style">Alt+I</b> = info lainnya dalam ringkasan</li>
+                            <li><b class="btn-desc-style">Alt+L</b> = laporan hari sebelumnya</li>
                         </ul>
                     </div>
 

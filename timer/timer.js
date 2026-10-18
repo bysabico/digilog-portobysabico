@@ -114,7 +114,11 @@ const inputsSection = document.getElementById('inputs-section'),
       dailyReportEl = document.getElementById('daily-report-modal'),
       dailyReportWhen = document.getElementById('daily-report-when'),
       dailyReportDate = document.getElementById('daily-report-date'),
-      dailyReportBody = document.getElementById('daily-report-body')
+      dailyReportBody = document.getElementById('daily-report-body'),
+
+      lastReportWrap = document.getElementById('last-report-wrap'),
+      lastReportBtn = document.getElementById('last-report-btn'),
+      lastReportLabel = document.getElementById('last-report-label')
 ;
 
 let autoCloseTimeout = null,
@@ -126,6 +130,10 @@ let autoCloseTimeout = null,
 
 
 let totalPausedMs = 0;
+
+let endPreviewOn = false,
+    endPreviewShown = false
+;
 
 let sessionWasPaused = false;
 let sessionStartTimestamp = null;
@@ -308,6 +316,8 @@ modeBiasaRadio.addEventListener('change', () => {
     renderNameSuggestions();
     presetHint.classList.add('d-none');
     namaTimer.focus();
+
+    updateEndPreview();
 });
 
 modePomodoroRadio.addEventListener('change', () => {
@@ -324,6 +334,8 @@ modePomodoroRadio.addEventListener('change', () => {
     renderNameSuggestions();
     presetHint.classList.add('d-none');
     namaTimer.focus();
+
+    updateEndPreview();
 });
 
 unlimitedPengulangan.addEventListener('change', () => {
@@ -339,7 +351,66 @@ function storageKey(dayKey){
     return `timer-results:${dayKey}`
 }
 
+// pratinjau end time saat isi durasi
+function previewClock(sec) {
+    const end = new Date(Date.now() + sec * 1000);
 
+    const startOf = d => new Date(d.getFullYear(), d.getMonth(), d.getDate()),
+          dayDiff = Math.round((startOf(end) - startOf(new Date())) / 86400000),
+          suffix = dayDiff === 0 ? '' : dayDiff === 1 ? ' (besok)' : ` (+${dayDiff} hari)`
+    ;
+    
+    return formatClockTime(end) + suffix;
+}
+
+function updateEndPreview() {
+    if (!endPreviewOn || inputsSection.classList.contains('d-none')) return;
+
+    let text = '';
+
+    if (mode === 'biasa') {
+        const dur = toSec(durasiJamTimer.value, durasiMenitTimer.value, durasiDetikTimer.value);
+        if (dur > 0) text = `Jika Start sekarang, selesai pada ${previewClock(dur)}`;
+    } else {
+        const focus = toSec(jamPomodoro.value, menitPomodoro.value, detikPomodoro.value),
+              rest = toSec(jamIstirahat.value, menitIstirahat.value, detikIstirahat.value),
+              repeat = parseInt(jumlahPengulangan.value, 10);
+
+        if (focus > 0) {
+            text = `Fokus pertama selesai pada ${previewClock(focus)}`;
+            if (!unlimitedPengulangan.checked && repeat > 0 && rest > 0) {
+                text += ` · semua siklus selesai pada ${previewClock(repeat * (focus + rest))}`;
+            }
+        }
+    }
+
+    if (text) {
+        statusText.textContent = text;
+        endPreviewShown = true;
+    } else if (endPreviewShown) {
+        statusText.textContent = '';
+        endPreviewShown = false;
+    }
+}
+
+[durasiJamTimer, durasiMenitTimer, durasiDetikTimer,
+ jamPomodoro, menitPomodoro, detikPomodoro,
+ jamIstirahat, menitIstirahat, detikIstirahat,
+ jumlahPengulangan].forEach(el => {
+    el.addEventListener('input', () => {
+        endPreviewOn = true;
+        updateEndPreview();
+    });
+});
+
+unlimitedPengulangan.addEventListener('change', () => {
+    endPreviewOn = true;
+    updateEndPreview();
+});
+
+setInterval(updateEndPreview, 1000);
+
+// results
 async function loadResultsForToday() {
     const key = todayKey();
     currentDayKey = key;
@@ -568,6 +639,9 @@ function resetTampilan() {
     pauseTimerBtn.disabled = false;
     resetTimerBtn.disabled = false;
 
+    endPreviewOn = false;
+    endPreviewShown = false;
+
     clearActiveSession();
     stopTicking();
     hideTicker();
@@ -594,6 +668,8 @@ function startTimerInterval() {
     pauseStartTimestamp = null;
     updateDisplayTimer();
     updateRunningLabel();
+    endPreviewOn = false;
+    endPreviewShown = false;
     statusText.innerHTML = 'Starting <span class="dot">.</span><span class="dot"> .</span><span class="dot"> .</span>';
 
     startTicking();
@@ -1184,6 +1260,8 @@ function tryApplyPreset() {
     if (!p) return;
 
     applyDurationData(p.data);
+    endPreviewOn = true;
+    updateEndPreview();
     presetHint.textContent = `Waktu terakhir "${p.name}" terisi otomatis`;
     presetHint.classList.remove('d-none');
 }
@@ -1471,6 +1549,12 @@ document.addEventListener('keydown', (e) => {
         return;
     }
 
+    if(altOnly && e.code === 'KeyL') {
+        e.preventDefault();
+        openLastReport();
+        return;
+    }
+
     const formVisible = !inputsSection.classList.contains('d-none');
 
     if (formVisible && altOnly) {
@@ -1700,6 +1784,7 @@ function showDailyReport(day) {
 }
 
 function maybeShowDailyReport() {
+    updateLastReportBtn();
     if (inputsSection.classList.contains('d-none')) return;
     if (document.querySelector('.modal.show')) return;
 
@@ -1712,7 +1797,29 @@ function maybeShowDailyReport() {
     showDailyReport(last);
 }
 
+function updateLastReportBtn() {
+    const last = findLastUsageDay();
+
+    lastReportWrap.classList.toggle('d-none', !last);
+
+    if(last) {
+        const diff = Math.round((dayKeyToDate(todayKey())- last.date) / 86400000);
+        lastReportLabel.textContent = diff === 1 ? 'Kemarin' : `${diff} Hari Lalu`;
+    }
+}
+
+function openLastReport() {
+    if (document.querySelector('.modal.show')) return;
+
+    const last = findLastUsageDay();
+
+    if (last) showDailyReport(last);
+}
+
+lastReportBtn.addEventListener('click', openLastReport)
+
 maybeShowDailyReport();
+
 setInterval(maybeShowDailyReport, 60 * 1000);
 document.addEventListener('visibilitychange', () => {
     if (!document.hidden) maybeShowDailyReport();
